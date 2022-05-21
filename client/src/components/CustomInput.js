@@ -1,19 +1,49 @@
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { Controller } from "react-hook-form";
 
 import { COLORS } from "../Colors";
 
-const CustomInput = ({ value, setValue, placehoder, secureTextEntry }) => {
+const CustomInput = ({
+  control,
+  name,
+  rules={},
+  placehoder,
+  secureTextEntry,
+  logo,
+}) => {
   return (
-    <View style={styles.container}>
-      <TextInput
-        value={value}
-        onChangeText={setValue}
-        placeholder={placehoder}
-        style={styles.input}
-        secureTextEntry={secureTextEntry}
+    
+      
+      <Controller
+        control={control}
+        name={name}
+        rules={rules}
+        render={({ field: { value, onChange, onBlur }, fieldState:{error} }) => (
+          <>
+          <View style={[styles.container, {borderColor: error ? 'red': "#e8e8e8"}]}>
+          {logo ? (
+            <View style={styles.wrapperLogo}>
+              <Ionicons name={logo} size={30} />
+            </View>
+          ) : null}
+          <TextInput
+            value={value}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            placeholder={placehoder}
+            style={styles.input}
+            secureTextEntry={secureTextEntry}
+          />
+          </View>
+          {error && (
+            <Text style={{color:"red", alignSelf: "stretch"}}>{error.message || "error"}</Text>
+          )}
+          </>
+        )}
       />
-    </View>
+    
   );
 };
 
@@ -27,8 +57,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     marginVertical: 8,
+    flexDirection: "row",
   },
-  input: {},
+  wrapperLogo: {
+    paddingHorizontal: 5,
+    borderRightWidth: 1,
+  },
+  input: {
+    paddingLeft: 10,
+    width: '100%',
+  },
 });
 
 export default CustomInput;

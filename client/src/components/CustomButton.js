@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
+import { Ionicons } from "@expo/vector-icons";
 
 import { COLORS } from "../Colors";
 
@@ -9,6 +10,7 @@ const CustomButton = ({
   type = "PRIMARY",
   bgColor,
   fgColor,
+  logo,
 }) => {
   return (
     <TouchableOpacity
@@ -19,6 +21,7 @@ const CustomButton = ({
         bgColor ? { backgroundColor: bgColor } : {},
       ]}
     >
+      <Ionicons style={styles.logo} name={logo} size={30} color={fgColor}/>
       <Text
         style={[
           styles.text,
@@ -45,6 +48,11 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   container_TERTIARY: {},
+  logo:{
+    position: "absolute",
+    top: 10,
+    left: 20,
+  },
   text: {
     fontWeight: "bold",
     color: COLORS.white,

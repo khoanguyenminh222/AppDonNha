@@ -4,22 +4,65 @@ import {
   StyleSheet,
   Image,
   useWindowDimensions,
+  ScrollView,
+  TextInput,
 } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import React, { useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { useForm, Controller, get } from "react-hook-form";
 
 import GlobalStyles from "../GlobalStyles";
 import { COLORS } from "../Colors";
+import BaseURL from "../api/BaseURL";
+
+import AuthContext from "../context/AuthContext";
+import { LoginSuccess } from '../context/Actions'
+
 import Logo from "../../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
 
-const LoginScreen = () => {
+const EMAIL_REGEX =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+const SignInScreen = () => {
   const { height } = useWindowDimensions();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const onSignInPressed = () => {
-    console.warn("Sign in");
+  const navigation = useNavigation();
+
+  const [state, dispatch] = useContext(AuthContext);
+  const user = state;
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const onSignInPressed = async (data) => {
+    try {
+      const res = await fetch(`${BaseURL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (res.status == 200) {
+        // lưu dữ liệu người dùng
+        const temp = res.json()
+        .then(data=>({
+          data: data,
+          status: res.status
+        }))
+        .then(res=>{
+          dispatch({type:'LOGIN_SUCCESS', payload: res.data});
+          navigation.navigate("Main");
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
   const onForgotPasswordPressed = () => {
     console.warn("Forgot Password");
@@ -36,48 +79,65 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <KeyboardAwareScrollView>
-      <View style={styles.container}>
-      
-        <Image
-          source={Logo}
-          style={[styles.logo, { height: height * 0.3 }]}
-          resizeMode="contain"
-        />
-        <CustomInput placehoder="Email" value={email} setValue={setEmail} />
-        <CustomInput
-          placehoder="Mật khẩu"
-          value={password}
-          setValue={setPassword}
-          secureTextEntry={true}
-        />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <Image
+            source={Logo}
+            style={[styles.logo, { height: height * 0.3 }]}
+            resizeMode="contain"
+          />
+          <CustomInput
+            control={control}
+            name="email"
+            rules={{
+              required: "Email không được để trống",
+              pattern: { value: EMAIL_REGEX, message: "Email sai định dạng" },
+            }}
+            placehoder="Email"
+            logo="mail-outline"
+          />
+          <CustomInput
+            control={control}
+            name="password"
+            rules={{
+              required: "Mật khẩu không được để trống",
+              minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
+            }}
+            placehoder="Mật khẩu"
+            secureTextEntry={true}
+            logo="key-outline"
+          />
 
-        <CustomButton text="Đăng nhập" onPress={onSignInPressed} />
-        <CustomButton
-          text="Quên mật khẩu"
-          onPress={onForgotPasswordPressed}
-          type="TERTIARY"
-        />
-        <CustomButton
-          text="Đăng nhập với Facebook"
-          onPress={onSignInFacebook}
-          bgColor="#e7eaf4"
-          fgColor="#4765a9"
-        />
-        <CustomButton
-          text="Đăng nhập với Google"
-          onPress={onSignInGoogle}
-          bgColor="#fae9ea"
-          fgColor="#dd4d44"
-        />
-        <CustomButton
-          text="Chưa có tài khoản? Đăng kí ngay"
-          onPress={onSignUpPressed}
-          type="TERTIARY"
-        />
-      
-      </View>
-      </KeyboardAwareScrollView>
+          <CustomButton
+            text="Đăng nhập"
+            onPress={handleSubmit(onSignInPressed)}
+          />
+          <CustomButton
+            text="Quên mật khẩu"
+            onPress={onForgotPasswordPressed}
+            type="TERTIARY"
+          />
+          <CustomButton
+            text="Đăng nhập với Facebook"
+            onPress={onSignInFacebook}
+            bgColor="#e7eaf4"
+            fgColor="#4765a9"
+            logo="logo-facebook"
+          />
+          <CustomButton
+            text="Đăng nhập với Google"
+            onPress={onSignInGoogle}
+            bgColor="#fae9ea"
+            fgColor="#dd4d44"
+            logo="logo-google"
+          />
+          <CustomButton
+            text="Chưa có tài khoản? Đăng kí ngay"
+            onPress={onSignUpPressed}
+            type="TERTIARY"
+          />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -96,4 +156,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default SignInScreen;

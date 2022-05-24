@@ -6,6 +6,7 @@ import {
   useWindowDimensions,
   ScrollView,
   TextInput,
+  Text,
 } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -16,7 +17,6 @@ import { COLORS } from "../Colors";
 import BaseURL from "../api/BaseURL";
 
 import AuthContext from "../context/AuthContext";
-import { LoginSuccess } from '../context/Actions'
 
 import Logo from "../../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
@@ -30,16 +30,19 @@ const SignInScreen = () => {
   const navigation = useNavigation();
 
   const [state, dispatch] = useContext(AuthContext);
-  const user = state;
+  const [errMessage, setErrMessage] = useState('');
 
+  //useForm
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  //SignIn 
   const onSignInPressed = async (data) => {
     try {
+      //fetch api
       const res = await fetch(`${BaseURL}/auth/login`, {
         method: "POST",
         headers: {
@@ -56,9 +59,13 @@ const SignInScreen = () => {
           status: res.status
         }))
         .then(res=>{
+          // payload dữ liệu người dùng
           dispatch({type:'LOGIN_SUCCESS', payload: res.data});
+          // chuyển hướng trang
           navigation.navigate("Main");
         });
+      }else{
+        setErrMessage("Sai tài khoản và mật khẩu");
       }
     } catch (err) {
       console.log(err);
@@ -107,7 +114,7 @@ const SignInScreen = () => {
             secureTextEntry={true}
             logo="key-outline"
           />
-
+          <Text style={{color: "red", alignSelf: "stretch"}}>{errMessage}</Text>
           <CustomButton
             text="Đăng nhập"
             onPress={handleSubmit(onSignInPressed)}

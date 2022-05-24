@@ -4,6 +4,7 @@ import React, { useEffect, useState, useContext } from 'react'
 import BaseURL from '../api/BaseURL';
 import GlobalStyles from "../GlobalStyles";
 import AuthContext from '../context/AuthContext';
+import Header from '../components/Header';
 
 
 const HomeScreen = () => {
@@ -27,7 +28,7 @@ const HomeScreen = () => {
       {/* {users.map((u)=>(
         <Text key={u._id}>{u.username}</Text>
       ))} */}
-      <Text>home</Text>
+      <Header/>
     </View>
   )
 }

@@ -11,6 +11,7 @@ const CustomButton = ({
   bgColor,
   fgColor,
   logo,
+  size = "100%",
 }) => {
   return (
     <TouchableOpacity
@@ -19,6 +20,7 @@ const CustomButton = ({
         styles.container,
         styles[`container_${type}`],
         bgColor ? { backgroundColor: bgColor } : {},
+        {width:size},
       ]}
     >
       <Ionicons style={styles.logo} name={logo} size={30} color={fgColor}/>
@@ -37,7 +39,7 @@ const CustomButton = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: '100%',
     padding: 15,
     marginVertical: 5,
 

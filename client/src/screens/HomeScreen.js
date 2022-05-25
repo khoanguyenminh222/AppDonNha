@@ -1,4 +1,4 @@
-import { View, Text, Alert } from 'react-native'
+import { View, Text, Alert, SafeAreaView } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react'
 
 import BaseURL from '../api/BaseURL';
@@ -10,7 +10,7 @@ import Header from '../components/Header';
 const HomeScreen = () => {
 
   const [state, dispatch] = useContext(AuthContext);
-  console.log(state.user.username);
+  console.log(state.user.fullname);
   const [user, setUser] = useState([]);
   
   // useEffect(()=>{
@@ -24,12 +24,12 @@ const HomeScreen = () => {
 
 
   return (
-    <View style={GlobalStyles.droidSafeArea}>
+    <SafeAreaView style={GlobalStyles.droidSafeArea}>
       {/* {users.map((u)=>(
         <Text key={u._id}>{u.username}</Text>
       ))} */}
       <Header/>
-    </View>
+    </SafeAreaView>
   )
 }
 

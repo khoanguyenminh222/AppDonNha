@@ -50,10 +50,11 @@ const SignInScreen = () => {
         },
         body: JSON.stringify(data),
       });
+    
 
       if (res.status == 200) {
         // lưu dữ liệu người dùng
-        const temp = res.json()
+        res.json()
         .then(data=>({
           data: data,
           status: res.status
@@ -65,7 +66,16 @@ const SignInScreen = () => {
           navigation.navigate("Main");
         });
       }else{
-        setErrMessage("Sai tài khoản và mật khẩu");
+        res.json()
+        .then(data=>({
+          data: data,
+          status: res.status
+        }))
+        .then(res=>{
+          console.log(res.data)
+          setErrMessage(res.data);
+        })
+        
       }
     } catch (err) {
       console.log(err);

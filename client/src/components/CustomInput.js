@@ -12,6 +12,8 @@ const CustomInput = ({
   placehoder,
   secureTextEntry,
   logo,
+  editable,
+  selectTextOnFocus,
 }) => {
   return (
     
@@ -29,6 +31,8 @@ const CustomInput = ({
             </View>
           ) : null}
           <TextInput
+            editable = {editable}
+            selectTextOnFocus = {selectTextOnFocus}
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}

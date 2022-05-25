@@ -16,11 +16,10 @@ router.post("/register", async (req, res) => {
 
     //create new user
     const newUser = new User({
-      username: req.body.username,
+      fullname: req.body.fullname,
       email: req.body.email,
       password: hashedPassword,
     });
-
     //save user and respond
     const user = await newUser.save();
     res.status(200).json(user);
@@ -40,7 +39,6 @@ router.post("/login", async (req, res) => {
       user.password
     );
     !validPassword && res.status(400).json("sai mật khẩu");
-    console.log(validPassword);
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);

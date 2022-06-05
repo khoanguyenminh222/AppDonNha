@@ -1,0 +1,140 @@
+import {
+    SafeAreaView,
+    View,
+    StyleSheet,
+    Image,
+    useWindowDimensions,
+    ScrollView,
+    TextInput,
+    Text,
+  } from "react-native";
+  import React, { useEffect, useState, useContext } from "react";
+  import { useNavigation } from "@react-navigation/native";
+  import { useForm, Controller, get } from "react-hook-form";
+  
+
+  import GlobalStyles from "../GlobalStyles";
+  import { COLORS } from "../Colors";
+  import BaseURL from "../api/BaseURL";
+  
+  import AuthContext from "../context/AuthContext";
+  
+  import Logo from "../../assets/images/logo.png";
+  import CustomInput from "../components/CustomInput";
+  import CustomButton from "../components/CustomButton";
+  
+  const EMAIL_REGEX =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  
+  const SignUpScreen = () => {
+    const { height } = useWindowDimensions();
+    const [checked, setChecked] = React.useState('first');
+
+    //useForm
+    const {
+      control,
+      handleSubmit,
+      formState: { errors },
+    } = useForm();
+  
+    const onRegisterPressed = () =>{
+        console.warn("Sign in");
+    };
+    
+    const onTermsOfUserPressed = () => {
+        console.warn("onTermsOfUserPressed");
+      };
+    const onSignInFacebook = () => {
+        console.warn("Sign in facebook");
+      };
+      const onSignInGoogle = () => {
+        console.warn("Sign in google");
+      };
+      const onSignUpPressed = () => {
+        console.warn("Sign up");
+      };
+    return (
+      <SafeAreaView style={GlobalStyles.droidSafeArea}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.container}>
+            <Image
+              source={Logo}
+              style={[styles.logo, { height: height * 0.3 }]}
+              resizeMode="contain"
+            />
+            <h1> ĐĂNG KÝ </h1> 
+            <CustomInput
+              control={control}
+              name="fullname"
+              placehoder="Họ và tên"
+            />
+            <CustomInput control={control} name="email" placehoder="Email" />
+            <CustomInput
+              control={control}
+              name="password"
+              placehoder="Mật khẩu"
+              secureTextEntry={true}
+            />
+            <CustomInput
+              control={control}
+              name="passwordRepeat"
+              placehoder="Nhập lại mật khẩu"
+              secureTextEntry={true}
+            />
+            
+            <CustomButton text="Đăng ký" onPress={onRegisterPressed} />
+            <Text style={styles.text}>
+               
+              Bằng việc đăng ký, bạn đã đồng ý với 
+              <Text style={styles.link} onPress={onTermsOfUserPressed}> Điều khoản sử dụng</Text> {''}
+              của App 
+            </Text> 
+            <CustomButton
+            text="Đăng nhập với Facebook"
+            onPress={onSignInFacebook}
+            bgColor="#e7eaf4"
+            fgColor="#4765a9"
+            logo="logo-facebook"
+          />
+          <CustomButton
+            text="Đăng nhập với Google"
+            onPress={onSignInGoogle}
+            bgColor="#fae9ea"
+            fgColor="#dd4d44"
+            logo="logo-google"
+          />
+          <CustomButton
+            text="Bạn đã có tài khoản? Đăng nhập ngay"
+            onPress={onSignUpPressed}
+            type="TERTIARY"
+          />
+          </View>
+        </ScrollView> 
+      </SafeAreaView>
+    );
+  };
+  
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: COLORS.backgroundColor,
+      alignItems: "center",
+      padding: 20,
+    },
+    logo: {
+      width: "70%",
+      maxWidth: 300,
+      maxHeight: 200,
+    },
+
+    text: {
+        color: 'gray',
+        marginVertical: 20,
+    },  
+    link: {
+        color: '#FDB075'
+    }
+  });
+  
+  export default SignUpScreen;
+  

@@ -49,6 +49,10 @@ const styles = StyleSheet.create({
   container_PRIMARY: {
     backgroundColor: COLORS.primary,
   },
+  container_SECONDARY: {
+    borderColor: '#3B71F3',
+    borderWidth: 2,
+  },
   container_TERTIARY: {},
   logo:{
     position: "absolute",
@@ -61,6 +65,10 @@ const styles = StyleSheet.create({
   },
   text_TERTIARY: {
     color: COLORS.gray,
+  },
+
+  text_SECONDARY: {
+    color: '#3B71F3',
   },
 });
 

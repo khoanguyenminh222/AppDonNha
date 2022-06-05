@@ -28,6 +28,7 @@ import {
   
   const SignUpScreen = () => {
     const { height } = useWindowDimensions();
+    const navigation = useNavigation();
     const [checked, setChecked] = React.useState('first');
 
     //useForm
@@ -38,6 +39,7 @@ import {
     } = useForm();
   
     const onRegisterPressed = () =>{
+        navigation.navigate("ConfirmEmail");
         console.warn("Sign in");
     };
     
@@ -50,8 +52,9 @@ import {
       const onSignInGoogle = () => {
         console.warn("Sign in google");
       };
-      const onSignUpPressed = () => {
-        console.warn("Sign up");
+      const onSignInPressed = () => {
+        navigation.navigate("SignIn");
+        console.warn("Sign In");
       };
     return (
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -62,7 +65,7 @@ import {
               style={[styles.logo, { height: height * 0.3 }]}
               resizeMode="contain"
             />
-            <h1> ĐĂNG KÝ </h1> 
+            <Text> ĐĂNG KÝ </Text> 
             <CustomInput
               control={control}
               name="fullname"
@@ -105,7 +108,7 @@ import {
           />
           <CustomButton
             text="Bạn đã có tài khoản? Đăng nhập ngay"
-            onPress={onSignUpPressed}
+            onPress={onSignInPressed}
             type="TERTIARY"
           />
           </View>

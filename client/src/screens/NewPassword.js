@@ -43,7 +43,7 @@ import {
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
-            <h1> ĐỔI MẬT KHẨU </h1>
+            <Text> ĐỔI MẬT KHẨU </Text>
             <CustomInput control={control} name="oldPassword" placehoder="Nhập mật khẩu hiện tại"  secureTextEntry={true} />
             <CustomInput control={control} name="newPassword" placehoder="Nhập mật khẩu mới"   secureTextEntry={true}/>
             <CustomInput control={control} name="newPasswordRepeat" placehoder="Nhập mật lại khẩu mới"   secureTextEntry={true} />

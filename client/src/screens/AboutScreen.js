@@ -17,6 +17,14 @@ const AboutScreen = () => {
 
   const [state, dispatch] = useContext(AuthContext);
 
+  const VerifyUser = ()=>{
+
+  }
+
+  const ChangePassword = ()=>{
+    navigation.navigate("NewPassword");
+  }
+
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Header/>
@@ -37,6 +45,7 @@ const AboutScreen = () => {
               bgColor={COLORS.green}
               fgColor={COLORS.white}
               logo="shield-checkmark-outline"
+              onPress={VerifyUser}
             />
           </View>
 
@@ -57,6 +66,7 @@ const AboutScreen = () => {
               <CustomButton
                 size="48%"
                 text="Đổi mật khẩu"
+                onPress={ChangePassword}
               />
           </View>
           <CustomButton

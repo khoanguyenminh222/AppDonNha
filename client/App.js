@@ -17,12 +17,12 @@ export default function App() {
   
   return (
     <>
-      {/* <AuthProvider>
+      <AuthProvider>
         <NavigationContainer>
           <StackNavigator />
         </NavigationContainer>
-      </AuthProvider> */}
-      <SignUpScreen/>
+      </AuthProvider>
+      {/* <SignUpScreen/> */}
       </>
   );
 }

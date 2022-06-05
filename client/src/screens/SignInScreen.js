@@ -82,15 +82,18 @@ const SignInScreen = () => {
     }
   };
   const onForgotPasswordPressed = () => {
+    navigation.navigate("ForgotPassword");
     console.warn("Forgot Password");
   };
   const onSignInFacebook = () => {
+    
     console.warn("Sign in facebook");
   };
   const onSignInGoogle = () => {
     console.warn("Sign in google");
   };
   const onSignUpPressed = () => {
+    navigation.navigate("SignUp");
     console.warn("Sign up");
   };
 

@@ -27,6 +27,7 @@ const EMAIL_REGEX =
 
 const ForgotPassword = () => {
   const { height } = useWindowDimensions();
+  const navigation = useNavigation();
   //useForm
   const {
     control,
@@ -34,16 +35,18 @@ const ForgotPassword = () => {
     formState: { errors },
   } = useForm();
   const onSendPressed = () => {
+    navigation.navigate("SignIn");
     console.warn("onSendPressed");
   };
   const onSignInPressed = () => {
+    navigation.navigate("SignIn");
     console.warn("onSignInPressed");
   };
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          <h1> LẤY LẠI MẬT KHẨU MỚI </h1>
+          <Text> LẤY LẠI MẬT KHẨU MỚI </Text>
           <CustomInput control={control} name="email" placehoder="Nhập Email" />
           <CustomButton text="Gửi" onPress={onSendPressed} />
 

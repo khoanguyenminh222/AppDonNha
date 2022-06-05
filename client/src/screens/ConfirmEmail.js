@@ -27,6 +27,7 @@ import {
   
   const ConfirmEmail = () => {
     const { height } = useWindowDimensions();
+    const navigation = useNavigation();
     //useForm
     const {
       control,
@@ -41,14 +42,15 @@ import {
         console.warn("onResendPressed");
       };
       const onSignInPressed = () => {
-        console.warn("Sign up");
+        navigation.navigate("SignIn");
+        console.warn("Sign in");
       };
     return (
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
             
-            <h1> XÁC THỰC TÀI KHOẢN EMAIL </h1> 
+            <Text> XÁC THỰC TÀI KHOẢN EMAIL </Text> 
             <CustomInput
               control={control}
               name="confirmationCode"

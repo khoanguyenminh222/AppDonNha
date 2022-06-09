@@ -27,6 +27,7 @@ import {
   
   const NewPassword = () => {
     const { height } = useWindowDimensions();
+    const navigation = useNavigation();
     //useForm
     const {
       control,
@@ -38,6 +39,7 @@ import {
     };
     const backHomePressed = () => {
         console.warn("backHomePressed");
+        navigation.goBack();
       };
     return (
       <SafeAreaView style={GlobalStyles.droidSafeArea}>

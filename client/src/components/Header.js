@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-
+import Logo from "../../assets/images/logo.png";
 import { COLORS } from "../Colors";
 
 const Header = () => {
@@ -19,19 +19,27 @@ const Header = () => {
           placeholder="Tìm kiếm dịch vụ"
         ></TextInput>
       </View>
+      <Image
+        source={Logo}
+        style={styles.logo}
+        resizeMethod= 'contain'
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row',
     height: 60,
     backgroundColor: COLORS.yellow,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    justifyContent: "center",
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
   wrapper: {
+    width: '80%',
     backgroundColor: COLORS.white,
     flexDirection: "row",
     height: "80%",
@@ -49,6 +57,11 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 20,
   },
+  logo:{
+    width: '80%',
+    height: 50,
+    maxWidth: 50,
+  }
 });
 
 export default Header;

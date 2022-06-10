@@ -3,7 +3,7 @@ import { COLORS } from './Colors';
 export default StyleSheet.create({
     droidSafeArea: {
         flex: 1,
-        backgroundColor: COLORS.white,
+        backgroundColor: COLORS.backgroundColor,
         paddingTop: Platform.OS === 'android' ? 25 : 0
     },
 });

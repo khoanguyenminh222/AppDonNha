@@ -1,6 +1,6 @@
 export const COLORS={
     backgroundColor: '#f9fbfc',
-    white: '#fff',
+    white: '#f2f5f3',
     gray: 'gray',
     light: '#ebedeb',
     yellow: '#e8cd54',

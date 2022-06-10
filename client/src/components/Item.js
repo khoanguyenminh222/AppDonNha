@@ -1,25 +1,26 @@
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native'
 import React from 'react'
 import HCM from "../../assets/images/1.jpg";
+import { COLORS } from '../Colors';
 const Item = () => {
   return (
     <View style={styles.container}>
-      <Pressable>
+      <Pressable style={({pressed})=>[{backgroundColor: pressed ? COLORS.white: COLORS.backgroundColor}]}>
         <View style={styles.wrapper}>
           <Image source={HCM} style={styles.img} resizeMode="cover" />
-          <Text>Tp Hồ Chí Minh</Text>
+          <Text style={styles.txtContent}>Tp Hồ Chí Minh</Text>
         </View>
       </Pressable>
-      <Pressable>
+      <Pressable style={({pressed})=>[{backgroundColor: pressed ? COLORS.white: COLORS.backgroundColor}]}>
         <View style={styles.wrapper}>
           <Image source={HCM} style={styles.img} resizeMode="cover" />
-          <Text>Tp Hồ Chí Minh</Text>
+          <Text style={styles.txtContent}>Tp Hồ Chí Minh</Text>
         </View>
       </Pressable>
-      <Pressable>
+      <Pressable style={({pressed})=>[{backgroundColor: pressed ? COLORS.white: COLORS.backgroundColor}]}>
         <View style={styles.wrapper}>
           <Image source={HCM} style={styles.img} resizeMode="cover" />
-          <Text>Tp Hồ Chí Minh</Text>
+          <Text style={styles.txtContent}>Tp Hồ Chí Minh</Text>
         </View>
       </Pressable>
     </View>
@@ -32,15 +33,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
+        height: 100,
     },
     wrapper:{
 
     },
     img:{   
-        height: 80,
-        width: 100,
-        maxheight: 100,
-        maxwidth: 300,
+        height: '100%',
+        maxHeight: 100,
+        maxWidth: 110,
+    },
+    txtContent:{
+      fontSize: 16,
     }
 
 })

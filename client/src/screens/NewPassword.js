@@ -21,6 +21,7 @@ import {
   import Logo from "../../assets/images/logo.png";
   import CustomInput from "../components/CustomInput";
   import CustomButton from "../components/CustomButton";
+import BackButton from "../components/BackButton";
   
   const EMAIL_REGEX =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -43,6 +44,7 @@ import {
       };
     return (
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
+        <BackButton/>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
             <Text> ĐỔI MẬT KHẨU </Text>

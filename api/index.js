@@ -7,6 +7,8 @@ const morgan = require("morgan");
 const multer = require("multer");
 const cors = require("cors");
 const authRoute = require("./routes/auth");
+const userRoute = require("./routes/user");
+const verifyRoute = require("./routes/verify");
 
 const router = express.Router();
 const path = require("path");
@@ -39,7 +41,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-app.post("/api/upload", upload.single("file"), (req, res) => {
+app.post("/api/upload", upload.array("file"), (req, res) => {
   try {
     return res.status(200).json("File uploaded successfully");
   } catch (error) {
@@ -48,6 +50,8 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 });
 
 app.use("/api/auth", authRoute);
+app.use("/api/user", userRoute);
+app.use("/api/verify", verifyRoute);
 
 app.listen(3000, () => {
   console.log("Backend server is running!");

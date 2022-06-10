@@ -27,33 +27,41 @@ const HomeScreen = () => {
 
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      {/* {users.map((u)=>(
+      <Header/>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      
+        {/* {users.map((u)=>(
         <Text key={u._id}>{u.username}</Text>
       ))} */}
-      <Header/>
-      <Banner/>
-      <Text style={styles.txtheader}>Vị trí</Text>
-      <Item/>
-      <Text style={styles.txtheader}>Danh mục</Text>
-      <Item/>
-      <Text style={styles.txtheader}>Tin mới nhất</Text>
-      <Post/>
-      <Post/>
-      <Post/>
+        <View style={styles.container}>
+          
+          <Banner />
+          <Text style={styles.txtheader}>Vị trí</Text>
+          <Item />
+          <Text style={styles.txtheader}>Danh mục</Text>
+          <Item />
+          <Text style={styles.txtheader}>Tin mới nhất</Text>
+          <Post />
+          <Post />
+          <Post />
+        </View>
       
-    </SafeAreaView>
     </ScrollView>
-  )
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
+  container:{
+    flex: 1,
+    position: 'relative',
+  },
   txtheader:{
     paddingVertical: 20,
     paddingHorizontal: 20,
-    fontSize: 24,
-    fontStyle: 'bold',
+    fontSize: 28,
+    fontWeight: '500',
   }
 })
 

@@ -6,7 +6,7 @@ import { COLORS } from '../Colors';
 const Post = () => {
     const { height } = useWindowDimensions();
   return (
-    <Pressable style={({pressed})=>[{backgroundColor: pressed ? COLORS.light: ''}]}>
+    <Pressable style={({pressed})=>[{backgroundColor: pressed ? COLORS.white: COLORS.backgroundColor}]}>
     <View style={styles.container}>
       <Image
         source={Logo}
@@ -14,8 +14,8 @@ const Post = () => {
         resizeMode="contain"
       />
       <View style={styles.wrapperText}>
-        <Text>Tieu de</Text>
-        <Text>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</Text>
+        <Text style={styles.title}>Tieu de</Text>
+        <Text style={styles.content}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</Text>
       </View>
       
     </View>
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-around',
         marginHorizontal: 20,
-        marginVertical: 10,
+        marginBottom: 30,
     },
     wrapperText:{
         flex: 2,
@@ -39,7 +39,15 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '28%',
         maxWidth: 80,
-        maxHeight: 80,
+        maxHeight: 100,
+    },
+    title:{
+      fontSize: 24,
+      fontWeight: '400',
+    },
+    content: {
+      fontSize: 18,
+      lineHeight: 24,
     }
 })
 

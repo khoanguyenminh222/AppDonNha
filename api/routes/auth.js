@@ -45,7 +45,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-//Sercice email
+//Service email
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {

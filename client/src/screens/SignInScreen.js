@@ -63,7 +63,14 @@ const SignInScreen = () => {
           // payload dữ liệu người dùng
           dispatch({type:'LOGIN_SUCCESS', payload: res.data});
           // chuyển hướng trang
-          navigation.navigate("Main");
+          if(res.data.isAdmin){
+            //admin
+            navigation.navigate("Admin");
+          }else{
+            //người dùng
+            navigation.navigate("Main");
+          }
+          
         });
       }else{
         res.json()

@@ -26,8 +26,12 @@ const UserSchema = new mongoose.Schema(
       default: "",
     },
     idCardPicture: {
+      type: [String],
+      default: [],
+    },
+    crimCertificate:{
       type: String,
-      default: "",
+      default: '',
     },
     isAdmin: {
       type: Boolean,
@@ -53,6 +57,14 @@ const UserSchema = new mongoose.Schema(
       max: 50,
       default: "",
     },
+    isVerify:{
+      type: Boolean,
+      default: false,
+    },
+    waiting:{
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );

@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, Image, StyleSheet, useWindowDimensions, TextInput, ScrollView } from "react-native";
+import { View, Text, SafeAreaView, Image, StyleSheet, useWindowDimensions, TextInput, ScrollView, Alert } from "react-native";
 import React, { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 
@@ -9,8 +9,11 @@ import Logo from "../../assets/images/logo.png";
 import { COLORS } from "../Colors";
 import Header from "../components/Header";
 import InfoText from "../components/InfoText";
+import PublicFolder from "../api/PublicFolder";
 
 const AboutScreen = () => {
+
+
   const { height } = useWindowDimensions();
 
   const navigation = useNavigation();
@@ -18,13 +21,24 @@ const AboutScreen = () => {
   const [state, dispatch] = useContext(AuthContext);
 
   const VerifyUser = ()=>{
+    console.log(!state.user.dayOfBirth)
+    //kiểm tra thông tin đầy đủ
+    if(!state.user.dayOfBirth||!state.user.phone||!state.user.from){
+      Alert.alert("Cần thiết!","Cập nhật thông tin trước khi thực hiện thao tác này",[
+        {text:"OK", onPress:()=>console.log("alert closed")}
+      ])
+      return false;
+    }else{  
+      navigation.navigate("Verify");
+    }
 
+    
   }
 
   const ChangePassword = ()=>{
     navigation.navigate("NewPassword");
   }
-
+  console.log(PublicFolder+state.user.profilePicture);
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Header/>
@@ -34,9 +48,9 @@ const AboutScreen = () => {
 
           
             <Image
-              source={Logo}
-              style={[styles.logo, { height: height * 0.3 }]}
-              resizeMode="contain"
+              source={{uri: state.user.profilePicture ? PublicFolder+state.user.profilePicture : PublicFolder+"persons/noAvatar.png"}}
+              style={styles.logo}
+              resizeMode="cover"
             />
             <Text>Trạng thái: Chưa xác minh</Text>
             <CustomButton
@@ -93,9 +107,12 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   logo: {
-    width: "70%",
-    maxWidth: 300,
-    maxHeight: 200,
+    width: 150,
+    height: 150,
+    borderRadius: 150/2,
+    overflow: "hidden",
+    borderWidth: 3,
+    borderColor: COLORS.light,
   },
   bodyWrapper:{
     width: '100%',

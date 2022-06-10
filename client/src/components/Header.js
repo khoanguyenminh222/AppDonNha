@@ -22,7 +22,7 @@ const Header = () => {
       <Image
         source={Logo}
         style={styles.logo}
-        resizeMethod= 'contain'
+        resizeMethod= 'resize'
       />
     </View>
   );

@@ -5,6 +5,7 @@ const User = require("../models/User");
 router.get("/:id/getAll", async(req,res)=>{
   try {
     const admin = await User.findById(req.params.id);
+    //kiểm tra có phải admin
     if (admin.isAdmin) {
       try {
         User.find(
@@ -28,14 +29,26 @@ router.get("/:id/getAll", async(req,res)=>{
   }
 })
 
+// lấy ra người dùng
+router.get("/:id", async(req,res)=>{
+  try {
+    const user = await User.findById(req.params.id);
+    res.status(200).json(user);
+    
+  } catch (err) {
+    res.status(500).json(err);
+  }
+})
+
 //cập nhật người dùng
 router.put("/:id", async (req, res) => {
-  if (req.body.userId === req.params.id) {
+  const admin = await User.findById(req.body.userId);
+  if (req.body.userId === req.params.id || admin.isAdmin) {
     try {
       const user = await User.findByIdAndUpdate(req.params.id, {
         $set: req.body,
       });
-      res.status(200).json("Cập nhật thành công");
+      res.status(200).json(user);
     } catch (e) {
       res.status(500).json(err);
     }

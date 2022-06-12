@@ -21,7 +21,7 @@ import {
   import Logo from "../../assets/images/logo.png";
   import CustomInput from "../components/CustomInput";
   import CustomButton from "../components/CustomButton";
-import BackButton from "../components/BackButton";
+import Header from "../components/Header";
   
   const EMAIL_REGEX =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -44,10 +44,10 @@ import BackButton from "../components/BackButton";
       };
     return (
       <SafeAreaView style={GlobalStyles.droidSafeArea}>
-        <BackButton/>
+        <Header iconLeft="chevron-back-outline" textCenter="Thay đổi mật khẩu"/>
+
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
-            <Text> ĐỔI MẬT KHẨU </Text>
             <CustomInput control={control} name="oldPassword" placehoder="Nhập mật khẩu hiện tại"  secureTextEntry={true} />
             <CustomInput control={control} name="newPassword" placehoder="Nhập mật khẩu mới"   secureTextEntry={true}/>
             <CustomInput control={control} name="newPasswordRepeat" placehoder="Nhập mật lại khẩu mới"   secureTextEntry={true} />

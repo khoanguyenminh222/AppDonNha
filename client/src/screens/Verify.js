@@ -17,17 +17,21 @@ import AuthContext from '../context/AuthContext';
 
 import { COLORS } from "../Colors";
 import BaseURL from "../api/BaseURL";
-import BackButton from "../components/BackButton";
 import CustomButton from "../components/CustomButton";
+import { useNavigation } from "@react-navigation/native";
+import Header from "../components/Header";
 
 const Verify = () => {
+  const navigation = useNavigation();
+
   const [profilePicture, setProfilePicture] = useState(null);
   const [idCardFront, setIdCardFront] = useState(null);
   const [idCardBack, setIdCardBack] = useState(null);
   const [crimCertificate, setCrimCertificate] = useState(null);
   const [message, setMessage] = useState("");
 
-  const [state, dispatch] = useContext(AuthContext);
+  //const [state, dispatch] = useContext(AuthContext);
+  const [state,setState] = useContext(AuthContext);
 
   //lấy ảnh 3*4
   let ProfilePicture = async () => {
@@ -143,7 +147,7 @@ const Verify = () => {
 
 
     const editUser = {
-      userId : state.user._id,
+      userId : state._id,
       profilePicture: filenameProfile,
       idCardPicture: [filenameIdFront, filenameIdBack],
       crimCertificate: filenameCrimCer,
@@ -151,13 +155,16 @@ const Verify = () => {
     }
     //cập nhật người dùng
     try {
-      const user = await fetch(`${BaseURL}/user/${state.user._id}`,{
+      const user = await fetch(`${BaseURL}/user/${state._id}`,{
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(editUser),
       })
+      Alert.alert("Thông báo!","Đã gửi xác minh.",[
+        {text:"OK", onPress:()=>navigation.goBack()}
+      ])
     } catch (error) {
       console.log(error);
     }
@@ -165,10 +172,10 @@ const Verify = () => {
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <BackButton />
+      <Header iconLeft="chevron-back-outline" textCenter="Xác minh"/>
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          <Text style={styles.txtHeader}>Verify</Text>
 
           {/* Ảnh 3*4 */}
           <View style={styles.wrapper}>

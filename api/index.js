@@ -9,11 +9,26 @@ const cors = require("cors");
 const authRoute = require("./routes/auth");
 const userRoute = require("./routes/user");
 const verifyRoute = require("./routes/verify");
+const notifyRoute = require("./routes/notify");
 
 const router = express.Router();
 const path = require("path");
 
 dotenv.config();
+
+process.on('uncaughtException', (error, origin) => {
+  console.log('----- Uncaught exception -----')
+  console.log(error)
+  console.log('----- Exception origin -----')
+  console.log(origin)
+})
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.log('----- Unhandled Rejection at -----')
+  console.log(promise)
+  console.log('----- Reason -----')
+  console.log(reason)
+})
 
 mongoose
   .connect(process.env.MONGO_URL, {
@@ -52,6 +67,7 @@ app.post("/api/upload", upload.array("file"), (req, res) => {
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/verify", verifyRoute);
+app.use("/api/notify", notifyRoute);
 
 app.listen(3000, () => {
   console.log("Backend server is running!");

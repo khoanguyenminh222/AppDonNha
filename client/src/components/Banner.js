@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
         height: 200,
         backgroundColor: 'red',
         alignSelf: 'center',
+        marginBottom: 10,
     }
 })
 

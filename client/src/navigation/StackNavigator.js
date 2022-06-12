@@ -9,6 +9,10 @@ import Verify from '../screens/Verify';
 import AdminNavigator from './AdminNavigator';
 import TabNavigator from './TabNavigator';
 import NewPassword from '../screens/NewPassword';
+import NotificationScreen from '../screens/NotificationScreen';
+
+import DetailUser from '../screens/DetailUser';
+import LocationScreen from '../screens/LocationScreen';
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
@@ -45,7 +49,20 @@ const StackNavigator = () => {
           component={Verify}
         />
         <Stack.Screen name="Main" component={TabNavigator} />
+
         <Stack.Screen name="Admin" component={AdminNavigator}/>
+        <Stack.Screen
+          name="DetailUser"
+          component={DetailUser}
+        />
+        <Stack.Screen
+          name="Notification"
+          component={NotificationScreen}
+        />
+        <Stack.Screen
+          name="Location"
+          component={LocationScreen}
+        />
       </Stack.Navigator>
     );
   };

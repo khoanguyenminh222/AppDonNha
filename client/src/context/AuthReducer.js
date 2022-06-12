@@ -10,6 +10,15 @@ function AuthReducer(state, action){
             return {
                 user: action.payload,
             };
+        case 'UPDATE_USER':
+            return {
+                user: {
+                    ...state.user,
+                    city: action.payload,
+                    from: action.payload,
+                    phone: action.payload,
+                }
+            };
         default:
             throw new Error('Invalid action')
     }

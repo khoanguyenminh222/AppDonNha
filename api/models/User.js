@@ -20,6 +20,7 @@ const UserSchema = new mongoose.Schema(
     },
     dayOfBirth:{
       type: String,
+      default: "",
     },
     profilePicture: {
       type: String,

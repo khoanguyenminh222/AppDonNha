@@ -29,7 +29,8 @@ const SignInScreen = () => {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
 
-  const [state, dispatch] = useContext(AuthContext);
+  //const [state, dispatch] = useContext(AuthContext);
+  const [state, setState] = useContext(AuthContext);
   const [errMessage, setErrMessage] = useState('');
 
   //useForm
@@ -61,7 +62,8 @@ const SignInScreen = () => {
         }))
         .then(res=>{
           // payload dữ liệu người dùng
-          dispatch({type:'LOGIN_SUCCESS', payload: res.data});
+          //dispatch({type:'LOGIN_SUCCESS', payload: res.data});
+          setState(res.data);
           // chuyển hướng trang
           if(res.data.isAdmin){
             //admin
@@ -79,7 +81,6 @@ const SignInScreen = () => {
           status: res.status
         }))
         .then(res=>{
-          console.log(res.data)
           setErrMessage(res.data);
         })
         

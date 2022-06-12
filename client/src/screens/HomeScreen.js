@@ -1,21 +1,24 @@
-import { View, Text, Alert, SafeAreaView, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, Alert, SafeAreaView, StyleSheet, ScrollView, useWindowDimensions } from 'react-native'
 import React, { useEffect, useState, useContext } from 'react'
+import { useNavigation } from "@react-navigation/native";
 
 import BaseURL from '../api/BaseURL';
 import GlobalStyles from "../GlobalStyles";
 import AuthContext from '../context/AuthContext';
 import Header from '../components/Header';
-import Post from '../components/Post';
-import Banner from '../components/Banner';
 import Item from '../components/Item';
+import Banner from '../components/Banner';
+
+import Suggestion from '../components/Suggestion';
+
 
 
 const HomeScreen = () => {
+  const {height} = useWindowDimensions();
+  const navigation = useNavigation();
+  //const [state, dispatch] = useContext(AuthContext);
 
-  const [state, dispatch] = useContext(AuthContext);
-  console.log(state.user.fullname);
-  const [user, setUser] = useState([]);
-  
+  const [state, setState] = useContext(AuthContext);
   // useEffect(()=>{
   //   const fetchUser = async()=>{
   //     let response = await fetch(`${BaseURL}/auth/users`);
@@ -24,11 +27,17 @@ const HomeScreen = () => {
   //   }
   //   fetchUser();
   // },[users])
+  const changeScreenLocation = () =>{
+    navigation.navigate("Location");
+  }
 
+  const changeScreenNotify = ()=>{
+    navigation.navigate("Notification");
+  }
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Header/>
+      <Header iconLeft="location-outline" isSearch={true} iconRight={true} textLeft="Vị trí" onPressLeft={changeScreenLocation} onPressRight={changeScreenNotify}/>
     <ScrollView showsVerticalScrollIndicator={false}>
       
         {/* {users.map((u)=>(
@@ -37,14 +46,13 @@ const HomeScreen = () => {
         <View style={styles.container}>
           
           <Banner />
-          <Text style={styles.txtheader}>Vị trí</Text>
-          <Item />
-          <Text style={styles.txtheader}>Danh mục</Text>
-          <Item />
-          <Text style={styles.txtheader}>Tin mới nhất</Text>
-          <Post />
-          <Post />
-          <Post />
+          <Text style={[styles.txtheader, {fontSize:height*0.04}]}>Vị trí</Text>
+          <Suggestion />
+          <Text style={[styles.txtheader, {fontSize:height*0.04}]}>Danh mục</Text>
+          <Suggestion />
+          <Text style={[styles.txtheader, {fontSize:height*0.04}]}>Tin mới nhất</Text>
+          <Item title="tieu de" content={['mo ta']}/>
+          
         </View>
       
     </ScrollView>
@@ -58,9 +66,9 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   txtheader:{
-    paddingVertical: 20,
+    paddingVertical: 5,
     paddingHorizontal: 20,
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '500',
   }
 })

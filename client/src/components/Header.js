@@ -1,17 +1,65 @@
-import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity } from "react-native";
-import React from "react";
-
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Image,
+  TouchableOpacity,
+} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Logo from "../../assets/images/logo.png";
 import { COLORS } from "../Colors";
 import Badge from "./Badge";
+import AuthContext from "../context/AuthContext";
+import BaseURL from '../api/BaseURL';
 
-const Header = ({iconLeft, iconRight, textLeft, textCenter, onPressLeft, onPressRight, isSearch}) => {
+const Header = ({
+  iconLeft,
+  iconRight,
+  textLeft,
+  textCenter,
+  isSearch,
+}) => {
 
+  const [badge,setBadge] = useState(false);
+
+  const [notifies, setNotifies] = useState([]);
+  const [state, setState] = useContext(AuthContext);
+  
+  const navigation = useNavigation();
+
+  const changeScreenLocation = () =>{
+    navigation.navigate("Location");
+  }
+
+  const changeScreenNotify = ()=>{
+    navigation.navigate("Notification");
+  }
+
+  const fetchNotifies = async () => {
+    const response = await fetch(`${BaseURL}/notify/notread/user/${state._id}`);
+    const responseJson = await response.json();
+    setNotifies(responseJson);
+    notifies && notifies.map((noti)=>{
+      if(noti.readed){
+        setBadge(false);
+      }else{
+        setBadge(true);
+      }
+    }) 
+  };
+
+  useEffect(() => {
+    fetchNotifies();
+
+  }, [notifies.length]);
+  
   return (
     <View style={styles.container}>
       <View style={styles.top}>
-        <TouchableOpacity onPress={onPressLeft} style={styles.leftWrapper}>
+        <TouchableOpacity onPress={changeScreenLocation} style={styles.leftWrapper}>
           <Ionicons
             style={styles.iconLocation}
             size={24}
@@ -19,38 +67,44 @@ const Header = ({iconLeft, iconRight, textLeft, textCenter, onPressLeft, onPress
             name={iconLeft}
           ></Ionicons>
           <Text style={styles.txtLocation}>{textLeft}</Text>
-          
-         </TouchableOpacity>
-         <View style={styles.centerWrapper}>
-         <Text style={styles.txtCenter}>{textCenter}</Text>
-         </View>
-         
-        {iconRight ? (
-         <TouchableOpacity onPress={onPressRight} style={styles.rightWrapper}>
-          <Badge/>
-          <Ionicons style={styles.iconNotify} size={24} name="notifications-outline">
-          
-          </Ionicons>
-          
-          </TouchableOpacity>)
-        : undefined
-        }
+        </TouchableOpacity>
+        <View style={styles.centerWrapper}>
+          <Text style={styles.txtCenter}>{textCenter}</Text>
+        </View>
+
+        {iconRight
+        
+          ? (
+            <TouchableOpacity
+                  onPress={changeScreenNotify}
+                  style={styles.rightWrapper}
+                >
+                  
+                  {badge?<Badge/>:undefined}
+                  <Ionicons
+                    style={styles.iconNotify}
+                    size={24}
+                    name="notifications-outline"
+                  ></Ionicons>
+                </TouchableOpacity>
+          )
+          : undefined
+          }
       </View>
       {isSearch ? (
         <View style={styles.bottom}>
-        <Ionicons
-          style={styles.icon}
-          name="search-outline"
-          size={24}
-          color={COLORS.gray}
-        />
-        <TextInput
-          style={styles.search}
-          placeholder="Tìm kiếm dịch vụ"
-        ></TextInput>
-      </View>
-      ): undefined}
-      
+          <Ionicons
+            style={styles.icon}
+            name="search-outline"
+            size={24}
+            color={COLORS.gray}
+          />
+          <TextInput
+            style={styles.search}
+            placeholder="Tìm kiếm ..."
+          ></TextInput>
+        </View>
+      ) : undefined}
     </View>
   );
 };
@@ -82,7 +136,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   iconLocation: {
     marginRight: 5,
   },
@@ -91,30 +145,30 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
 
-  centerWrapper:{
+  centerWrapper: {
     flex: 1,
     position: "absolute",
     right: 0,
     left: 0,
     flexDirection: "row",
-    justifyContent: 'center',
+    justifyContent: "center",
     alignItems: "center",
   },
-  txtCenter:{
+  txtCenter: {
     fontSize: 16,
     fontWeight: "500",
   },
 
-  rightWrapper:{
+  rightWrapper: {
     flex: 1,
     position: "absolute",
     right: 0,
     flexDirection: "row",
-    justifyContent: 'center',
+    justifyContent: "center",
     alignItems: "center",
   },
-  iconNotify:{
-    position: 'relative',
+  iconNotify: {
+    position: "relative",
   },
 
   bottom: {

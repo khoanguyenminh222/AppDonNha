@@ -29,6 +29,34 @@ router.get("/:id/getAll", async(req,res)=>{
   }
 })
 
+//lấy ra tất cả người dùng đang đợi xác nhận
+router.get("/:id/getAllVerify", async(req,res)=>{
+  try {
+    const admin = await User.findById(req.params.id);
+    //kiểm tra có phải admin
+    if (admin.isAdmin) {
+      try {
+        User.find(
+          {waiting:true},
+          (err, docs) => {
+            if (err) {
+              res.status(500).json(err);
+            } else {
+              res.status(200).json(docs);
+            }
+          }
+        );
+      } catch (err) {
+        res.status(500).json(err);
+      }
+    } else {
+      res.status(500).json("không phải admin");
+    }
+  } catch (err) {
+    res.status(500).json(err);
+  }
+})
+
 // lấy ra người dùng
 router.get("/:id", async(req,res)=>{
   try {

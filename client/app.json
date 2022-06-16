@@ -18,16 +18,25 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.AppDonNha",
+      "config": {
+      "googleMapsApiKey": "AIzaSyAGjKf2d2RTUaw12yJzgKd0ozRxTX7A4KM"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "config":{
+        "googleMaps" : {
+          "apiKey": "AIzaSyAGjKf2d2RTUaw12yJzgKd0ozRxTX7A4KM" 
+        }
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.@@png"
     }
   }
 }

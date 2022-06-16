@@ -24,15 +24,24 @@ const DetailUser = ({ route }) => {
   const [state,setState] = useContext(AuthContext);
   const navigation = useNavigation();
 
+  const handleBackBtn = () =>{
+    navigation.goBack();
+  }
+
   const AcceptBtn = ()=>{
     const editUser={
-      userId : state.user._id,
+      userId : state._id,
       waiting: false,
       isVerify: true,
     }
+    const notify={
+      userId: user._id,
+      title: "XÁC NHẬN NGƯỜI DÙNG THÀNH CÔNG",
+      text: "Có thể thông tin gửi đi không chính xác, hoặc ảnh mờ",
+    }
     Alert.alert("Thông báo!","Xác nhận danh tính người dùng này",[
       {text:"Cancel", onPress:()=>console.log("alert closed")},
-      {text:"OK", onPress:()=>updateUser(editUser)}
+      {text:"OK", onPress:()=>completeProcess(editUser,notify)}
     ]);
   }
 
@@ -44,11 +53,24 @@ const DetailUser = ({ route }) => {
       crimCertificate: "",
       waiting: false,
     }
+
+    const notify={
+      userId: user._id,
+      title: "TỪ CHỐI XÁC NHẬN NGƯỜI DÙNG",
+      text: "Có thể thông tin gửi đi không chính xác, hoặc ảnh mờ, hãy thử xác minh lại lần nữa",
+    }
+    
     Alert.alert("Thông báo!","Từ chối xác nhận danh tính người dùng này",[
       {text:"Cancel", onPress:()=>console.log("alert closed")},
-      {text:"OK", onPress:()=>updateUser(editUser)}
+      {text:"OK", onPress:()=>completeProcess(editUser,notify)}
     ]);
     
+  }
+
+  const completeProcess = (editUser,notify)=>{
+    updateUser(editUser);
+    createNotify(notify);
+    navigation.goBack();
   }
 
   const updateUser = async(editUser)=>{
@@ -60,7 +82,6 @@ const DetailUser = ({ route }) => {
         },
         body: JSON.stringify(editUser),
       })
-      navigation.goBack();
     } catch (error) {
       console.log(error);
     }
@@ -75,7 +96,6 @@ const DetailUser = ({ route }) => {
         },
         body: JSON.stringify(notify),
       })
-      navigation.goBack();
     } catch (error) {
       console.log(error);
     }
@@ -83,7 +103,7 @@ const DetailUser = ({ route }) => {
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Header iconLeft="chevron-back-outline" textCenter="Thông tin"/>
+      <Header iconLeft="chevron-back-outline" onPressLeft={handleBackBtn} textCenter="Thông tin"/>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.wrapper}>

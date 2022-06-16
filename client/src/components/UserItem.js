@@ -1,23 +1,34 @@
 import { View, Text, Image, StyleSheet, useWindowDimensions, TouchableOpacity, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import { useNavigation } from "@react-navigation/native";
+import PublicFolder from "../api/PublicFolder";
 import Logo from "../../assets/images/logo.png";
 import { COLORS } from '../Colors';
 
-const Item = ({item,image,title,content,onPress}) => {
+const UserItem = ({user}) => {
     const { height } = useWindowDimensions();
+    
+
+    const navigation = useNavigation();
+    const onDetailPresed = (user) => {
+        navigation.navigate("DetailUser", user);
+      };
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={()=>onDetailPresed(user)}>
 
         <View style={styles.container}>
         <Image
-          source={{uri: image}}
+          source={{uri: PublicFolder+user.profilePicture}}
           style={[styles.logo, { height: height * 0.3 }]}
           resizeMode="contain"
         />
         <View style={styles.wrapperText}>
-          <Text style={[styles.title,{fontSize:height*0.04}]}>{title}</Text>
-          {content.map((c) => (<Text key={c} style={[styles.content, {fontSize:height*0.03}]}>{c}</Text>))}
+          <Text style={[styles.title,{fontSize:height*0.03}]}>Họ tên: {user.fullname}</Text>
+          <Text style={[styles.content, {fontSize:height*0.02}]}>{user.email}</Text>
+          <Text style={[styles.content, {fontSize:height*0.02}]}>{user.dayOfBirth}</Text>
+          <Text style={[styles.content, {fontSize:height*0.02}]}>{user.phone}</Text>
+          <Text style={[styles.content, {fontSize:height*0.02}]}>{user.from}</Text>
         </View>
         
       </View>
@@ -56,4 +67,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default Item
+export default UserItem

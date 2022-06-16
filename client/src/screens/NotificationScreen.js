@@ -1,5 +1,5 @@
 import { View, Text, SafeAreaView, ScrollView, StyleSheet } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import AuthContext from "../context/AuthContext";
 import GlobalStyles from "../GlobalStyles";
 import { useNavigation } from "@react-navigation/native";
@@ -9,25 +9,28 @@ import BaseURL from "../api/BaseURL";
 import Header from '../components/Header';
 import Item from '../components/Item';
 import Notify from '../components/Notify';
+import Back from '../components/Back';
 const NotificationScreen = () => {
   const [state, setState] = useContext(AuthContext);
   const [notifies,setNotifies] = useState([]);
 
-  const navigation = useNavigation();
-  const handleBackScreen = () =>{
-    navigation.goBack();
-  }
+  
+  const fetchNotifies = async () => {
+      
+    let response = await fetch(`${BaseURL}/notify/user/${state._id}`);
+    let responseJson = await response.json();
+    
+    setNotifies(responseJson);
+  };
+
   useEffect(()=>{
-    const fetchNotifies = async () => {
-      let response = await fetch(`${BaseURL}/notify/user/${state._id}`);
-      let responseJson = await response.json();
-      setNotifies(responseJson);
-    };
     fetchNotifies();
-  },[notifies])
+  },[])
+
+  
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-        <Header iconLeft="chevron-back-outline" onPressLeft={handleBackScreen} textCenter="Hộp thư"/>
+        <Back textCenter="Hộp thư"/>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.container}>
             {notifies.map((n)=>(<Notify key={n._id} n={n}/>))}

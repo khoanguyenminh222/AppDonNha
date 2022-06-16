@@ -9,7 +9,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import AuthContext from "../context/AuthContext";
@@ -22,6 +22,7 @@ import Header from "../components/Header";
 import InfoText from "../components/InfoText";
 import PublicFolder from "../api/PublicFolder";
 import { Ionicons } from "@expo/vector-icons";
+import Back from "../components/Back";
 
 const AboutScreen = () => {
   const { height } = useWindowDimensions();
@@ -31,14 +32,16 @@ const AboutScreen = () => {
   //const [state, dispatch] = useContext(AuthContext);
   const [state, setState] = useContext(AuthContext);
 
-  const fetchUser = async () => {
-    let response = await fetch(`${BaseURL}/user/${state._id}`);
-    let responseJson = await response.json();
-    setState(responseJson);
-  };
+  
   useEffect(() => {
+    const fetchUser = async () => {
+      let response = await fetch(`${BaseURL}/user/${state._id}`);
+      let responseJson = await response.json();
+      setState(responseJson);
+    };
     fetchUser();
-  },[state]);
+    
+  },[]);
 
   const VerifyUser = () => {
     //kiểm tra thông tin đầy đủ
@@ -60,7 +63,7 @@ const AboutScreen = () => {
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Header iconLeft="chevron-back-outline" textCenter="Thông tin"/>
+      <Back textCenter="Thông tin"/>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.headerWrapper}>

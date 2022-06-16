@@ -5,7 +5,7 @@ import {
   useWindowDimensions,
   StyleSheet,
 } from "react-native";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import AuthContext from "../context/AuthContext";
 import { COLORS } from "../Colors";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,7 +15,8 @@ const Notify = ({ n }) => {
   const { height } = useWindowDimensions();
   const [state, setState] = useContext(AuthContext);
 
-  const [notify, setNotify] = useState([]);
+  const [notify,setNotify] = useState([]);
+
   const handleNotify = async () => {
     const editNotify = {
       userId: state._id,
@@ -33,12 +34,14 @@ const Notify = ({ n }) => {
   };
 
   useEffect(() => {
+
     const fetchNotify = async () => {
       const response = await fetch(`${BaseURL}/notify/${n._id}`);
       const responseJson = await response.json();
       setNotify(responseJson);
     };
     fetchNotify();
+    
   }, [notify.readed]);
 
   return (
@@ -49,7 +52,7 @@ const Notify = ({ n }) => {
         </Text>
         <Text style={styles.content}>{n.text}</Text>
       </View>
-      {n.readed ? (
+      {notify.readed ? (
         <View style={styles.icon}>
           <Ionicons
             name="alert-circle-outline"

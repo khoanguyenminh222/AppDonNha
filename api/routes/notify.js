@@ -15,7 +15,17 @@ router.get("/:id", async (req, res) => {
 // lấy thông báo của người dùng
 router.get("/user/:id", async (req, res) => {
   try {
-    const result = await Notify.find({ userId: req.params.id });
+    const result = await Notify.find({ userId: req.params.id }).sort({updatedAt: -1});
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// lấy thông báo chưa đọc của người dùng
+router.get("/notread/user/:id", async (req, res) => {
+  try {
+    const result = await Notify.find({ userId: req.params.id, readed: false });
     res.status(200).json(result);
   } catch (err) {
     res.status(500).json(err);

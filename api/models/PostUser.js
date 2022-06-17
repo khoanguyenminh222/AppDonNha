@@ -1,13 +1,17 @@
 const mongoose = require("mongoose");
 
-const PostOfferSchema = new mongoose.Schema(
+const PostUserSchema = new mongoose.Schema(
   {
-    email: {
+    userId: {
         type: String,
         required: true,
     },
     address:{
         type: String,
+        required: true,
+    },
+    location:{
+        type: [String],
         required: true,
     },
     title:{
@@ -36,4 +40,4 @@ const PostOfferSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("PostOffer", PostOfferSchema);
+module.exports = mongoose.model("PostUser", PostUserSchema);

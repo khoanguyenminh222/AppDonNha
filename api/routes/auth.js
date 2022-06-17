@@ -127,4 +127,45 @@ router.put("/changepassword", async (req, res) => {
   }
 });
 
+let code = "";
+//Confirm Email
+router.put("/code", async (req, res) => {
+  const givenSet = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for(let i=0; i<5; i++) {
+   let pos = Math.floor(Math.random()*givenSet.length);
+   code += givenSet[pos];
+  }
+  let to = await req.body.email;
+  let mailOption = {
+    from: process.env.EMAIL_SECRET, 
+    to: to,
+    subject: "Confirm Account",
+    text: `Mã xác nhận của bạn là ${code}.`,
+  };
+  transporter.sendMail(mailOption, function (err, info) {
+    if (err) {
+      res.status(500).json(err);
+    } else {
+      console.log("Email sent");
+    }
+  });
+
+})
+//Save codeConfirm
+router.put("/savecode", async (req,res)=>{
+  try {
+    User.findByIdAndUpdate(req.body.email, { code: code }, function (err, docs) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Updated User : ", docs);
+      }
+    });
+    res.status(200).json(user);
+  }catch (e){
+    res.status(500).json(err);
+  }
+})
+
 module.exports = router;

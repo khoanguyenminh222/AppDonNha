@@ -7,11 +7,18 @@ import {
     ScrollView,
     TextInput,
     Text,
+<<<<<<< HEAD
+=======
+    Alert,
+>>>>>>> 9aeb34a (Xong Đăng ký)
   } from "react-native";
   import React, { useEffect, useState, useContext } from "react";
   import { useNavigation } from "@react-navigation/native";
   import { useForm, Controller, get } from "react-hook-form";
+<<<<<<< HEAD
   
+=======
+>>>>>>> 9aeb34a (Xong Đăng ký)
 
   import GlobalStyles from "../GlobalStyles";
   import { COLORS } from "../Colors";
@@ -30,17 +37,54 @@ import {
     const { height } = useWindowDimensions();
     const navigation = useNavigation();
     const [checked, setChecked] = React.useState('first');
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9aeb34a (Xong Đăng ký)
     //useForm
     const {
       control,
       handleSubmit,
+<<<<<<< HEAD
       formState: { errors },
     } = useForm();
   
     const onRegisterPressed = () =>{
         navigation.navigate("ConfirmEmail");
         console.warn("Sign in");
+=======
+      watch,
+      formState: { errors },
+    } = useForm();
+    const pwd = watch('password');
+  
+    const onRegisterPressed = async (data) =>{
+      const ress = await fetch(`${BaseURL}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+      console.log(data);
+      
+      // const request = await fetch(`${BaseURL}/auth/code`, {
+      //   method: "PUT",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      // });
+      // console.log(request);
+      // const res = await fetch(`${BaseURL}/auth/savecode`, {
+      //   method: "PUT",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(data.email),
+      // });
+
+       navigation.navigate('ConfirmEmail', data)
+>>>>>>> 9aeb34a (Xong Đăng ký)
     };
     
     const onTermsOfUserPressed = () => {
@@ -70,6 +114,7 @@ import {
               control={control}
               name="fullname"
               placehoder="Họ và tên"
+<<<<<<< HEAD
             />
             <CustomInput control={control} name="email" placehoder="Email" />
             <CustomInput
@@ -77,15 +122,61 @@ import {
               name="password"
               placehoder="Mật khẩu"
               secureTextEntry={true}
+=======
+              rules={{
+                required : 'Họ và tên không được để trống',
+                minLength:{
+                  value: 3,
+                  message: 'Họ và tên phải nhiều hơn 3 ký tự'
+                },
+                maxLength:{
+                  value: 24,
+                  message: 'Họ và tên phải ít hơn 24 ký tự'
+                },
+
+              }}
+            />
+            <CustomInput 
+              control={control} 
+              name="email" 
+              placehoder="Email" 
+              rules={{
+                required: "Email không được để trống",
+                pattern: { value: EMAIL_REGEX, message: "Email sai định dạng" },
+              }}
+            />
+            <CustomInput
+              control={control}
+              name="password"
+              rules={{
+                required: "Mật khẩu không được để trống",
+                minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
+              }}
+              placehoder="Mật khẩu"
+              secureTextEntry={true}
+              
+>>>>>>> 9aeb34a (Xong Đăng ký)
             />
             <CustomInput
               control={control}
               name="passwordRepeat"
+<<<<<<< HEAD
+=======
+              rules={{
+                validate: value => value === pwd || 'Mật khẩu không khớp',
+                required: "Mật khẩu không được để trống",
+                minLength: { value: 6, message: "Mật khẩu ít nhất 6 kí tự" },
+              }}
+>>>>>>> 9aeb34a (Xong Đăng ký)
               placehoder="Nhập lại mật khẩu"
               secureTextEntry={true}
             />
             
+<<<<<<< HEAD
             <CustomButton text="Đăng ký" onPress={onRegisterPressed} />
+=======
+            <CustomButton text="Đăng ký" onPress={handleSubmit(onRegisterPressed)} />
+>>>>>>> 9aeb34a (Xong Đăng ký)
             <Text style={styles.text}>
                
               Bằng việc đăng ký, bạn đã đồng ý với 

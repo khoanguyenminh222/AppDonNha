@@ -8,6 +8,7 @@ const GooglePlacesInput = () => {
   const [region, setRegion] = useState({
     latitude: 10.82302,
     longitude: 106.62965,
+
 })
   return (
     <View style={styles.container}>
@@ -27,50 +28,19 @@ const GooglePlacesInput = () => {
       
     /> */}
     <GooglePlacesAutocomplete
-          placeholder="Search"
-          minLength={2} // minimum length of text to search
-          autoFocus={false}
-          returnKeyType={'search'} // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
-          listViewDisplayed="auto" // true/false/undefined
-          fetchDetails={true}
-          renderDescription={row => row.description} // custom description render
-          onPress={(data, details = null) => {
-            console.log(data);
-            console.log(details);
-          }}
-          getDefaultValue={() => {
-            return ''; // text input default value
-          }}
-          query={{
-            // available options: https://developers.google.com/places/web-service/autocomplete
-            key: 'AIzaSyAGF8cAOPFPIKCZYqxuibF9xx5XD4JBb84',
-            language: 'en', // language of the results
-            types: '(cities)', // default: 'geocode'
-          }}
-          styles={{
-            description: {
-              fontWeight: 'bold',
-            },
-            predefinedPlacesDescription: {
-              color: '#1faadb',
-            },
-          }}
-          currentLocation={true} // Will add a 'Current location' button at the top of the predefined places list
-          currentLocationLabel="Current location"
-          nearbyPlacesAPI="GooglePlacesSearch" // Which API to use: GoogleReverseGeocoding or GooglePlacesSearch
-          GoogleReverseGeocodingQuery={{
-            // available options for GoogleReverseGeocoding API : https://developers.google.com/maps/documentation/geocoding/intro
-          }}
-          GooglePlacesSearchQuery={{
-            // available options for GooglePlacesSearch API : https://developers.google.com/places/web-service/search
-            rankby: 'distance',
-          }}
-          filterReverseGeocodingByTypes={[
-            'locality',
-            'administrative_area_level_3',
-          ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
-          debounce={200}
-        />
+        placeholder="Search"
+        query={{
+          key: 'AIzaSyC-CWSH6B1PrY562d5tu-rir6MAIren6MY',
+          language: 'en', // language of the results
+        }}
+        onPress={(data, details = null) => console.log(data)}
+        onFail={(error) => console.error(error)}
+        requestUrl={{
+          url:
+            'https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api',
+          useOnPlatform: 'web',
+        }} // this in only required for use on the web. See https://git.io/JflFv more for details.
+      />
     </View>
   )
 }

@@ -1,22 +1,20 @@
 import { View, Text, SafeAreaView, ScrollView, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Header from '../components/Header'
 import GlobalStyles from '../GlobalStyles'
 import Map from '../components/Map'
 import Back from '../components/Back'
 import GooglePlacesInput from '../components/GooglePlacesInput'
+
 const LocationScreen = () => {
-
-
+  
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       
         <Back iconLeft="chevron-back-outline" textCenter="Nhập vị trí"/>
-        <GooglePlacesInput/>
-          <View style={styles.container}>
+        
           
         <Map/>
-        </View>
 
     </SafeAreaView>
   )

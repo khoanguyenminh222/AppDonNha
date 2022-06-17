@@ -29,6 +29,7 @@ const Back = ({textCenter}) => {
 
 const styles = StyleSheet.create({
     container:{
+        marginVertical: 10,
         position: 'relative',
         height: 40,
         width: '100%',

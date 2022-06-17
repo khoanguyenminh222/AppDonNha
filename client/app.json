@@ -21,7 +21,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.example.AppDonNha",
       "config": {
-      "googleMapsApiKey": "AIzaSyAGjKf2d2RTUaw12yJzgKd0ozRxTX7A4KM"
+      "googleMapsApiKey": "AIzaSyD9OXYLGgT1cSQ5XX7pi0vmSSJ9AY1x4y8"
       }
     },
     "android": {
@@ -31,7 +31,7 @@
       },
       "config":{
         "googleMaps" : {
-          "apiKey": "AIzaSyAGjKf2d2RTUaw12yJzgKd0ozRxTX7A4KM" 
+          "apiKey": "AIzaSyD9OXYLGgT1cSQ5XX7pi0vmSSJ9AY1x4y8" 
         }
       }
     },

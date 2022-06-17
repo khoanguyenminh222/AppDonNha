@@ -45,12 +45,16 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+let testAccount = nodemailer.createTestAccount();
 //Service email
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.ethereal.email",
+  port: 587,
+  secure: false,
   auth: {
-    user: process.env.EMAIL_SECRET,
-    pass: process.env.PASS_SECRET,
+    user: testAccount.user,
+    pass: testAccount.pass,
   },
 });
 
@@ -58,7 +62,7 @@ const transporter = nodemailer.createTransport({
 router.put("/resetpassword", async (req, res) => {
   let to = await req.body.email;
   let mailOption = {
-    from: process.env.EMAIL_SECRET,
+    from: testAccount.user,
     to: to,
     subject: "Reset pasword",
     text: `Mật khẩu của bạn là ${process.env.RESET_PASS}. Hãy đổi mật khẩu sau khi đăng nhập`,
@@ -76,7 +80,6 @@ router.put("/resetpassword", async (req, res) => {
     //update password
     User.findOne({ email: to }, (error, doc) => {
       if (error) {
-        console.log(error);
         res.status(500).json(error);
       } else {
         if (!doc) {
@@ -85,7 +88,6 @@ router.put("/resetpassword", async (req, res) => {
           doc.password = hashedPassword;
           doc.save((err, updateObject) => {
             if (err) {
-              console.log(err);
               res.status(500).json(err);
             } else {
               res.status(200).json(updateObject);
@@ -95,7 +97,6 @@ router.put("/resetpassword", async (req, res) => {
       }
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -127,9 +128,10 @@ router.put("/changepassword", async (req, res) => {
   }
 });
 
-let code = "";
+
+
 //Confirm Email
-router.put("/code", async (req, res) => {
+router.post("/code", async (req, res) => {
   const givenSet = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
   for(let i=0; i<5; i++) {
@@ -145,26 +147,25 @@ router.put("/code", async (req, res) => {
   };
   transporter.sendMail(mailOption, function (err, info) {
     if (err) {
-      res.status(500).json(err);
+      console.log(err);
     } else {
       console.log("Email sent");
     }
   });
-
+  res.status(200).json(code);
 })
 //Save codeConfirm
 router.put("/savecode", async (req,res)=>{
   try {
-    User.findByIdAndUpdate(req.body.email, { code: code }, function (err, docs) {
+    User.findOneAndUpdate({email: req.body.email}, { code: req.body.code }, function (err, docs) {
       if (err) {
         console.log(err);
       } else {
-        console.log("Updated User : ", docs);
+        res.status(200).json(docs);
       }
     });
-    res.status(200).json(user);
   }catch (e){
-    res.status(500).json(err);
+    res.status(500).json(e);
   }
 })
 

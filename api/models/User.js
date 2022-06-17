@@ -65,6 +65,14 @@ const UserSchema = new mongoose.Schema(
     waiting:{
       type: Boolean,
       default: false,
+    },
+    code:{
+      type: String,
+      default: "",
+    },
+    status:{
+      type: Boolean,
+      default: false
     }
   },
   { timestamps: true }

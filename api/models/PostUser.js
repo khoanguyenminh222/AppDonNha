@@ -11,8 +11,14 @@ const PostUserSchema = new mongoose.Schema(
         required: true,
     },
     location:{
-        type: [String],
-        required: true,
+        type: {
+            type: String,
+            default: "Point"
+        },
+        coordinates: {
+            type: [Number],
+            index: "2dsphere"
+        }
     },
     title:{
         type: String,

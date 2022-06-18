@@ -13,20 +13,24 @@ router.post("/", async (req,res)=>{
     }
 })
 
-router.get("/", async (req,res)=>{
-    const arrayLocation = {};
-    const location = {};
+router.get("/", (req,res)=>{
     try {
-        const posts = await PostUser.find({});
-        posts.forEach(post => {
-            
-            const key = post.id;
-            location = {...location,key: post.location};
-            arrayLocation.push(location);
-        });
-        console.log(location);
-        const getLocation = geolib.orderByDistance({ latitude: 51.515, longitude: 7.453619 }, arrayLocation);
-        res.status(200).json(getLocation);
+        PostUser.aggregate([
+            {
+              $geoNear: {
+                near: {
+                  type: "Point",
+                  coordinates: [parseFloat(req.query.lng), parseFloat(req.query.lat)],
+                },
+                distanceField: "dist.calculated",
+                maxDistance: 100000,
+                spherical: true
+              },
+            },
+          ])
+            .then(function (posts) {
+              res.status(200).json(posts);
+            })
     } catch (error) {
         res.status(500).json(error);
     }

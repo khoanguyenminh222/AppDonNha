@@ -4,7 +4,6 @@ const dotenv = require("dotenv");
 
 const router = require("express").Router();
 const User = require("../models/User");
-const { route } = require("express/lib/application");
 
 dotenv.config();
 //REGISTER
@@ -46,56 +45,79 @@ router.post("/login", async (req, res) => {
 });
 
 
-let testAccount = nodemailer.createTestAccount();
+
 //Service email
 const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: 587,
-  secure: false,
+  service: "gmail",
   auth: {
-    user: testAccount.user,
-    pass: testAccount.pass,
+    user: process.env.EMAIL_SECRET,
+    pass: process.env.PASS_SECRET,
   },
 });
 
-//RESET PASSWORD
-router.put("/resetpassword", async (req, res) => {
-  let to = await req.body.email;
-  let mailOption = {
-    from: testAccount.user,
-    to: to,
-    subject: "Reset pasword",
-    text: `Mật khẩu của bạn là ${process.env.RESET_PASS}. Hãy đổi mật khẩu sau khi đăng nhập`,
-  };
-  transporter.sendMail(mailOption, function (err, info) {
+// trực tiếp gửi mail
+const sendMail = (subject,text, receiver) => {
+  transporter.sendMail({
+    from: process.env.EMAIL_SECRET,
+    to: receiver,
+    subject: subject,
+    text: text,
+  }, function (err, info) {
     if (err) {
       res.status(500).json(err);
     } else {
       console.log("Email sent");
     }
   });
+}
+
+// tạo mã
+const createCode = () => {
+  const givenSet = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for(let i=0; i<5; i++) {
+   let pos = Math.floor(Math.random()*givenSet.length);
+   code += givenSet[pos];
+  }
+  return code;
+}
+
+// xử lí gửi mail
+const handleSendmail = async (req,res,next) =>{
+  let code = createCode();
+  let receiver = req.body.email;
+
+  try {
+    const user = await User.findOne({email: receiver});
+    if(user){
+      sendMail(
+        'Đặt lại mật khẩu',
+        `Mật khẩu của bạn là ${code}. Hãy đổi mật khẩu sau khi đăng nhập`,
+        receiver
+      )
+      req.pass = code;
+      next();
+    }else{
+      res.status(500).json({message: 'Người dùng không tồn tại'});
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+}
+
+//RESET PASSWORD
+router.put("/resetpassword", handleSendmail, async (req, res) => {
+  const newPass = req.pass;
+  console.log(newPass);
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(process.env.RESET_PASS, salt);
+  const hashedPassword = await bcrypt.hash(newPass, salt);
+
   try {
     //update password
-    User.findOne({ email: to }, (error, doc) => {
-      if (error) {
-        res.status(500).json(error);
-      } else {
-        if (!doc) {
-          res.status(404).json("email không tồn tại");
-        } else {
-          doc.password = hashedPassword;
-          doc.save((err, updateObject) => {
-            if (err) {
-              res.status(500).json(err);
-            } else {
-              res.status(200).json(updateObject);
-            }
-          });
-        }
-      }
-    });
+    const user = await User.findOne({email: req.body.email});
+    await user.updateOne({password: hashedPassword});
+
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -103,9 +125,9 @@ router.put("/resetpassword", async (req, res) => {
 
 //CHANGE PASSWORD
 router.put("/changepassword", async (req, res) => {
-  let email = await req.body.email;
-  let password = await req.body.password;
-  let newpassword = await req.body.newpassword;
+  let email = req.body.email;
+  let password = req.body.password;
+  let newpassword = req.body.newpassword;
   try {
     const user = await User.findOne({ email: email });
     !user && res.status(404).json("email không tìm thấy");
@@ -128,36 +150,18 @@ router.put("/changepassword", async (req, res) => {
   }
 });
 
-
-
-//Confirm Email
-router.post("/code", async (req, res) => {
-  const givenSet = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let code = "";
-  for(let i=0; i<5; i++) {
-   let pos = Math.floor(Math.random()*givenSet.length);
-   code += givenSet[pos];
-  }
-  let to = await req.body.email;
-  let mailOption = {
-    from: process.env.EMAIL_SECRET, 
-    to: to,
-    subject: "Confirm Account",
-    text: `Mã xác nhận của bạn là ${code}.`,
-  };
-  transporter.sendMail(mailOption, function (err, info) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("Email sent");
-    }
-  });
-  res.status(200).json(code);
-})
 //Save codeConfirm
 router.put("/savecode", async (req,res)=>{
+  const code = createCode();
+  // send email
+  sendMail(
+    "Xác minh tài khoản",
+    `Mã xác nhận của bạn là ${code}.`,
+    req.body.email
+  )
+  // update code trong user
   try {
-    User.findOneAndUpdate({email: req.body.email}, { code: req.body.code }, function (err, docs) {
+    User.findOneAndUpdate({email: req.body.email}, { code: code }, function (err, docs) {
       if (err) {
         console.log(err);
       } else {

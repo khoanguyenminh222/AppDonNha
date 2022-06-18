@@ -48,29 +48,14 @@ const SignUpScreen = () => {
       },
       body: JSON.stringify(data),
     });
-    // Tạo mã cho người dùng xác nhận
-    const createCode = await fetch(`${BaseURL}/auth/code`, {
-      method: "POST",
+    
+    // lưu code vào người dùng và gửi mail
+    const saveCodeToUser = await fetch(`${BaseURL}/auth/savecode`, {
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-    });
-    //lấy code từ đường dẫn /code trả về
-
-    createCode.json().then((code) => {
-      // lưu lại code nhận được từ /code
-      const editUser = {
-        email: data.email,
-        code: code,
-      };
-      console.log(editUser);
-      const saveCodeToUser = fetch(`${BaseURL}/auth/savecode`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editUser),
-      });
+      body: JSON.stringify(data),
     });
     navigation.navigate("ConfirmEmail", data);
   };

@@ -8,8 +8,9 @@ import {
   TextInput,
   ScrollView,
   Alert,
+  RefreshControl
 } from "react-native";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import AuthContext from "../context/AuthContext";
@@ -24,15 +25,33 @@ import PublicFolder from "../api/PublicFolder";
 import { Ionicons } from "@expo/vector-icons";
 import Back from "../components/Back";
 
+const wait = timeout => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+};
+
 const AboutScreen = () => {
   const { height } = useWindowDimensions();
 
   const navigation = useNavigation();
 
-  //const [state, dispatch] = useContext(AuthContext);
+  // lấy ra người dùng hiện tại
   const [state, setState] = useContext(AuthContext);
 
+  //tạo biến refresh trang
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback( async() => {
+    const res = await fetch(`${BaseURL}/user/${state._id}`)
+    res.json()
+    .then(user=>{
+      setState(user);
+    })
+
+    setRefreshing(true);
+    wait(1000).then(() => setRefreshing(false));
+  }, []);
   
+
   useEffect(() => {
     const fetchUser = async () => {
       let response = await fetch(`${BaseURL}/user/${state._id}`);
@@ -64,7 +83,10 @@ const AboutScreen = () => {
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Thông tin"/>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollView}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
         <View style={styles.container}>
           <View style={styles.headerWrapper}>
             <Image

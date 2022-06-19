@@ -70,15 +70,15 @@ router.get("/:id", async(req,res)=>{
 
 //cập nhật người dùng
 router.put("/:id", async (req, res) => {
-  const admin = await User.findById(req.body.userId);
-  if (req.body.userId === req.params.id || admin.isAdmin) {
+  const user = await User.findById(req.body.userId);
+  if (req.body.userId === req.params.id || user.isAdmin) {
     try {
       const user = await User.findByIdAndUpdate(req.params.id, {
         $set: req.body,
-      });
+      },{new:true});
       res.status(200).json(user);
     } catch (e) {
-      res.status(500).json(err);
+      res.status(500).json(e);
     }
   } else {
     return res.status(403).json("Chỉ có thể cập nhật tài khoản của mình!");

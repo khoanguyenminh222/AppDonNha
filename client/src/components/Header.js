@@ -55,6 +55,7 @@ const Header = ({
     fetchNotifies();
 
   }, [notifies.length]);
+
   
   return (
     <View style={styles.container}>
@@ -66,7 +67,7 @@ const Header = ({
             color={COLORS.primary}
             name={iconLeft}
           ></Ionicons>
-          <Text style={styles.txtLocation}>{textLeft}</Text>
+          <Text numberOfLines={1} ellipsizeMode='tail' style={styles.txtLocation}>{textLeft}</Text>
         </TouchableOpacity>
         <View style={styles.centerWrapper}>
           <Text style={styles.txtCenter}>{textCenter}</Text>
@@ -143,6 +144,8 @@ const styles = StyleSheet.create({
   txtLocation: {
     fontSize: 16,
     fontWeight: "500",
+    flex: 1,
+    width: 300,
   },
 
   centerWrapper: {

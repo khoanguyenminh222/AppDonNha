@@ -17,9 +17,10 @@ import CustomButton from "../components/CustomButton";
 import BaseURL from "../api/BaseURL";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
+import Back from "../components/Back";
 const DetailUser = ({ route }) => {
   const user = route.params;
-
+  console.log(user);
   //const [state, dispatch] = useContext(AuthContext);
   const [state,setState] = useContext(AuthContext);
   const navigation = useNavigation();
@@ -82,6 +83,7 @@ const DetailUser = ({ route }) => {
         },
         body: JSON.stringify(editUser),
       })
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -103,7 +105,7 @@ const DetailUser = ({ route }) => {
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Header iconLeft="chevron-back-outline" onPressLeft={handleBackBtn} textCenter="Thông tin"/>
+      <Back textCenter="Thông tin"/>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.wrapper}>

@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema(
       require: true,
       min: 6,
     },
-    dayOfBirth:{
+    dayOfBirth: {
       type: String,
       default: "",
     },
@@ -30,9 +30,9 @@ const UserSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    crimCertificate:{
+    crimCertificate: {
       type: String,
-      default: '',
+      default: "",
     },
     isAdmin: {
       type: Boolean,
@@ -43,7 +43,7 @@ const UserSchema = new mongoose.Schema(
       max: 50,
       default: "",
     },
-    phone:{
+    phone: {
       type: String,
       max: 10,
       default: "",
@@ -58,22 +58,26 @@ const UserSchema = new mongoose.Schema(
       max: 50,
       default: "",
     },
-    isVerify:{
+    coordinates: {
+      type : [Number],
+      default: [],
+    },
+    isVerify: {
       type: Boolean,
       default: false,
     },
-    waiting:{
+    waiting: {
       type: Boolean,
       default: false,
     },
-    code:{
+    code: {
       type: String,
       default: "",
     },
-    status:{
+    status: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   { timestamps: true }
 );

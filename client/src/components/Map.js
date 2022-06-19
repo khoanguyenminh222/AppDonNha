@@ -6,7 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import MapView, {
   Callout,
   Circle,
@@ -17,8 +17,14 @@ import MapView, {
 import * as Location from "expo-location";
 import CustomButton from "./CustomButton";
 import { COLORS } from "../Colors";
+import AuthContext from "../context/AuthContext";
+import baseURL from "../api/BaseURL";
+import { useNavigation } from "@react-navigation/native";
 
 const Map = () => {
+  const navigation = useNavigation();
+
+  const [state, setState] = useContext(AuthContext);
   const [text, setText] = useState("");
   const [address, setAddress] = useState(null);
 
@@ -112,9 +118,20 @@ const Map = () => {
   };
 
   // nhấn nút lưu vị trí
-  const onChangeRegion = () => {
-    console.log(region);
-    console.log(text);
+  const onChangeRegion = async() => {
+    const editUser = {
+      coordinates: [region.longitude,region.latitude],
+      city: text,
+      userId: state._id,
+    }
+    const res = await fetch(`${baseURL}/user/${state._id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(editUser),
+    });
+    navigation.goBack();
   }
 
   return (

@@ -48,7 +48,6 @@ const SignUpScreen = () => {
       },
       body: JSON.stringify(data),
     });
-    
     // lưu code vào người dùng và gửi mail
     const saveCodeToUser = await fetch(`${BaseURL}/auth/savecode`, {
       method: "PUT",
@@ -57,21 +56,24 @@ const SignUpScreen = () => {
       },
       body: JSON.stringify(data),
     });
-    navigation.navigate("ConfirmEmail", data);
+    saveCodeToUser.json().then((user) => {
+      console.log(user);
+      navigation.navigate("ConfirmEmail", user);
+    });
   };
 
   const onTermsOfUserPressed = () => {
-    console.warn("onTermsOfUserPressed");
+    
   };
   const onSignInFacebook = () => {
-    console.warn("Sign in facebook");
+   
   };
   const onSignInGoogle = () => {
-    console.warn("Sign in google");
+   
   };
   const onSignInPressed = () => {
     navigation.navigate("SignIn");
-    console.warn("Sign In");
+ 
   };
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>

@@ -31,13 +31,13 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
-    !user && res.status(404).json("email không tìm thấy");
+    !user && res.status(404).json("Email không tìm thấy");
 
     const validPassword = await bcrypt.compare(
       req.body.password,
       user.password
     );
-    !validPassword && res.status(400).json("sai mật khẩu");
+    !validPassword && res.status(400).json("Sai mật khẩu");
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
@@ -161,7 +161,7 @@ router.put("/savecode", async (req,res)=>{
   )
   // update code trong user
   try {
-    User.findOneAndUpdate({email: req.body.email}, { code: code }, function (err, docs) {
+    User.findOneAndUpdate({email: req.body.email}, { code: code },{new : true}, function (err, docs) {
       if (err) {
         console.log(err);
       } else {

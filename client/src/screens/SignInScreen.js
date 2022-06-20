@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   Text,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -70,7 +71,15 @@ const SignInScreen = () => {
             navigation.navigate("Admin");
           }else{
             //người dùng
-            navigation.navigate("Main");
+            if(res.data.status){
+              navigation.navigate("Main");
+            }
+            else{
+              Alert.alert("Thông báo!","Tài khoản chưa được xác nhận. Vui lòng xác nhận để tiến hành Đăng nhập.",[
+                {text:"Cancel", onPress:()=>console.log("alert closed")},
+                {text:"OK", onPress:()=>navigation.navigate("ConfirmEmail", res.data)}
+              ]);
+            }
           }
           
         });
@@ -91,18 +100,18 @@ const SignInScreen = () => {
   };
   const onForgotPasswordPressed = () => {
     navigation.navigate("ForgotPassword");
-    console.warn("Forgot Password");
+    
   };
   const onSignInFacebook = () => {
     
-    console.warn("Sign in facebook");
+    
   };
   const onSignInGoogle = () => {
-    console.warn("Sign in google");
+   
   };
   const onSignUpPressed = () => {
     navigation.navigate("SignUp");
-    console.warn("Sign up");
+   
   };
 
   return (

@@ -1,13 +1,13 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TextInput, Keyboard } from "react-native";
 import React from "react";
 
 import { COLORS } from "../Colors";
 
-const InfoText = ({name,data}) => {
+const InfoText = ({name,data,editable}) => {
   return (
     <View style={styles.wrapperText}>
       <Text style={styles.textField}>{name}</Text>
-      <Text style={styles.textDataField}>{data}</Text>
+      <TextInput style={styles.textDataField} placeholder={data} editable={editable} placeholderTextColor={COLORS.black}/>
     </View>
   );
 };
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     marginVertical: 8,
+    color: COLORS.black
   },
 });
 export default InfoText;

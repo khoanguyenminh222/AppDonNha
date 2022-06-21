@@ -130,10 +130,10 @@ router.put("/changepassword", async (req, res) => {
   let newpassword = req.body.newpassword;
   try {
     const user = await User.findOne({ email: email });
-    !user && res.status(404).json("email không tìm thấy");
+    !user && res.status(404).json({message:"email không tìm thấy"});
 
     const validPassword = await bcrypt.compare(password, user.password);
-    !validPassword && res.status(400).json("sai mật khẩu");
+    !validPassword && res.status(400).json({message:"sai mật khẩu"});
 
     // hash new password
     const salt = await bcrypt.genSalt(10);

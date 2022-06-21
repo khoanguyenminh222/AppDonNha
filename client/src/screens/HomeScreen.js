@@ -42,7 +42,7 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      {state.coordinates===[] ? 
+      {state.city==="" ? 
         <Header iconLeft="location-outline" isSearch={true} iconRight={true} textLeft="Vị trí" />
         :
         <Header iconLeft="location-outline" isSearch={true} iconRight={true} textLeft={state.city} />
@@ -59,11 +59,11 @@ const HomeScreen = () => {
         <View style={styles.container}>
           
           <Banner />
-          <Text style={[styles.txtheader, {fontSize:height*0.04}]}>Vị trí</Text>
+          <Text style={[styles.txtheader, {fontSize:height*0.03}]}>Vị trí</Text>
           <Suggestion />
-          <Text style={[styles.txtheader, {fontSize:height*0.04}]}>Danh mục</Text>
+          <Text style={[styles.txtheader, {fontSize:height*0.03}]}>Danh mục</Text>
           <Suggestion />
-          <Text style={[styles.txtheader, {fontSize:height*0.04}]}>Tin mới nhất</Text>
+          <Text style={[styles.txtheader, {fontSize:height*0.03}]}>Tin mới nhất</Text>
           <Item title="tieu de" content={['mo ta']}/>
           
         </View>

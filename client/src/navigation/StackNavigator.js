@@ -5,6 +5,7 @@ import SignUpScreen from '../screens/SignUpScreen';
 import ForgotPassword from '../screens/ForgotPassword';
 import ConfirmEmail from '../screens/ConfirmEmail';
 import Verify from '../screens/Verify';
+import UpdateInforScreen from '../screens/UpdateInforScreen';
 
 import AdminNavigator from './AdminNavigator';
 import TabNavigator from './TabNavigator';
@@ -13,6 +14,7 @@ import NotificationScreen from '../screens/NotificationScreen';
 
 import DetailUser from '../screens/DetailUser';
 import LocationScreen from '../screens/LocationScreen';
+
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
@@ -48,6 +50,11 @@ const StackNavigator = () => {
           name="Verify"
           component={Verify}
         />
+        <Stack.Screen
+          name="UpdateInfor"
+          component={UpdateInforScreen}
+        />
+
         <Stack.Screen name="Main" component={TabNavigator} />
 
         <Stack.Screen name="Admin" component={AdminNavigator}/>

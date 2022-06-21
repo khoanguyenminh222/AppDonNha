@@ -80,6 +80,10 @@ const AboutScreen = () => {
     navigation.navigate("NewPassword");
   };
 
+  const onUpdateInfor = () => {
+    navigation.navigate("UpdateInfor", state);
+  }
+
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Thông tin"/>
@@ -126,14 +130,14 @@ const AboutScreen = () => {
           </View>
 
           <View style={styles.bodyWrapper}>
-            <InfoText name="Email" data={state.email} />
-            <InfoText name="Tên người dùng" data={state.fullname} />
-            <InfoText name="Địa chỉ" data={state.city} />
-            <InfoText name="Số điện thoại" data={state.phone} />
+            <InfoText name="Email" data={state.email} editable={false}/>
+            <InfoText name="Tên người dùng" data={state.fullname} editable={false}/>
+            <InfoText name="Địa chỉ" data={state.city} editable={false}/>
+            <InfoText name="Số điện thoại" data={state.phone} editable={false}/>
           </View>
 
           <View style={styles.footer}>
-            <CustomButton size="48%" text="Chỉnh sửa thông tin" />
+            <CustomButton size="48%" text="Chỉnh sửa thông tin" onPress={onUpdateInfor}/>
             <CustomButton
               size="48%"
               text="Đổi mật khẩu"

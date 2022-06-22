@@ -11,6 +11,7 @@ import SignUpScreen from './src/screens/SignUpScreen';
 import ConfirmEmail from './src/screens/ConfirmEmail';
 import ForgotPassword from './src/screens/ForgotPassword';
 import NewPassword from './src/screens/NewPassword';
+import IndividualPostScreen  from './src/screens/IndividualPostScreen';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 const Stack = createNativeStackNavigator();
 export default function App() {
@@ -22,8 +23,7 @@ export default function App() {
           <StackNavigator />
         </NavigationContainer>
       </AuthProvider>
-      {/* <SignUpScreen/> */}
-      </>
+    </>
   );
 }
 

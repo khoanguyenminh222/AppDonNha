@@ -5,11 +5,12 @@ const geolib = require('geolib');
 
 router.post("/", async (req,res)=>{
     const newPost = new PostUser(req.body);
+    console.log(newPost);
     try {
         const savePost = await newPost.save();
         res.status(200).json(savePost);
     } catch (error) {
-        res.status(500).json(error);
+        res.status(500).json(error.message);
     }
 })
 

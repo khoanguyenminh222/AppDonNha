@@ -26,6 +26,7 @@ import CustomButton from "../components/CustomButton";
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
+
 const SignInScreen = () => {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();

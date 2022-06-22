@@ -6,15 +6,15 @@ import ForgotPassword from '../screens/ForgotPassword';
 import ConfirmEmail from '../screens/ConfirmEmail';
 import Verify from '../screens/Verify';
 import UpdateInforScreen from '../screens/UpdateInforScreen';
-
 import AdminNavigator from './AdminNavigator';
 import TabNavigator from './TabNavigator';
 import NewPassword from '../screens/NewPassword';
 import NotificationScreen from '../screens/NotificationScreen';
-
 import DetailUser from '../screens/DetailUser';
 import LocationScreen from '../screens/LocationScreen';
-
+import IndividualPostScreen from '../screens/IndividualPostScreen';
+import OrganizationPostScreen from '../screens/OrganizationPostScreen';
+import ManagePostScreen from '../screens/ManagePostScreen';
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
@@ -55,9 +55,15 @@ const StackNavigator = () => {
           component={UpdateInforScreen}
         />
 
-        <Stack.Screen name="Main" component={TabNavigator} />
+        <Stack.Screen 
+        name="Main" 
+        component={TabNavigator} 
+        />
 
-        <Stack.Screen name="Admin" component={AdminNavigator}/>
+        <Stack.Screen 
+        name="Admin" 
+        component={AdminNavigator}
+        />
         <Stack.Screen
           name="DetailUser"
           component={DetailUser}
@@ -69,6 +75,18 @@ const StackNavigator = () => {
         <Stack.Screen
           name="Location"
           component={LocationScreen}
+        />
+        <Stack.Screen
+          name = "IndividualPost"
+          component={IndividualPostScreen}
+        />
+        <Stack.Screen
+          name = "OrganizationPost"
+          component={OrganizationPostScreen}
+        />
+        <Stack.Screen
+          name = "ManagePost"
+          component={ManagePostScreen}
         />
       </Stack.Navigator>
     );

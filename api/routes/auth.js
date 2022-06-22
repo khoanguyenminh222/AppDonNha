@@ -75,7 +75,7 @@ const sendMail = (subject,text, receiver) => {
 const createCode = () => {
   const givenSet = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   let code = "";
-  for(let i=0; i<5; i++) {
+  for(let i=0; i<=6; i++) {
    let pos = Math.floor(Math.random()*givenSet.length);
    code += givenSet[pos];
   }

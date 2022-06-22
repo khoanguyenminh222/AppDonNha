@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   Text,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -27,6 +28,7 @@ const EMAIL_REGEX =
 
 const ForgotPassword = () => {
   const { height } = useWindowDimensions();
+  const [err , setErr] = useState(' ');
   const navigation = useNavigation();
   //useForm
   const {
@@ -34,21 +36,50 @@ const ForgotPassword = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSendPressed = () => {
-    navigation.navigate("SignIn");
-    console.warn("onSendPressed");
+  const onSendPressed = async(data) => {
+    const forgotPass = await fetch(`${BaseURL}/auth/resetpassword`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    console.log(data)
+    forgotPass.json().then(res=>{
+      if(res.message){
+        setErr(res.message);
+      }
+      else{
+        Alert.alert("Thông báo!","Mật khẩu mới đã được gửi về Email. Trở về đăng nhập.",[
+          {text:"Cancel", onPress:()=>console.log("alert closed")},
+          {text:"OK", onPress:()=>navigation.navigate("SignIn")}
+        ]);
+      }
+    })
+    
   };
   const onSignInPressed = () => {
     navigation.navigate("SignIn");
-    console.warn("onSignInPressed");
+   
   };
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <Text> LẤY LẠI MẬT KHẨU MỚI </Text>
-          <CustomInput control={control} name="email" placehoder="Nhập Email" />
-          <CustomButton text="Gửi" onPress={onSendPressed} />
+          <CustomInput control={control} 
+            name="email" 
+            placehoder="Nhập Email" 
+            rules={{
+              required: "Email không được để trống",
+              pattern: { value: EMAIL_REGEX, message: "Email sai định dạng" },
+            }}
+            />
+            <Text style={{color: "red"}}>{err}</Text>
+          <CustomButton 
+            text="Gửi" 
+            onPress={handleSubmit(onSendPressed)} 
+          />
 
           <CustomButton
             text="Trở về Đăng nhập"

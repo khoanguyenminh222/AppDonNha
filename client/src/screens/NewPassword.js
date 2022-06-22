@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   Text,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -58,7 +59,11 @@ const NewPassword = () => {
       if (res.message) {
         setErrorMess(res.message);
       } else {
-        navigation.goBack();
+        Alert.alert("Thông báo!","Đổi mật khẩu thành công",[
+          {text:"Cancel", onPress:()=>console.log("alert closed")},
+          {text:"OK", onPress:()=>navigation.goBack()}
+        ]);
+       
       }
     });
   };

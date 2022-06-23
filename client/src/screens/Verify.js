@@ -20,6 +20,7 @@ import BaseURL from "../api/BaseURL";
 import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import Header from "../components/Header";
+import Back from "../components/Back";
 
 const Verify = () => {
   const navigation = useNavigation();
@@ -172,7 +173,7 @@ const Verify = () => {
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Header iconLeft="chevron-back-outline" textCenter="Xác minh"/>
+      <Back textCenter="Xác minh"/>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>

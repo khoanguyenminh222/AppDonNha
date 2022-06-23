@@ -10,7 +10,7 @@ import {
   TextInput,
 } from "react-native";
 import React, { useState } from "react";
-import { TabView, SceneMap } from "react-native-tab-view";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import GlobalStyles from "../GlobalStyles";
 import Back from "../components/Back";
 import InfoText from "../components/InfoText";
@@ -52,13 +52,24 @@ const ManagePostScreen = () => {
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       {/* <Back textCenter="Quản lý tin đăng" /> */}
       <ScrollView showsVerticalScrollIndicator={false}>
-     
+        <View style={styles.topbar}>
           <TabView
+            
             navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}
             initialLayout={{ width: layout.width }}
+            renderTabBar={props=>
+            <TabBar {...props}
+              renderLabel={({route, color}) => (
+                <Text style={{ color: 'white', margin: 8, textAlign:'center'}}>
+                  {route.title}
+                </Text>
+              )}
+            />}
+            
           />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

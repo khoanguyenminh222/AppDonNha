@@ -71,7 +71,7 @@ const IndividualPostScreen = () => {
             ]}
             style={pickerSelectStyles}
           />
-          {category === "" ? <Text style={{color: "red"}}>{errMessage}</Text> : undefined}
+          {category === "" ? <Text style={{color: "red"}} marginLeft="5">{errMessage}</Text> : undefined}
 
           <Text style={styles.title}>THÔNG TIN CHI TIẾT</Text>
           <View style={styles.image}>
@@ -112,7 +112,7 @@ const IndividualPostScreen = () => {
             }}
           />
           <Text style={styles.title}>SỐ ĐIỆN THOẠI</Text>
-          <CustomInput
+          <CustomInput 
             control={control}
             name="phonenumber"
             placehoder="Số điện thoại*"
@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginLeft: 10,
+    marginTop: 20,
   },
   image: {
     width: "100%",
@@ -159,6 +160,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
+    
 });
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {

@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginLeft: 10,
+    marginTop: 20,
   },
   image: {
     width: "100%",

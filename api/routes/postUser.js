@@ -5,6 +5,7 @@ const geolib = require('geolib');
 
 router.post("/", async (req,res)=>{
     const newPost = new PostUser(req.body);
+    newPost.location.coordinates = req.body.coordinates;
     console.log(newPost);
     try {
         const savePost = await newPost.save();

@@ -8,9 +8,13 @@ import {
   StyleSheet,
   useWindowDimensions,
   TextInput,
+  Image,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import RNPickerSelect from "react-native-picker-select";
+import * as ImagePicker from "expo-image-picker";
+import * as Location from "expo-location";
+import Map from "../components/Map";
 import GlobalStyles from "../GlobalStyles";
 import Back from "../components/Back";
 import { COLORS } from "../Colors";
@@ -20,26 +24,96 @@ import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import baseURL from "../api/BaseURL";
+import AuthContext from "../context/AuthContext";
 const IndividualPostScreen = () => {
+  const [state, setState] = useContext(AuthContext);
+
   const { height, width } = useWindowDimensions();
   const [category, setCategory] = useState("");
   const { control, handleSubmit } = useForm();
   const navigation = useNavigation();
   const VNF_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/g;
-  const [errMessage, setErrMessage] = useState("Chưa chọn Danh mục");
+  const [errMessage, setErrMessage] = useState("");
+  const [errMessage1, setErrMessage1] = useState("");
 
-  const onSendIndividualPost = async(data) => {
+  const[arrayPicture, setArrayPicture] = useState([]);
+
+  const onUploadImage = async () => {
+    let permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    let pickerResult = await ImagePicker.launchImageLibraryAsync();
+    
+    if(arrayPicture.includes(undefined)){
+      arrayPicture.pop();
+    }
+    setArrayPicture([...arrayPicture,pickerResult.uri]);
+  };
+
+
+  useEffect(()=>{
+    if(arrayPicture[arrayPicture.length-1]==null || arrayPicture[arrayPicture.length-1]==undefined){
+      arrayPicture.pop();
+    }
+  },[arrayPicture.length])
+  
+  const onSendIndividualPost = async (data) => {
+    if(category==""){
+      setErrMessage("Chưa chọn Danh mục");
+      return;
+    }
+    if(arrayPicture.length===0){
+      setErrMessage1("Chưa chọn ảnh");
+      return;
+    }
+
+    const address = data.address+", "+data.district+", "+data.subregion+", "+data.region
+    let geocode = await Location.geocodeAsync(address, Location.setGoogleApiKey("AIzaSyD9OXYLGgT1cSQ5XX7pi0vmSSJ9AY1x4y8"));
+
+    const formData = new FormData();
+    //mảng chưa tên ảnh
+    const arrayFilename = [];
+    //duyệt qua tất cả đường dẫn uri
+    arrayPicture.forEach(a=>{
+      const arrPicture = a.split("/");
+      const filename = `file_${Date.now()}_${arrPicture[arrPicture.length-1]}`;
+      arrayFilename.push(filename);
+      formData.append('file',{
+        name: filename,
+        uri: a,
+        type: 'image/*'
+      })
+    })
+
+    //upload ảnh lên server
+    try {
+      //fetch api
+      const res = await fetch(`${baseURL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+    
+    
+
     let postIndividual = {
-      userId : "62b1b1682251ecc6c91931ec",
-
+      userId: state._id,
+      coordinates: [geocode[0].longitude,geocode[0].latitude],
       category: category,
-      
+      picture: arrayFilename,
       title: data.title,
       desc: data.desciption,
-      address: data.address,
+      address: address,
       phonenumber: data.phonenumber,
     };
-    try{
+    try {
       const postIndi = await fetch(`${baseURL}/postUser`, {
         method: "POST",
         headers: {
@@ -47,14 +121,14 @@ const IndividualPostScreen = () => {
         },
         body: JSON.stringify(postIndividual),
       });
-      console.log(postIndi)
-    }catch(err){
-      console.log(err)
+      console.log(postIndi);
+    } catch (err) {
+      console.log(err);
     }
-    
+
     //navigation.navigate("ManagePost");
   };
-  
+
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Đăng tin" />
@@ -71,15 +145,44 @@ const IndividualPostScreen = () => {
             ]}
             style={pickerSelectStyles}
           />
-          {category === "" ? <Text style={{color: "red"}} marginLeft="5">{errMessage}</Text> : undefined}
+          {errMessage=="" ? undefined : (
+            <Text style={{ color: "red" }} marginLeft="5">
+              {errMessage}
+            </Text>
+          )}
 
           <Text style={styles.title}>THÔNG TIN CHI TIẾT</Text>
           <View style={styles.image}>
-            <TouchableOpacity style={styles.icon}>
+            {arrayPicture.length<3 ? 
+              (
+                <TouchableOpacity style={styles.icon} onPress={()=>onUploadImage()}>
               <Ionicons name="camera-outline" size={90}></Ionicons>
               <Text> ĐĂNG TỪ 1 ĐẾN 3 ẢNH </Text>
             </TouchableOpacity>
+              )
+              :
+              undefined
+            }
+            
+            {arrayPicture.map(element => (
+                <View style={styles.coverImg}>
+                <Image
+                  source={{ uri: element}}
+                  style={styles.img}
+                  resizeMode="contain"
+                ></Image>
+              </View>
+            ))}
+            
+            
           </View>
+          {errMessage1=="" ? 
+          undefined
+          : (
+            <Text style={{color:COLORS.red}}>{errMessage1}</Text>
+          )
+          }
+
           <Text style={styles.title}>TIÊU ĐỀ VÀ MÔ TẢ</Text>
           <CustomInput
             control={control}
@@ -105,14 +208,39 @@ const IndividualPostScreen = () => {
           <Text style={styles.title}>ĐỊA CHỈ</Text>
           <CustomInput
             control={control}
-            name="address"
-            placehoder="Địa chỉ*"
+            name="region"
+            placehoder="Tỉnh/Thành phố*"
             rules={{
-              required: "Địa chỉ không được để trống",
+              required: "Tỉnh/thành phố không được để trống",
             }}
           />
+          <CustomInput
+            control={control}
+            name="subregion"
+            placehoder="Quận/Huyện*"
+            rules={{
+              required: "Quận/huyện không được để trống",
+            }}
+          />
+          <CustomInput
+            control={control}
+            name="district"
+            placehoder="Phường/Xã*"
+            rules={{
+              required: "Phường/xã không được để trống",
+            }}
+          />
+          <CustomInput
+            control={control}
+            name="address"
+            placehoder="Số nhà, đường*"
+            rules={{
+              required: "Số nhà không được để trống",
+            }}
+          />
+          
           <Text style={styles.title}>SỐ ĐIỆN THOẠI</Text>
-          <CustomInput 
+          <CustomInput
             control={control}
             name="phonenumber"
             placehoder="Số điện thoại*"
@@ -149,18 +277,29 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   image: {
-    width: "100%",
+    width: '100%',
     borderRadius: 3,
     backgroundColor: COLORS.light,
     height: 200,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   icon: {
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
-    height: "100%",
+    flex: 1,
   },
-    
+  coverImg:{
+    marginHorizontal: 10,
+    marginVertical: 10,
+    backgroundColor: COLORS.white,
+    flex:1,
+  },
+  img:{
+    width: '100%',
+    height: '100%',
+  }
 });
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {

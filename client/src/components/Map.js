@@ -58,6 +58,7 @@ const Map = () => {
     })();
   }, []);
   
+  //gọi khi điểm đánh dấu thay đổi
   useEffect(() => {
     // lần đầu không gọi
     if (region.latitudeDelta === 0.0122) {
@@ -81,6 +82,7 @@ const Map = () => {
     }
   }, [region]);
 
+  // gọi khi tên đường thay đổi
   useEffect(()=>{
     if(address){
       setText(

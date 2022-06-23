@@ -20,6 +20,7 @@ import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import baseURL from "../api/BaseURL";
+
 const OrganizationPostScreen = () => {
   const { height, width } = useWindowDimensions();
   const [category, setCategory] = useState("");
@@ -69,7 +70,7 @@ const OrganizationPostScreen = () => {
             ]}
             style={pickerSelectStyles}
           />
-          {category === "" || category=== null ?  <Text style={{color: "red"}}>{errMessage}</Text> : undefined}
+          {category === "" || category === null ?  <Text style={{color: "red"}}>{errMessage}</Text> : undefined}
 
           <Text style={styles.title}>TÊN NHÀ CUNG CẤP DỊCH VỤ</Text>
           <CustomInput

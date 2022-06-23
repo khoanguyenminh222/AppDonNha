@@ -13,17 +13,20 @@ import ForgotPassword from './src/screens/ForgotPassword';
 import NewPassword from './src/screens/NewPassword';
 import IndividualPostScreen  from './src/screens/IndividualPostScreen';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import UpdateInforScreen from './src/screens/UpdateInforScreen';
+import ManagePostScreen from './src/screens/ManagePostScreen';
 const Stack = createNativeStackNavigator();
 export default function App() {
   
   return (
-    <>
-      <AuthProvider>
-        <NavigationContainer>
-          <StackNavigator />
-        </NavigationContainer>
-      </AuthProvider>
-    </>
+    // <>
+    //   <AuthProvider>
+    //     <NavigationContainer>
+    //       <StackNavigator />
+    //     </NavigationContainer>
+    //   </AuthProvider>
+    // </>
+    <ManagePostScreen></ManagePostScreen>
   );
 }
 

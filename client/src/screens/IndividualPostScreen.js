@@ -71,7 +71,7 @@ const IndividualPostScreen = () => {
             ]}
             style={pickerSelectStyles}
           />
-          {category === "" ? <Text style={{color: "red"}} marginLeft="5">{errMessage}</Text> : undefined}
+          {category === "" || category === null? <Text style={{color: "red"}} marginLeft="5">{errMessage}</Text> : undefined}
 
           <Text style={styles.title}>THÔNG TIN CHI TIẾT</Text>
           <View style={styles.image}>

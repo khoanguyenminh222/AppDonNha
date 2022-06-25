@@ -15,6 +15,7 @@ import LocationScreen from '../screens/LocationScreen';
 import IndividualPostScreen from '../screens/IndividualPostScreen';
 import OrganizationPostScreen from '../screens/OrganizationPostScreen';
 import ManagePostScreen from '../screens/ManagePostScreen';
+import DetailPost from '../screens/DetailPost';
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
@@ -53,6 +54,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="UpdateInfor"
           component={UpdateInforScreen}
+        />
+
+        <Stack.Screen
+          name="DetailPost"
+          component={DetailPost}
         />
 
         <Stack.Screen 

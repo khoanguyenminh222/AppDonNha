@@ -1,20 +1,25 @@
 import { View, Text, Image, StyleSheet, useWindowDimensions, TouchableOpacity, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Logo from "../../assets/images/logo.png";
 import { COLORS } from '../Colors';
 import PublicFolder from '../api/PublicFolder';
+import { useNavigation } from '@react-navigation/native';
 
-const Item = ({post, onPress}) => {
+const Item = ({post}) => {
     const { height } = useWindowDimensions();
+    const navigation = useNavigation();
+
+    const handleChangeScreen = (post) => {
+      navigation.navigate('DetailPost',post);
+    }
 
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={()=>handleChangeScreen(post)}>
 
         <View style={styles.container}>
         <Image
           source={{uri: PublicFolder+post.picture[0]}}
           style={[styles.logo, { height: height * 0.3 }]}
-          resizeMode="contain"
+          resizeMode="cover"
         />
         <View style={styles.wrapperText}>
           <Text style={[styles.title,{fontSize:height*0.02}]}>{post.title}</Text>
@@ -35,9 +40,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     marginHorizontal: 20,
-    marginBottom: 30,
     borderBottomColor: COLORS.light,
     borderBottomWidth: 0.8,
+    paddingVertical: 20,
   },
   wrapperText: {
     flex: 2,

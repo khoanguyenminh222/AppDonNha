@@ -75,9 +75,6 @@ const HomeScreen = () => {
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
-  
-
-
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       {state.city==="" ? 

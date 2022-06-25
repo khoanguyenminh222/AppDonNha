@@ -8,35 +8,18 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
-import HCM from "../../assets/images/1.jpg";
-import { COLORS } from "../Colors";
-const Suggestion = () => {
+
+const Suggestion = ({content, source}) => {
   const { width, height } = useWindowDimensions();
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.wrapper}>
         <Image
-          source={HCM}
+          source={source}
           style={[styles.img, { width: width * 0.25, height: height * 0.1 }]}
           resizeMode="cover"
         />
-        <Text style={[styles.txtContent, { fontSize: height * 0.02}]}>Tp Hồ Chí Minh</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.wrapper}>
-        <Image
-          source={HCM}
-          style={[styles.img, { width: width * 0.25, height: height * 0.1 }]}
-          resizeMode="cover"
-        />
-        <Text style={[styles.txtContent, { fontSize: height * 0.02}]}>Tp Hồ Chí Minh</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.wrapper}>
-        <Image
-          source={HCM}
-          style={[styles.img, { width: width * 0.25, height: height * 0.1 }]}
-          resizeMode="cover"
-        />
-        <Text style={[styles.txtContent, { fontSize: height * 0.02}]}>Tp Hồ Chí Minh</Text>
+        <Text style={[styles.txtContent, { fontSize: height * 0.02}]}>{content}</Text>
       </TouchableOpacity>
     </View>
   );

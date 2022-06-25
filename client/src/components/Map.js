@@ -54,7 +54,15 @@ const Map = () => {
         longitudeDelta: 0.0122,
       });
       setAddress(arrayNameLocation[0]);
-      
+      setText(
+        arrayNameLocation[0].streetNumber +
+          " " +
+          arrayNameLocation[0].street +
+          ", " +
+          arrayNameLocation[0].subregion +
+          ", " +
+          arrayNameLocation[0].region
+      );
     })();
   }, []);
   
@@ -67,7 +75,7 @@ const Map = () => {
         setAddress(arrayNameLocation[0]);
       })();
     }
-    // tránh việc address bị null không không có thuộc tính
+    // tránh việc address bị null không có thuộc tính
     if(address){
       setText(
         address.streetNumber +

@@ -25,7 +25,7 @@ router.get("/", (req,res)=>{
                   coordinates: [parseFloat(req.query.lng), parseFloat(req.query.lat)],
                 },
                 distanceField: "dist.calculated",
-                maxDistance: 100000,
+                maxDistance: 10000,
                 spherical: true
               },
             },

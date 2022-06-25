@@ -19,14 +19,13 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   
   return (
-    // <>
-    //   <AuthProvider>
-    //     <NavigationContainer>
-    //       <StackNavigator />
-    //     </NavigationContainer>
-    //   </AuthProvider>
-    // </>
-    <ManagePostScreen></ManagePostScreen>
+    <>
+      <AuthProvider>
+        <NavigationContainer>
+          <StackNavigator />
+        </NavigationContainer>
+      </AuthProvider>
+    </>
   );
 }
 

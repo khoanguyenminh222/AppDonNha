@@ -2,8 +2,9 @@ import { View, Text, Image, StyleSheet, useWindowDimensions, TouchableOpacity, P
 import React, { useEffect, useState } from 'react'
 import Logo from "../../assets/images/logo.png";
 import { COLORS } from '../Colors';
+import PublicFolder from '../api/PublicFolder';
 
-const Item = ({item,image,title,content,onPress}) => {
+const Item = ({post, onPress}) => {
     const { height } = useWindowDimensions();
 
   return (
@@ -11,17 +12,18 @@ const Item = ({item,image,title,content,onPress}) => {
 
         <View style={styles.container}>
         <Image
-          source={{uri: image}}
+          source={{uri: PublicFolder+post.picture[0]}}
           style={[styles.logo, { height: height * 0.3 }]}
           resizeMode="contain"
         />
         <View style={styles.wrapperText}>
-          <Text style={[styles.title,{fontSize:height*0.04}]}>{title}</Text>
-          {content.map((c) => (<Text key={c} style={[styles.content, {fontSize:height*0.03}]}>{c}</Text>))}
+          <Text style={[styles.title,{fontSize:height*0.02}]}>{post.title}</Text>
+          <Text style={[styles.content,{fontSize:height*0.02}]}>{post.category}</Text>
+          <Text style={[styles.content,{fontSize:height*0.02}]}>{post.address}</Text>
         </View>
         
       </View>
-
+      
     
     </TouchableOpacity>
   );
@@ -34,6 +36,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     marginHorizontal: 20,
     marginBottom: 30,
+    borderBottomColor: COLORS.light,
+    borderBottomWidth: 0.8,
   },
   wrapperText: {
     flex: 2,
@@ -53,6 +57,7 @@ const styles = StyleSheet.create({
   content: {
     fontSize: 18,
     lineHeight: 24,
+    color: COLORS.gray,
   },
 })
 

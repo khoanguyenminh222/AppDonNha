@@ -24,14 +24,14 @@ import { COLORS } from "../Colors";
 
 const ManagePostScreen = () => {
   const FirstRoute = () => (
-    <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
+    <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }} />
   );
 
   const SecondRoute = () => (
-    <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
+    <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }} />
   );
   const ThirdRoute = () => (
-    <View style={{ flex: 1, backgroundColor: '#ff4081' }} />
+    <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }} />
   );
 
   const renderScene = SceneMap({
@@ -50,7 +50,7 @@ const ManagePostScreen = () => {
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      {/* <Back textCenter="Quản lý tin đăng" /> */}
+      <Back textCenter="Quản lý tin đăng" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.topbar}>
           <TabView

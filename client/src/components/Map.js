@@ -55,17 +55,16 @@ const Map = () => {
       });
       setAddress(arrayNameLocation[0]);
       setText(
-        arrayNameLocation[0].streetNumber +
-          " " +
-          arrayNameLocation[0].street +
-          ", " +
-          arrayNameLocation[0].subregion +
-          ", " +
-          arrayNameLocation[0].region
+        (arrayNameLocation[0].streetNumber!==null ? arrayNameLocation[0].streetNumber + ", " :"") + 
+          (arrayNameLocation[0].street!==null ? arrayNameLocation[0].street + ", " :"") + 
+          (arrayNameLocation[0].city!==null ? arrayNameLocation[0].city + ", " :"") + 
+          (arrayNameLocation[0].district!==null ? arrayNameLocation[0].district + ", " :"") + 
+          (arrayNameLocation[0].subregion !==null ?  arrayNameLocation[0].subregion + ", " : "") +
+          (arrayNameLocation[0].region !==null ?  arrayNameLocation[0].region : "")
       );
     })();
   }, []);
-  
+
   useEffect(() => {
     // lần đầu không gọi
     if (region.latitudeDelta === 0.0122) {
@@ -78,27 +77,28 @@ const Map = () => {
     // tránh việc address bị null không có thuộc tính
     if(address){
       setText(
-        address.streetNumber +
-          " " +
-          address.street +
-          ", " +
-          address.subregion +
-          ", " +
-          address.region
+        (address.streetNumber!==null ? address.streetNumber + ", "  :"") + 
+        (address.street!==null ? address.street + ", "  :"") + 
+        (address.city!==null ? address.city + ", "  :"") + 
+        (address.district!==null ? address.district + ", " :"") + 
+        (address.subregion !==null ?  address.subregion + ", " : "") +
+        (address.region !==null ?  address.region : "")
       );
     }
-  }, [region]);
+    
+  },[region]);
 
+  // gọi lại khi address thay đổi
   useEffect(()=>{
+    // nếu 
     if(address){
       setText(
-        address.streetNumber +
-          " " +
-          address.street +
-          ", " +
-          address.subregion +
-          ", " +
-          address.region
+        (address.streetNumber!==null ? address.streetNumber + ", "  :"") + 
+          (address.street!==null ? address.street + ", "  :"") + 
+          (address.city!==null ? address.city + ", "  :"") + 
+          (address.district!==null ? address.district + ", " :"") + 
+          (address.subregion !==null ?  address.subregion + ", " : "") +
+          (address.region !==null ?  address.region : "")
       );
     }
     
@@ -114,15 +114,16 @@ const Map = () => {
       latitudeDelta: 0.0122,
       longitudeDelta: 0.0122,
     });
-    setText(
-      address.streetNumber +
-        " " +
-        address.street +
-        ", " +
-        address.subregion +
-        ", " +
-        address.region
-    );
+    if(address){
+      setText(
+        (address.streetNumber!==null ? address.streetNumber + ", "  :"") + 
+          (address.street!==null ? address.street + ", "  :"") + 
+          (address.city!==null ? address.city + ", "  :"") + 
+          (address.district!==null ? address.district + ", " :"") + 
+          (address.subregion !==null ?  address.subregion + ", " : "") +
+          (address.region !==null ?  address.region : "")
+      );
+    }
   };
 
   // nhấn nút lưu vị trí
@@ -147,6 +148,8 @@ const Map = () => {
       {address ? (
         <View style={styles.wrapperInput}>
           <TextInput
+            multiline={true}
+            numberOfLines = {2}
             onChangeText={setText}
             value={text}
             focusable={true}
@@ -218,6 +221,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   wrapperInput: {
+    paddingHorizontal: 10,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",

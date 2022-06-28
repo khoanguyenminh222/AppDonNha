@@ -24,6 +24,8 @@ import InfoText from "../components/InfoText";
 import PublicFolder from "../api/PublicFolder";
 import { Ionicons } from "@expo/vector-icons";
 import Back from "../components/Back";
+import CustomInput from "../components/CustomInput";
+import { useForm } from "react-hook-form";
 
 const wait = timeout => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -31,6 +33,13 @@ const wait = timeout => {
 
 const AboutScreen = () => {
   const { height } = useWindowDimensions();
+
+  //useForm
+  const {
+    control,
+    handleSubmit,
+    
+  } = useForm();
 
   const navigation = useNavigation();
 
@@ -42,24 +51,35 @@ const AboutScreen = () => {
 
   const onRefresh = useCallback( async() => {
     const res = await fetch(`${BaseURL}/user/${state._id}`)
-    res.json()
-    .then(user=>{
-      setState(user);
+    .then(res=>res.json())
+    .then(resJson=>{
+      setState(resJson);
     })
 
     setRefreshing(true);
     wait(1000).then(() => setRefreshing(false));
   }, []);
   
+  const fetchUser = async()=>{
+    const res = await fetch(`${BaseURL}/user/${state._id}`)
+    .then(res=>res.json())
+    .then(resJson=>{
+      setState(resJson);
+    })
+  }
+
+  // gọi sau khi navigate trang
+  useEffect(()=>{
+    fetchUser();
+    const willFocusSubscription = navigation.addListener('focus',()=>{
+      fetchUser();
+    });
+    return willFocusSubscription;
+  }, [])
+
 
   useEffect(() => {
-    const fetchUser = async () => {
-      let response = await fetch(`${BaseURL}/user/${state._id}`);
-      let responseJson = await response.json();
-      setState(responseJson);
-    };
     fetchUser();
-    
   },[]);
 
   const VerifyUser = () => {
@@ -130,10 +150,49 @@ const AboutScreen = () => {
           </View>
 
           <View style={styles.bodyWrapper}>
-            <InfoText name="Email" data={state.email} editable={false}/>
-            <InfoText name="Tên người dùng" data={state.fullname} editable={false}/>
-            <InfoText name="Địa chỉ" data={state.city} editable={false}/>
-            <InfoText name="Số điện thoại" data={state.phone} editable={false}/>
+
+          <View style={styles.containerInput}>
+            <View style={styles.wrapperLogo}>
+              <Ionicons name="mail-outline" size={30} />
+            </View>
+            <TextInput
+              value={state.email}
+              style={styles.input}
+              editable={false}
+            />
+          </View>
+           <View style={styles.containerInput}>
+            <View style={styles.wrapperLogo}>
+              <Ionicons name="person-outline" size={30} />
+            </View>
+            <TextInput
+              value={state.fullname}
+              style={styles.input}
+              editable={false}
+            />
+          </View>
+          <View style={styles.containerInput}>
+            <View style={styles.wrapperLogo}>
+              <Ionicons name="home-outline" size={30} />
+            </View>
+            <TextInput
+              value={state.city}
+              placeholder="Địa chỉ"
+              style={styles.input}
+              editable={false}
+            />
+          </View>
+          <View style={styles.containerInput}>
+            <View style={styles.wrapperLogo}>
+              <Ionicons name="call-outline" size={30} />
+            </View>
+            <TextInput
+              value={state.phone}
+              placeholder="Ngày sinh"
+              style={styles.input}
+              editable={false}
+            />
+          </View>
           </View>
 
           <View style={styles.footer}>
@@ -178,6 +237,27 @@ const styles = StyleSheet.create({
   bodyWrapper: {
     width: "100%",
     marginVertical: 20,
+  },
+
+  containerInput: {
+    backgroundColor: COLORS.white,
+    width: "100%",
+    borderColor: "#e8e8e8",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginVertical: 8,
+    flexDirection: "row",
+  },
+  wrapperLogo: {
+    paddingHorizontal: 5,
+    borderRightWidth: 1,
+  },
+  input: {
+    paddingLeft: 10,
+    width: '100%',
+    color: COLORS.black,
   },
   footer: {
     width: "100%",

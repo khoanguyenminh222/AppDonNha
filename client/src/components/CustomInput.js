@@ -17,11 +17,13 @@ const CustomInput = ({
   underlineColorAndroid,
   numberOfLines,
   multiline,
+  defaultValue,
 }) => {
   return (
     
       
       <Controller
+        defaultValue={defaultValue}
         control={control}
         name={name}
         rules={rules}

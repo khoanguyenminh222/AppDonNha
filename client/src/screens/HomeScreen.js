@@ -151,7 +151,8 @@ const styles = StyleSheet.create({
     width: '100%',    
     flex: 1,
     height: 100,
-    overflow: 'hidden'
+    overflow: 'hidden',
+
   }
 })
 

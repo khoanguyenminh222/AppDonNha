@@ -16,6 +16,7 @@ import IndividualPostScreen from '../screens/IndividualPostScreen';
 import OrganizationPostScreen from '../screens/OrganizationPostScreen';
 import ManagePostScreen from '../screens/ManagePostScreen';
 import DetailPost from '../screens/DetailPost';
+import PersonalScreen from '../screens/PersonalScreen'
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
@@ -93,6 +94,10 @@ const StackNavigator = () => {
         <Stack.Screen
           name = "ManagePost"
           component={ManagePostScreen}
+        />
+        <Stack.Screen
+          name = "Personal"
+          component={PersonalScreen}
         />
       </Stack.Navigator>
     );

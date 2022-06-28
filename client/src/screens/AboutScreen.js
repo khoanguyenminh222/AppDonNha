@@ -179,6 +179,9 @@ const AboutScreen = () => {
               value={state.city}
               placeholder="Địa chỉ"
               style={styles.input}
+              numberOfLines={3}
+              underlineColorAndroid="transparent"
+              multiline={true}
               editable={false}
             />
           </View>
@@ -188,7 +191,7 @@ const AboutScreen = () => {
             </View>
             <TextInput
               value={state.phone}
-              placeholder="Ngày sinh"
+              placeholder="Số điện thoại"
               style={styles.input}
               editable={false}
             />
@@ -233,6 +236,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 3,
     borderColor: COLORS.light,
+    
   },
   bodyWrapper: {
     width: "100%",
@@ -256,7 +260,8 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingLeft: 10,
-    width: '100%',
+    width: "100%",
+    height:"100%",
     color: COLORS.black,
   },
   footer: {

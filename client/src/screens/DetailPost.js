@@ -16,12 +16,14 @@ import { Avatar } from "react-native-elements";
 import { Ionicons } from "@expo/vector-icons";
 import PublicFolder from "../api/PublicFolder";
 import imageBanner1 from "../../assets/images/banner1.png";
-import LocationScreen from "./LocationScreen";
+
 import baseURL from "../api/BaseURL";
 import CustomButton from "../components/CustomButton";
 import { stopLocationUpdatesAsync } from "expo-location";
+import { useNavigation } from "@react-navigation/native";
 const DetailPost = ({ route }) => {
   const { width } = useWindowDimensions();
+  const navigation = useNavigation();
   const [user, setUser] = useState([]);
   const getFullnameById = async () => {
     try {
@@ -40,10 +42,11 @@ const DetailPost = ({ route }) => {
   }, []);
 
   const handleLocation = () => {
-
-
+   
+    
   };
-  const onPress = () => {};
+  const onPress = () => {  navigation.navigate("Personal", user )
+};
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Chi tiết" />
@@ -188,9 +191,10 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingTop: 20,
-    position: "relative",
-    left: 160,
+    position: "absolute",
+    left: 270,
     bottom: 5,
+    display: "flex",
   },
   text: {
     alignItems: "center",

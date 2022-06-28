@@ -3,11 +3,19 @@ import React from "react";
 
 import { COLORS } from "../Colors";
 
-const InfoText = ({name,data,editable}) => {
+const InfoText = ({ name, data, editable, numberOfLines, multiline, underlineColorAndroid }) => {
   return (
     <View style={styles.wrapperText}>
       <Text style={styles.textField}>{name}</Text>
-      <TextInput style={styles.textDataField} placeholder={data} editable={editable} placeholderTextColor={COLORS.black}/>
+      <TextInput
+        style={styles.textDataField}
+        placeholder={data}
+        editable={editable}
+        placeholderTextColor={COLORS.black}
+        numberOfLines={numberOfLines}
+        multiline={multiline}
+        underlineColorAndroid={underlineColorAndroid}
+      />
     </View>
   );
 };
@@ -21,7 +29,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   textField: {
-      width: "30%",
+    width: "30%",
   },
   textDataField: {
     width: "70%",
@@ -32,7 +40,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 10,
     marginVertical: 8,
-    color: COLORS.black
+    color: COLORS.black,
   },
 });
 export default InfoText;

@@ -18,6 +18,7 @@ const CustomInput = ({
   numberOfLines,
   multiline,
   defaultValue,
+  color,
 }) => {
   return (
     
@@ -47,6 +48,7 @@ const CustomInput = ({
             underlineColorAndroid = {underlineColorAndroid}
             numberOfLines = {numberOfLines}
             multiline = {multiline}
+            color = {color}
           />
           </View>
           {error && (

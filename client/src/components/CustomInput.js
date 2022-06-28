@@ -14,6 +14,7 @@ const CustomInput = ({
   logo,
   editable,
   selectTextOnFocus,
+  defaultValue,
 }) => {
   return (
     
@@ -39,6 +40,7 @@ const CustomInput = ({
             placeholder={placehoder}
             style={styles.input}
             secureTextEntry={secureTextEntry}
+            defaultValue={defaultValue}
           />
           </View>
           {error && (

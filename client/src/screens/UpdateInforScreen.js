@@ -19,10 +19,11 @@ import { useNavigation } from "@react-navigation/native";
 import baseURL from "../api/BaseURL";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
+
 const UpdateInforScreen = ({ route }) => {
   const { control, handleSubmit } = useForm();
   const navigation = useNavigation();
-
+  const VNF_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/g;
   const onSendUpdateInfor = () =>{
 
 

@@ -14,6 +14,9 @@ const CustomInput = ({
   logo,
   editable,
   selectTextOnFocus,
+  underlineColorAndroid,
+  numberOfLines,
+  multiline,
 }) => {
   return (
     
@@ -39,6 +42,9 @@ const CustomInput = ({
             placeholder={placehoder}
             style={styles.input}
             secureTextEntry={secureTextEntry}
+            underlineColorAndroid = {underlineColorAndroid}
+            numberOfLines = {numberOfLines}
+            multiline = {multiline}
           />
           </View>
           {error && (

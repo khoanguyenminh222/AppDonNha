@@ -45,7 +45,7 @@ const PostUserSchema = new mongoose.Schema(
       type: String,
     },
     phonenumber: {
-      type: Number,
+      type: String,
     },
     website: {
       type: String,

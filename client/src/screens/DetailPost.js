@@ -8,7 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GlobalStyles from "../GlobalStyles";
 import Back from "../components/Back";
 import Banner from "../components/Banner";
@@ -35,8 +35,14 @@ const DetailPost = ({ route }) => {
     }
   };
 
-  getFullnameById();
-  const handleLocation = () => {};
+  useEffect(() => {
+    getFullnameById();
+  }, []);
+
+  const handleLocation = () => {
+
+
+  };
   const onPress = () => {};
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -91,11 +97,14 @@ const DetailPost = ({ route }) => {
               size="medium"
               rounded
               source={{
-                uri: "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
+                uri:
+                  user.profilePicture === ""
+                    ? PublicFolder + user.profilePicture
+                    : PublicFolder + "persons/noAvatar.png",
               }}
             ></Avatar>
             <Text style={styles.info}>{user.fullname}</Text>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={onPress}>
               <Text style={styles.text}>Xem trang</Text>
             </TouchableOpacity>
           </TouchableOpacity>
@@ -114,20 +123,25 @@ const DetailPost = ({ route }) => {
             <Ionicons name="grid" size={20} color={"brown"}></Ionicons>
             <Text style={styles.textdetail}>{route.params.category}</Text>
           </View>
-          <View style={[styles.detail, { flexDirection: "row" }]}>
-            <Ionicons name="mail" size={20} color={"brown"}></Ionicons>
-            <Text style={styles.textdetail}>
-              {route.params.emailOrgazization}
-            </Text>
-          </View>
+          {route.params.emailOrgazization ? (
+            <View style={[styles.detail, { flexDirection: "row" }]}>
+              <Ionicons name="mail" size={20} color={"brown"}></Ionicons>
+              <Text style={styles.textdetail}>
+                {route.params.emailOrgazization}
+              </Text>
+            </View>
+          ) : undefined }
+
           <View style={[styles.detail, { flexDirection: "row" }]}>
             <Ionicons name="call" size={20} color={"brown"}></Ionicons>
             <Text style={styles.textdetail}>{route.params.phonenumber}</Text>
           </View>
-          <View style={[styles.detail, { flexDirection: "row" }]}>
-            <Ionicons name="globe" size={20} color={"brown"}></Ionicons>
-            <Text style={styles.textdetail}>{route.params.website}</Text>
-          </View>
+          {route.params.website  ? (
+            <View style={[styles.detail, { flexDirection: "row" }]}>
+              <Ionicons name="globe" size={20} color={"brown"}></Ionicons>
+              <Text style={styles.textdetail}>{route.params.website}</Text>
+            </View>
+          ) : undefined}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -138,6 +152,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 10,
+    marginBottom: 20,
   },
   containBanner: {
     flexDirection: "row",
@@ -160,11 +175,11 @@ const styles = StyleSheet.create({
   address: {
     paddingTop: 10,
     paddingLeft: 5,
-    fontSize: 20,
+    fontSize: 14,
   },
   info: {
     paddingTop: 20,
-    paddingLeft: 50,
+    paddingLeft: 20,
     fontSize: 20,
   },
   img: {
@@ -191,12 +206,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.25,
   },
   detail: {
-    fontSize: 14,
+    fontSize: 16,
     paddingLeft: 20,
     paddingTop: 10,
   },
   textdetail: {
     paddingLeft: 5,
+    fontSize: 16,
   },
 });
 

@@ -126,7 +126,7 @@ const IndividualPostScreen = () => {
       console.log(err);
     }
 
-    //navigation.navigate("ManagePost");
+    navigation.navigate("ManagePost");
   };
 
   return (
@@ -139,13 +139,13 @@ const IndividualPostScreen = () => {
             placeholder={{ label: "Chọn danh mục*", value: null }}
             onValueChange={(category) => setCategory(category)}
             items={[
-              { label: "Văn phòng", value: "office" },
-              { label: "Phòng trọ", value: "motel" },
-              { label: "Chung cư", value: "apartment" },
+              { label: "Văn phòng", value: "Văn phòng" },
+              { label: "Phòng trọ", value: "Phòng trọ" },
+              { label: "Chung cư", value: "Chung cư" },
             ]}
             style={pickerSelectStyles}
           />
-          {errMessage=="" ? undefined : (
+          {errMessage == "" ? undefined : (
             <Text style={{ color: "red" }} marginLeft="5">
               {errMessage}
             </Text>
@@ -153,35 +153,29 @@ const IndividualPostScreen = () => {
 
           <Text style={styles.title}>THÔNG TIN CHI TIẾT</Text>
           <View style={styles.image}>
-            {arrayPicture.length<3 ? 
-              (
-                <TouchableOpacity style={styles.icon} onPress={()=>onUploadImage()}>
-              <Ionicons name="camera-outline" size={90}></Ionicons>
-              <Text> ĐĂNG TỪ 1 ĐẾN 3 ẢNH </Text>
-            </TouchableOpacity>
-              )
-              :
-              undefined
-            }
-            
-            {arrayPicture.map(element => (
-                <View style={styles.coverImg}>
+            {arrayPicture.length < 3 ? (
+              <TouchableOpacity
+                style={styles.icon}
+                onPress={() => onUploadImage()}
+              >
+                <Ionicons name="camera-outline" size={90}></Ionicons>
+                <Text> ĐĂNG TỪ 1 ĐẾN 3 ẢNH </Text>
+              </TouchableOpacity>
+            ) : undefined}
+
+            {arrayPicture.map((element) => (
+              <View style={styles.coverImg}>
                 <Image
-                  source={{ uri: element}}
+                  source={{ uri: element }}
                   style={styles.img}
                   resizeMode="contain"
                 ></Image>
               </View>
             ))}
-            
-            
           </View>
-          {errMessage1=="" ? 
-          undefined
-          : (
-            <Text style={{color:COLORS.red}}>{errMessage1}</Text>
-          )
-          }
+          {errMessage1 == "" ? undefined : (
+            <Text style={{ color: COLORS.red }}>{errMessage1}</Text>
+          )}
 
           <Text style={styles.title}>TIÊU ĐỀ VÀ MÔ TẢ</Text>
           <CustomInput
@@ -194,16 +188,22 @@ const IndividualPostScreen = () => {
               minLength: { value: 20, message: "Tiêu đề tối thiểu 20 ký tự" },
             }}
           />
-          <CustomInput
-            control={control}
-            name="desciption"
-            placehoder="Mô tả chi tiết*"
-            rules={{
-              required: "Mô tả chi tiết không được để trống",
-              maxLength: { value: 200, message: "Mô tả tối đa 200 ký tự" },
-              minLength: { value: 20, message: "Mô tả tối thiểu 20 ký tự" },
-            }}
-          />
+          
+          <View style={styles.textAreaContainer}>
+            <CustomInput
+              control={control}
+              name="desciption"
+              placehoder="Mô tả chi tiết*"
+              numberOfLines={20}
+              multiline={true}
+              underlineColorAndroid="transparent"
+              rules={{
+                required: "Mô tả chi tiết không được để trống",
+                maxLength: { value: 200, message: "Mô tả tối đa 200 ký tự" },
+                minLength: { value: 20, message: "Mô tả tối thiểu 20 ký tự" },
+              }}
+            />
+          </View>
 
           <Text style={styles.title}>ĐỊA CHỈ</Text>
           <CustomInput
@@ -238,7 +238,7 @@ const IndividualPostScreen = () => {
               required: "Số nhà không được để trống",
             }}
           />
-          
+
           <Text style={styles.title}>SỐ ĐIỆN THOẠI</Text>
           <CustomInput
             control={control}
@@ -299,7 +299,13 @@ const styles = StyleSheet.create({
   img:{
     width: '100%',
     height: '100%',
-  }
+  },
+  textAreaContainer: {
+    borderColor: "#e8e8e8",
+    borderWidth: 1,
+    padding: 5,
+    height: 200,
+  },
 });
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
@@ -322,5 +328,6 @@ const pickerSelectStyles = StyleSheet.create({
     color: "black",
     paddingRight: 30,
   },
+  
 });
 export default IndividualPostScreen;

@@ -25,12 +25,12 @@ import { useNavigation } from "@react-navigation/native";
 import { COLORS } from "../Colors";
 import CustomInput from "../components/CustomInput";
 import { useForm } from "react-hook-form";
+import ReviewScreen from "./ReviewScreen";
 const PersonalScreen = ({ route }) => {
   const { width } = useWindowDimensions();
   const navigation = useNavigation();
   const [user, setUser] = useState([]);
   const { control, handleSubmit } = useForm();
-
   const getFullnameById = async () => {
     try {
       const response = await fetch(`$baseURL + /user/${route.params._id}`)
@@ -42,14 +42,16 @@ const PersonalScreen = ({ route }) => {
       console.log(error);
     }
   };
-
   useEffect(() => {
     getFullnameById();
   }, []);
+  const sendOnReviewScreen = ()=>{
+    navigation.navigate("Review")
+  };
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Back textCenter="Chi tiết" />
+      <Back textCenter="Trang cá nhân" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.headerWrapper}>
@@ -63,15 +65,11 @@ const PersonalScreen = ({ route }) => {
               style={styles.logo}
               resizeMode="cover"
             />
+            <Text style={{ paddingLeft: 10, fontSize: 20, fontWeight: "bold" }}>
+              {route.params.fullname}
+            </Text>
           </View>
-          <CustomInput
-            control={control}
-            name="fullname"
-            defaultValue={route.params.fullname}
-            logo="person-outline"
-            editable={false}
-            color="black"
-          />
+
           <CustomInput
             control={control}
             name="email"
@@ -112,7 +110,7 @@ const PersonalScreen = ({ route }) => {
             editable={false}
             color="black"
           />
-           <CustomInput
+          <CustomInput
             control={control}
             name="vote"
             defaultValue={route.params.desc}
@@ -120,10 +118,16 @@ const PersonalScreen = ({ route }) => {
             editable={false}
             color="black"
           />
+        </View>
+        <View style={styles.text}>
+          <Text>Tin đang đăng</Text>
+        </View>
+        <View style={styles.container}>
           <CustomButton
             text="ĐÁNH GIÁ"
             bgColor={COLORS.blue}
             fgColor={COLORS.white}
+            onPress={sendOnReviewScreen}
           />
         </View>
       </ScrollView>
@@ -139,12 +143,14 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   headerWrapper: {
-    alignItems: "center",
+    alignItems: "flex-start",
     width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     borderRadius: 150 / 2,
     overflow: "hidden",
     borderWidth: 3,
@@ -153,6 +159,17 @@ const styles = StyleSheet.create({
   bodyWrapper: {
     width: "100%",
     marginVertical: 20,
+  },
+  text: {
+    paddingLeft: 15,
+    fontSize: 16,
+    color: COLORS.gray,
+    borderBottomColor: "gray",
+    borderTopColor: "gray",
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingBottom: 10,
+    paddingTop: 10,
   },
 });
 

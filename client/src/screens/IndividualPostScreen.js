@@ -25,7 +25,7 @@ import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import baseURL from "../api/BaseURL";
 import AuthContext from "../context/AuthContext";
-const IndividualPostScreen = () => {
+const IndividualPostScreen = ({route}) => {
   const [state, setState] = useContext(AuthContext);
 
   const { height, width } = useWindowDimensions();
@@ -34,9 +34,23 @@ const IndividualPostScreen = () => {
   const navigation = useNavigation();
   const VNF_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/g;
   const [errMessage, setErrMessage] = useState("");
-  const [errMessage1, setErrMessage1] = useState("");
 
   const[arrayPicture, setArrayPicture] = useState([]);
+
+  const [address, setAddress] = useState([]);
+  const [coordinate, setCoordinate] = useState([]);
+
+  useEffect(() => {
+    if (route.params?.address) {
+      setAddress(route.params.address);
+    }
+  }, [route.params?.address]);
+
+  useEffect(() => {
+    if (route.params?.coordinate) {
+      setCoordinate(route.params.coordinate);
+    }
+  }, [route.params?.coordinate]);
 
   const onUploadImage = async () => {
     let permissionResult =
@@ -63,18 +77,28 @@ const IndividualPostScreen = () => {
   },[arrayPicture.length])
   
   const onSendIndividualPost = async (data) => {
-    if(category==""){
+    if (category == "") {
       setErrMessage("Chưa chọn Danh mục");
       return;
     }
-    if(arrayPicture.length===0){
-      setErrMessage1("Chưa chọn ảnh");
+    if (address == null || route.params == undefined) {
+      setErrMessage("Chưa chọn vị trí");
       return;
     }
 
-    const address = data.address+", "+data.district+", "+data.subregion+", "+data.region
-    let geocode = await Location.geocodeAsync(address, Location.setGoogleApiKey("AIzaSyD9OXYLGgT1cSQ5XX7pi0vmSSJ9AY1x4y8"));
+    if (arrayPicture.length === 0) {
+      setErrMessage("Chưa chọn ảnh");
+      return;
+    }
 
+    const textAddress =
+      (address.streetNumber !== null ? address.streetNumber + ", " : "") +
+      (address.street !== null ? address.street + ", " : "") +
+      (address.city !== null ? address.city + ", " : "") +
+      (address.district !== null ? address.district + ", " : "") +
+      (address.subregion !== null ? address.subregion + ", " : "") +
+      (address.region !== null ? address.region : "");
+    
     const formData = new FormData();
     //mảng chưa tên ảnh
     const arrayFilename = [];
@@ -105,12 +129,12 @@ const IndividualPostScreen = () => {
 
     let postIndividual = {
       userId: state._id,
-      coordinates: [geocode[0].longitude,geocode[0].latitude],
+      coordinates: [coordinate.longitude, coordinate.latitude],
       category: category,
       picture: arrayFilename,
       title: data.title,
       desc: data.desciption,
-      address: address,
+      address: textAddress,
       phonenumber: data.phonenumber,
     };
     try {
@@ -129,6 +153,11 @@ const IndividualPostScreen = () => {
     navigation.navigate("ManagePost");
   };
 
+  const onChangeScreen = () => {
+    const req = { action: "fill", name:"IndividualPost"};
+    navigation.navigate("Location", req);
+  }
+
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Đăng tin" />
@@ -145,37 +174,32 @@ const IndividualPostScreen = () => {
             ]}
             style={pickerSelectStyles}
           />
-          {errMessage == "" ? undefined : (
-            <Text style={{ color: "red" }} marginLeft="5">
-              {errMessage}
-            </Text>
-          )}
 
           <Text style={styles.title}>THÔNG TIN CHI TIẾT</Text>
           <View style={styles.image}>
-            {arrayPicture.length < 3 ? (
-              <TouchableOpacity
-                style={styles.icon}
-                onPress={() => onUploadImage()}
-              >
-                <Ionicons name="camera-outline" size={90}></Ionicons>
-                <Text> ĐĂNG TỪ 1 ĐẾN 3 ẢNH </Text>
-              </TouchableOpacity>
-            ) : undefined}
-
-            {arrayPicture.map((element) => (
-              <View style={styles.coverImg}>
+            {arrayPicture.length<3 ? 
+              (
+                <TouchableOpacity style={styles.icon} onPress={()=>onUploadImage()}>
+              <Ionicons name="camera-outline" size={90}></Ionicons>
+              <Text> ĐĂNG TỪ 1 ĐẾN 3 ẢNH </Text>
+            </TouchableOpacity>
+              )
+              :
+              undefined
+            }
+            
+            {arrayPicture.map((element,i) => (
+                <View key={i} style={styles.coverImg}>
                 <Image
-                  source={{ uri: element }}
+                  source={{ uri: element}}
                   style={styles.img}
                   resizeMode="contain"
                 ></Image>
               </View>
             ))}
+            
+            
           </View>
-          {errMessage1 == "" ? undefined : (
-            <Text style={{ color: COLORS.red }}>{errMessage1}</Text>
-          )}
 
           <Text style={styles.title}>TIÊU ĐỀ VÀ MÔ TẢ</Text>
           <CustomInput
@@ -188,57 +212,95 @@ const IndividualPostScreen = () => {
               minLength: { value: 20, message: "Tiêu đề tối thiểu 20 ký tự" },
             }}
           />
-          
           <View style={styles.textAreaContainer}>
-            <CustomInput
-              control={control}
-              name="desciption"
-              placehoder="Mô tả chi tiết*"
-              numberOfLines={20}
-              multiline={true}
-              underlineColorAndroid="transparent"
-              rules={{
-                required: "Mô tả chi tiết không được để trống",
-                maxLength: { value: 200, message: "Mô tả tối đa 200 ký tự" },
-                minLength: { value: 20, message: "Mô tả tối thiểu 20 ký tự" },
-              }}
-            />
+          <CustomInput
+            control={control}
+            name="desciption"
+            placehoder="Mô tả chi tiết*"
+            numberOfLines={20}
+            multiline={true}
+            underlineColorAndroid="transparent"
+            rules={{
+              required: "Mô tả chi tiết không được để trống",
+              maxLength: { value: 200, message: "Mô tả tối đa 200 ký tự" },
+              minLength: { value: 20, message: "Mô tả tối thiểu 20 ký tự" },
+            }}
+          />
           </View>
+          
 
           <Text style={styles.title}>ĐỊA CHỈ</Text>
-          <CustomInput
-            control={control}
-            name="region"
-            placehoder="Tỉnh/Thành phố*"
-            rules={{
-              required: "Tỉnh/thành phố không được để trống",
+          <TouchableOpacity
+            style={{
+              paddingHorizontal: 10,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
             }}
-          />
-          <CustomInput
-            control={control}
-            name="subregion"
-            placehoder="Quận/Huyện*"
-            rules={{
-              required: "Quận/huyện không được để trống",
-            }}
-          />
-          <CustomInput
-            control={control}
-            name="district"
-            placehoder="Phường/Xã*"
-            rules={{
-              required: "Phường/xã không được để trống",
-            }}
-          />
-          <CustomInput
-            control={control}
-            name="address"
-            placehoder="Số nhà, đường*"
-            rules={{
-              required: "Số nhà không được để trống",
-            }}
-          />
-
+            onPress={onChangeScreen}
+          >
+            <Ionicons
+              size={30}
+              color={COLORS.primary}
+              name="map-outline"
+            ></Ionicons>
+            <Text style={{ color: COLORS.primary }}>Chọn từ bản đồ</Text>
+          </TouchableOpacity>
+          {address.region ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.region}
+                placeholder="Tỉnh*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.subregion ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.subregion}
+                placeholder="Quận/Huyện*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.city ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.city}
+                placeholder="Thành phố*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.district ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.district}
+                placeholder="Phường/Xã*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.street ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.street}
+                placeholder="Tên đường*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.streetNumber ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.streetNumber}
+                placeholder="Số nhà*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          
           <Text style={styles.title}>SỐ ĐIỆN THOẠI</Text>
           <CustomInput
             control={control}
@@ -256,6 +318,13 @@ const IndividualPostScreen = () => {
               },
             }}
           />
+          {errMessage !== "" ? (
+            <CustomButton
+              text={errMessage}
+              bgColor={COLORS.red}
+              fgColor={COLORS.white}
+            />
+          ) : undefined}
           <CustomButton
             text="ĐĂNG TIN"
             onPress={handleSubmit(onSendIndividualPost)}
@@ -300,6 +369,26 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  containerInput: {
+    backgroundColor: COLORS.white,
+    width: "100%",
+    borderColor: "#e8e8e8",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginVertical: 8,
+    flexDirection: "row",
+  },
+  wrapperLogo: {
+    paddingHorizontal: 5,
+    borderRightWidth: 1,
+  },
+  input: {
+    paddingLeft: 10,
+    width: "100%",
+    color: COLORS.black,
+  },
   textAreaContainer: {
     borderColor: "#e8e8e8",
     borderWidth: 1,
@@ -328,6 +417,5 @@ const pickerSelectStyles = StyleSheet.create({
     color: "black",
     paddingRight: 30,
   },
-  
 });
 export default IndividualPostScreen;

@@ -6,15 +6,15 @@ import Map from '../components/Map'
 import Back from '../components/Back'
 import GooglePlacesInput from '../components/GooglePlacesInput'
 
-const LocationScreen = () => {
-  
+const LocationScreen = ({route}) => {
+  console.log(route.params)
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       
         <Back iconLeft="chevron-back-outline" textCenter="Nhập vị trí"/>
         
           
-        <Map/>
+        <Map action={route.params?.action} name={route.params?.name} location={route.params?.location} textAddress = {route.params?.textAddress}/>
 
     </SafeAreaView>
   )

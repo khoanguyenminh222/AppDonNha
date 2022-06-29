@@ -253,12 +253,15 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginVertical: 8,
     flexDirection: "row",
+    justifyContent:'center',
+    alignItems: 'center',
   },
   wrapperLogo: {
     paddingHorizontal: 5,
     borderRightWidth: 1,
   },
   input: {
+    flex: 1,
     paddingLeft: 10,
     width: "100%",
     height:"100%",

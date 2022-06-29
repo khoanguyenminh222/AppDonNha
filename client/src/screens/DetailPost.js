@@ -42,8 +42,12 @@ const DetailPost = ({ route }) => {
   }, []);
 
   const handleLocation = () => {
-   
-    
+    const req = {
+      action : 'view',
+      textAddress: route.params.address,
+      location: route.params.location.coordinates,
+    }
+   navigation.navigate("Location",req);
   };
   const onPress = () => {  navigation.navigate("Personal", user )
 };
@@ -58,7 +62,7 @@ const DetailPost = ({ route }) => {
           showsHorizontalScrollIndicator={false}
         >
           {route.params.picture.map((p) => (
-            <View style={[styles.containerImage, { width: width }]}>
+            <View key={p} style={[styles.containerImage, { width: width }]}>
               <Image
                 style={[styles.img, { width: width }]}
                 source={{ uri: PublicFolder + p }}
@@ -91,6 +95,7 @@ const DetailPost = ({ route }) => {
           <TouchableOpacity
             style={{
               flexDirection: "row",
+              paddingBottom: 4,
               borderBottomColor: "blue",
               borderBottomWidth: StyleSheet.hairlineWidth,
             }}
@@ -170,19 +175,18 @@ const styles = StyleSheet.create({
   },
   title: {
     paddingTop: 10,
-    paddingLeft: 5,
+    paddingHorizontal: 5,
     fontSize: 26,
     borderBottomColor: "blue",
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   address: {
     paddingTop: 10,
-    paddingLeft: 5,
     fontSize: 14,
   },
   info: {
     paddingTop: 20,
-    paddingLeft: 20,
+    paddingHorizontal: 20,
     fontSize: 20,
   },
   img: {
@@ -210,12 +214,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.25,
   },
   detail: {
+    alignItems:"center",
     fontSize: 16,
-    paddingLeft: 20,
-    paddingTop: 10,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   textdetail: {
-    paddingLeft: 5,
+    paddingHorizontal: 5,
     fontSize: 16,
   },
 });

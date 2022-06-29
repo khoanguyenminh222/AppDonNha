@@ -26,18 +26,36 @@ import { useNavigation } from "@react-navigation/native";
 import baseURL from "../api/BaseURL";
 import AuthContext from "../context/AuthContext";
 
-const OrganizationPostScreen = () => {
+const OrganizationPostScreen = ({ route }) => {
   const [state, setState] = useContext(AuthContext);
 
   const { height, width } = useWindowDimensions();
   const [category, setCategory] = useState("");
   const { control, handleSubmit } = useForm();
   const navigation = useNavigation();
-  const VNF_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/g;
-  const [errMessage, setErrMessage] = useState("");
-  const [errMessage1, setErrMessage1] = useState("");
 
-  const[arrayPicture, setArrayPicture] = useState([]);
+  const VNF_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+  const EMAIL_REGEX =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+  const [errMessage, setErrMessage] = useState("");
+
+  const [arrayPicture, setArrayPicture] = useState([]);
+  const [address, setAddress] = useState([]);
+  const [coordinate, setCoordinate] = useState([]);
+
+  useEffect(() => {
+    if (route.params?.address) {
+      setAddress(route.params.address);
+    }
+  }, [route.params?.address]);
+
+  useEffect(() => {
+    if (route.params?.coordinate) {
+      setCoordinate(route.params.coordinate);
+    }
+  }, [route.params?.coordinate]);
+
   const onUploadImage = async () => {
     let permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -48,46 +66,60 @@ const OrganizationPostScreen = () => {
     }
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync();
-    
-    if(arrayPicture.includes(undefined)){
+
+    if (arrayPicture.includes(undefined)) {
       arrayPicture.pop();
     }
-    setArrayPicture([...arrayPicture,pickerResult.uri]);
+    setArrayPicture([...arrayPicture, pickerResult.uri]);
   };
 
-
-  useEffect(()=>{
-    if(arrayPicture[arrayPicture.length-1]==null || arrayPicture[arrayPicture.length-1]==undefined){
+  useEffect(() => {
+    if (
+      arrayPicture[arrayPicture.length - 1] == null ||
+      arrayPicture[arrayPicture.length - 1] == undefined
+    ) {
       arrayPicture.pop();
     }
-  },[arrayPicture.length])
+  }, [arrayPicture.length]);
   const onSendOrganizationPost = async (data) => {
-    if(category==""){
+    if (category == "") {
       setErrMessage("Chưa chọn Danh mục");
       return;
     }
-    if(arrayPicture.length===0){
-      setErrMessage1("Chưa chọn ảnh");
+    if (address == null || route.params == undefined) {
+      setErrMessage("Chưa chọn vị trí");
       return;
     }
 
-    const address = data.address+", "+data.district+", "+data.subregion+", "+data.region
-    let geocode = await Location.geocodeAsync(address, Location.setGoogleApiKey("AIzaSyD9OXYLGgT1cSQ5XX7pi0vmSSJ9AY1x4y8"));
+    if (arrayPicture.length === 0) {
+      setErrMessage("Chưa chọn ảnh");
+      return;
+    }
+
+    const textAddress =
+      (address.streetNumber !== null ? address.streetNumber + ", " : "") +
+      (address.street !== null ? address.street + ", " : "") +
+      (address.city !== null ? address.city + ", " : "") +
+      (address.district !== null ? address.district + ", " : "") +
+      (address.subregion !== null ? address.subregion + ", " : "") +
+      (address.region !== null ? address.region : "");
 
     const formData = new FormData();
     //mảng chưa tên ảnh
     const arrayFilename = [];
     //duyệt qua tất cả đường dẫn uri
-    arrayPicture.forEach(a=>{
+    arrayPicture.forEach((a) => {
       const arrPicture = a.split("/");
-      const filename = `file_${Date.now()}_${arrPicture[arrPicture.length-1]}`;
+      const filename = `file_${Date.now()}_${
+        arrPicture[arrPicture.length - 1]
+      }`;
       arrayFilename.push(filename);
-      formData.append('file',{
+      formData.append("file", {
         name: filename,
         uri: a,
-        type: 'image/*'
-      })
-    })
+        type: "image/*",
+      });
+    });
 
     //upload ảnh lên server
     try {
@@ -99,22 +131,21 @@ const OrganizationPostScreen = () => {
     } catch (error) {
       console.log(error.message);
     }
-    
-    
+
     let postOrganizationPost = {
       userId: state._id,
-      coordinates: [geocode[0].longitude,geocode[0].latitude],
+      coordinates: [coordinate.longitude, coordinate.latitude],
       category: category,
       nameOrganization: data.nameOrganization,
-      picture: data.picture,
+      picture: arrayFilename,
       title: data.title,
       desc: data.desciption,
       emailOrgazization: data.emailOrgazization,
       website: data.website,
-      address: data.address,
+      address: textAddress,
       phonenumber: data.phonenumber,
     };
-    try{
+    try {
       const postOrgan = await fetch(`${baseURL}/postUser`, {
         method: "POST",
         headers: {
@@ -123,13 +154,17 @@ const OrganizationPostScreen = () => {
         body: JSON.stringify(postOrganizationPost),
       });
       console.log(postOrgan);
-    } catch (err){
+    } catch (err) {
       console.log(err);
     }
-   
 
     navigation.navigate("ManagePost");
   };
+
+  const onChangeScreen = () => {
+    const req = { action: "fill", name:"OrganizationPost"};
+    navigation.navigate("Location", req);
+  }
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -141,17 +176,12 @@ const OrganizationPostScreen = () => {
             placeholder={{ label: "Chọn danh mục*", value: null }}
             onValueChange={(category) => setCategory(category)}
             items={[
-              { label: "Văn phòng", value: "office" },
-              { label: "Phòng trọ", value: "motel" },
-              { label: "Chung cư", value: "apartment" },
+              { label: "Văn phòng", value: "Văn phòng" },
+              { label: "Phòng trọ", value: "Phòng trọ" },
+              { label: "Chung cư", value: "Chung cư" },
             ]}
             style={pickerSelectStyles}
           />
-           {errMessage == "" ? undefined : (
-            <Text style={{ color: "red" }} marginLeft="5">
-              {errMessage}
-            </Text>
-          )}
 
           <Text style={styles.title}>TÊN NHÀ CUNG CẤP DỊCH VỤ</Text>
           <CustomInput
@@ -162,6 +192,16 @@ const OrganizationPostScreen = () => {
               required: "Tên không được để trống",
               maxLength: { value: 70, message: "Tiêu đề tối đa 70 ký tự" },
               minLength: { value: 20, message: "Tiêu đề tối thiểu 20 ký tự" },
+            }}
+          />
+          <Text style={styles.title}>EMAIL NHÀ CUNG CẤP DỊCH VỤ</Text>
+          <CustomInput
+            control={control}
+            name="emailOrganization"
+            placehoder="Email*"
+            rules={{
+              required: "Email không được để trống",
+              pattern: { value: EMAIL_REGEX, message: "Email sai định dạng" },
             }}
           />
           <Text style={styles.title}>THÔNG TIN CHI TIẾT</Text>
@@ -176,8 +216,8 @@ const OrganizationPostScreen = () => {
               </TouchableOpacity>
             ) : undefined}
 
-            {arrayPicture.map((element) => (
-              <View style={styles.coverImg}>
+            {arrayPicture.map((element,i) => (
+              <View key={i} style={styles.coverImg}>
                 <Image
                   source={{ uri: element }}
                   style={styles.img}
@@ -186,9 +226,6 @@ const OrganizationPostScreen = () => {
               </View>
             ))}
           </View>
-          {errMessage1 == "" ? undefined : (
-            <Text style={{ color: COLORS.red }}>{errMessage1}</Text>
-          )}
 
           <Text style={styles.title}>TIÊU ĐỀ VÀ MÔ TẢ</Text>
           <CustomInput
@@ -218,38 +255,76 @@ const OrganizationPostScreen = () => {
           </View>
 
           <Text style={styles.title}>ĐỊA CHỈ</Text>
-          <CustomInput
-            control={control}
-            name="region"
-            placehoder="Tỉnh/Thành phố*"
-            rules={{
-              required: "Tỉnh/thành phố không được để trống",
+          <TouchableOpacity
+            style={{
+              paddingHorizontal: 10,
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
             }}
-          />
-          <CustomInput
-            control={control}
-            name="subregion"
-            placehoder="Quận/Huyện*"
-            rules={{
-              required: "Quận/huyện không được để trống",
-            }}
-          />
-          <CustomInput
-            control={control}
-            name="district"
-            placehoder="Phường/Xã*"
-            rules={{
-              required: "Phường/xã không được để trống",
-            }}
-          />
-          <CustomInput
-            control={control}
-            name="address"
-            placehoder="Số nhà, đường*"
-            rules={{
-              required: "Số nhà không được để trống",
-            }}
-          />
+            onPress={onChangeScreen}
+          >
+            <Ionicons
+              size={30}
+              color={COLORS.primary}
+              name="map-outline"
+            ></Ionicons>
+            <Text style={{ color: COLORS.primary }}>Chọn từ bản đồ</Text>
+          </TouchableOpacity>
+          {address.region ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.region}
+                placeholder="Tỉnh*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.subregion ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.subregion}
+                placeholder="Quận/Huyện*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.city ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.city}
+                placeholder="Thành phố*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.district ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.district}
+                placeholder="Phường/Xã*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.street ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.street}
+                placeholder="Tên đường*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
+          {address.streetNumber ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={address.streetNumber}
+                placeholder="Số nhà*"
+                style={styles.input}
+              />
+            </View>
+          ) : undefined}
 
           <Text style={styles.title}>SỐ ĐIỆN THOẠI</Text>
           <CustomInput
@@ -268,11 +343,15 @@ const OrganizationPostScreen = () => {
               },
             }}
           />
-          <CustomInput
-            control={control}
-            name="website"
-            placehoder="Website"
-          />
+          <Text style={styles.title}>Website</Text>
+          <CustomInput control={control} name="website" placehoder="Website" />
+          {errMessage !== "" ? (
+            <CustomButton
+              text={errMessage}
+              bgColor={COLORS.red}
+              fgColor={COLORS.white}
+            />
+          ) : undefined}
           <CustomButton
             text="ĐĂNG TIN"
             onPress={handleSubmit(onSendOrganizationPost)}
@@ -294,34 +373,54 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   image: {
-    width: '100%',
+    width: "100%",
     borderRadius: 3,
     backgroundColor: COLORS.light,
     height: 200,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   icon: {
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
   },
-  coverImg:{
+  coverImg: {
     marginHorizontal: 10,
     marginVertical: 10,
     backgroundColor: COLORS.white,
-    flex:1,
+    flex: 1,
   },
-  img:{
-    width: '100%',
-    height: '100%',
+  img: {
+    width: "100%",
+    height: "100%",
   },
   textAreaContainer: {
     borderColor: "#e8e8e8",
     borderWidth: 1,
     padding: 5,
     height: 200,
+  },
+  containerInput: {
+    backgroundColor: COLORS.white,
+    width: "100%",
+    borderColor: "#e8e8e8",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginVertical: 8,
+    flexDirection: "row",
+  },
+  wrapperLogo: {
+    paddingHorizontal: 5,
+    borderRightWidth: 1,
+  },
+  input: {
+    paddingLeft: 10,
+    width: "100%",
+    color: COLORS.black,
   },
 });
 const pickerSelectStyles = StyleSheet.create({

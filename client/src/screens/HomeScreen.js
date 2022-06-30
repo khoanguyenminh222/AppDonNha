@@ -118,7 +118,10 @@ const HomeScreen = () => {
           <Text style={[styles.txtheader, {fontSize:height*0.03}]}>Tin mới nhất</Text>
           
           {posts && posts.map((post)=>(
+            post.isWaiting==false && post.isCancel==false ? 
             <Item key={post._id} post={post}/>
+            :
+            undefined
           ))}
           
           

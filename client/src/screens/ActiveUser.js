@@ -15,7 +15,7 @@ const wait = timeout => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 };
 const ActiveUser = () => {
-  
+  const navigation = useNavigation();
   //const [state, dispatch] = useContext(AuthContext);
   const [state, setState] = useContext(AuthContext);
   const [users, setUsers] = useState([]);
@@ -27,11 +27,19 @@ const ActiveUser = () => {
     setUsers(responseJson);
   };
 
-  //hiênt thị người dùng lần đầu
+  //hiển thị người dùng lần đầu
   useEffect(()=>{
     fetchUsers();
   },[])
 
+  // gọi sau khi navigate trang
+  useEffect(()=>{
+    fetchUsers();
+    const willFocusSubscription = navigation.addListener('focus',()=>{
+      fetchUsers();
+    });
+    return willFocusSubscription;
+  }, [])
 
   //tạo biến refresh trang
   const [refreshing, setRefreshing] = useState(false);

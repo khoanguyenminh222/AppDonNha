@@ -3,6 +3,7 @@ import React from 'react'
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import ActiveUser from '../screens/ActiveUser';
+import ActivePost from '../screens/ActivePost';
 
 const Tab = createBottomTabNavigator();
 const AdminNavigator = () => {
@@ -16,7 +17,12 @@ const AdminNavigator = () => {
                 return <Ionicons name="people-outline" color={color} size={size}></Ionicons>
             }
         }}/>
-        
+        <Tab.Screen name='ActivePost' component={ActivePost} options={{
+            title:'Xác minh tin đăng',
+            tabBarIcon:({color,size})=>{
+                return <Ionicons name="briefcase-outline" color={color} size={size}></Ionicons>
+            }
+        }}/>
     </Tab.Navigator>
   )
 }

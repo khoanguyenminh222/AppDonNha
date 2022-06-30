@@ -50,6 +50,14 @@ const PostUserSchema = new mongoose.Schema(
     website: {
       type: String,
     },
+    isWaiting:{
+      type: Boolean,
+      default: true,
+    },
+    isCancel:{
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );

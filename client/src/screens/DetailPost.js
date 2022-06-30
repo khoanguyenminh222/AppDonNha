@@ -7,8 +7,9 @@ import {
   useWindowDimensions,
   Image,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import GlobalStyles from "../GlobalStyles";
 import Back from "../components/Back";
 import Banner from "../components/Banner";
@@ -21,10 +22,17 @@ import baseURL from "../api/BaseURL";
 import CustomButton from "../components/CustomButton";
 import { stopLocationUpdatesAsync } from "expo-location";
 import { useNavigation } from "@react-navigation/native";
+import AuthContext from "../context/AuthContext";
+import { COLORS } from "../Colors";
 const DetailPost = ({ route }) => {
   const { width } = useWindowDimensions();
   const navigation = useNavigation();
+
+  const [state, setState] = useContext(AuthContext);
+
   const [user, setUser] = useState([]);
+
+  // fetch data lấy dữ liệu người dùng set lại user
   const getFullnameById = async () => {
     try {
       const response = await fetch(baseURL + `/user/${route.params.userId}`)
@@ -36,11 +44,13 @@ const DetailPost = ({ route }) => {
       console.log(error);
     }
   };
-
+  console.log(route.params);
+  //gọi hàm khi load lần đầu load trang lấy ra người dùng đổ dữ liệu vào view
   useEffect(() => {
     getFullnameById();
   }, []);
 
+  //hàm chuyển qua trang LocationScreen
   const handleLocation = () => {
     const req = {
       action : 'view',
@@ -49,8 +59,67 @@ const DetailPost = ({ route }) => {
     }
    navigation.navigate("Location",req);
   };
+
+  // hàm chuyển sang trang cá nhân người dùng
   const onPress = () => {  navigation.navigate("Personal", user )
 };
+
+// nhấn duyệt bài đăng (chỉ có admin mới có quyền)
+const AcceptBtn = ()=>{
+  const editPost={
+    admin : state._id,
+    isWaiting: false,
+  }
+  const notify={
+    userId: user._id,
+    title: "TIN CỦA BẠN ĐÃ ĐƯỢC DUYỆT",
+    text: "Thật tuyệt vời, chắc chắn sẽ có rất nhiều người tìm đến bạn",
+  }
+  Alert.alert("Thông báo!","Xác nhận duyệt tin đăng người dùng này",[
+    {text:"Cancel", onPress:()=>console.log("alert closed")},
+    {text:"OK", onPress:()=>completeProcess(editPost,notify)}
+  ]);
+}
+
+const RejectBtn = ()=>{}
+
+const completeProcess = (editPost,notify)=>{
+  updatePost(editPost);
+  createNotify(notify);
+  navigation.goBack();
+}
+
+// cập nhật tin đăng
+const updatePost = async(editPost)=>{
+  try {
+    const response = await fetch(`${baseURL}/postUser/${route.params._id}`,{
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(editPost),
+    })
+    console.log(response);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+//tạo thông báo
+const createNotify = async(notify)=>{
+  try {
+    const response = await fetch(`${baseURL}/notify`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(notify),
+    })
+  } catch (error) {
+    console.log(error);
+  }
+}
+
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Chi tiết" />
@@ -151,6 +220,15 @@ const DetailPost = ({ route }) => {
             </View>
           ) : undefined}
         </View>
+          
+        {state.isAdmin ? 
+        (
+          <View style={styles.wrapperBtn}>
+            <CustomButton text="Từ chối" bgColor={COLORS.red} fgColor={COLORS.light} size='45%' onPress={RejectBtn}/>
+            <CustomButton text='Duyệt' bgColor={COLORS.green} fgColor={COLORS.light} size='45%' onPress={AcceptBtn}/>
+        </View>
+        ): undefined}
+        
       </ScrollView>
     </SafeAreaView>
   );
@@ -222,6 +300,10 @@ const styles = StyleSheet.create({
   textdetail: {
     paddingHorizontal: 5,
     fontSize: 16,
+  },
+  wrapperBtn:{
+    flexDirection:'row',
+    justifyContent: 'space-around',
   },
 });
 

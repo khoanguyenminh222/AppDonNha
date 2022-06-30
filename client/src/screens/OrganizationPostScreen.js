@@ -9,6 +9,7 @@ import {
   useWindowDimensions,
   TextInput,
   Image,
+  Alert,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import RNPickerSelect from "react-native-picker-select";
@@ -44,18 +45,21 @@ const OrganizationPostScreen = ({ route }) => {
   const [address, setAddress] = useState([]);
   const [coordinate, setCoordinate] = useState([]);
 
+  // set lại address khi có tham số route.params
   useEffect(() => {
     if (route.params?.address) {
       setAddress(route.params.address);
     }
   }, [route.params?.address]);
 
+  // set lại coordinate khi có tham số route.params
   useEffect(() => {
     if (route.params?.coordinate) {
       setCoordinate(route.params.coordinate);
     }
   }, [route.params?.coordinate]);
 
+  // hàm cho phép upload ảnh
   const onUploadImage = async () => {
     let permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -73,6 +77,7 @@ const OrganizationPostScreen = ({ route }) => {
     setArrayPicture([...arrayPicture, pickerResult.uri]);
   };
 
+  // mỗi khi picture thay đổi sẽ cập nhật lại ảnh bị null
   useEffect(() => {
     if (
       arrayPicture[arrayPicture.length - 1] == null ||
@@ -81,7 +86,10 @@ const OrganizationPostScreen = ({ route }) => {
       arrayPicture.pop();
     }
   }, [arrayPicture.length]);
+
+  // hàm xử lý khi bấm nút đăng
   const onSendOrganizationPost = async (data) => {
+    // kiểm tra bắt người dùng nhập đầy đủ
     if (category == "") {
       setErrMessage("Chưa chọn Danh mục");
       return;
@@ -96,6 +104,7 @@ const OrganizationPostScreen = ({ route }) => {
       return;
     }
 
+    // lấy ra text địa chỉ để lưu vào DB
     const textAddress =
       (address.streetNumber !== null ? address.streetNumber + ", " : "") +
       (address.street !== null ? address.street + ", " : "") +
@@ -104,6 +113,7 @@ const OrganizationPostScreen = ({ route }) => {
       (address.subregion !== null ? address.subregion + ", " : "") +
       (address.region !== null ? address.region : "");
 
+    // tạo formData để upload ảnh lên DB
     const formData = new FormData();
     //mảng chưa tên ảnh
     const arrayFilename = [];
@@ -132,6 +142,7 @@ const OrganizationPostScreen = ({ route }) => {
       console.log(error.message);
     }
 
+    // Các thuộc tính cần thiết của một tin đăng
     let postOrganizationPost = {
       userId: state._id,
       coordinates: [coordinate.longitude, coordinate.latitude],
@@ -145,6 +156,8 @@ const OrganizationPostScreen = ({ route }) => {
       address: textAddress,
       phonenumber: data.phonenumber,
     };
+
+    //fetch post tin đăng
     try {
       const postOrgan = await fetch(`${baseURL}/postUser`, {
         method: "POST",
@@ -158,9 +171,33 @@ const OrganizationPostScreen = ({ route }) => {
       console.log(err);
     }
 
-    navigation.navigate("ManagePost");
+    const notify={
+      userId: state._id,
+      title: "VUI LÒNG CHỜ CHO TIN CỦA BẠN ĐƯỢC DUYỆT !",
+      text: "Có thể mất vài tiếng để tin được duyệt.",
+    }
+    createNotify(notify);
+    Alert.alert("TIN ĐANG CHỜ DUYỆT !","Hãy chờ thông báo mới nhất",[
+      {text:"OK", onPress:()=>navigation.navigate("Main")}
+    ]);
   };
 
+  //tạo thông báo
+  const createNotify = async(notify)=>{
+    try {
+      const response = await fetch(`${baseURL}/notify`,{
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(notify),
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // nút chuyển qua trang location nhập vị trí
   const onChangeScreen = () => {
     const req = { action: "fill", name:"OrganizationPost"};
     navigation.navigate("Location", req);

@@ -36,12 +36,14 @@ const UpdateInforScreen = ({ route }) => {
   const navigation = useNavigation();
 
   const [date, setDate] = useState(new Date().getDate()+"/"+(new Date().getMonth()+1)+"/"+new Date().getFullYear());
+  const [textDate, setTextDate] = useState(route.params.dayOfBirth)
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
 
     let tempDate = new Date(currentDate);
     let fDate = tempDate.getDate()+"/"+(tempDate.getMonth()+1) + "/" + tempDate.getFullYear();
     setDate(fDate);
+    setTextDate(fDate);
   };
 
   const showMode = (currentMode) => {
@@ -58,14 +60,14 @@ const UpdateInforScreen = ({ route }) => {
   };
 
   useEffect(() => {
-    console.log(date);
-  }, []);
+    console.log(date)
+  }, [date]);
 
   const onSendUpdateInfor = async(data) => {
     const editUser = {
       userId: route.params._id,
       fullname: data.fullname,
-      dayOfBirth: date,
+      dayOfBirth: textDate,
       from: data.from,
       phone: data.phone
     }
@@ -121,8 +123,8 @@ const UpdateInforScreen = ({ route }) => {
               <Ionicons name="calendar-outline" size={30} />
             </View>
             <TextInput
-              value={date}
-              onChangeText={setDate}
+              value={textDate}
+              onChangeText={setTextDate}
               placeholder="Ngày sinh"
               style={styles.input}
               editable={false}

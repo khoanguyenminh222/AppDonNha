@@ -81,7 +81,22 @@ const AcceptBtn = ()=>{
   ]);
 }
 
-const RejectBtn = ()=>{}
+const RejectBtn = ()=>{
+  const editPost={
+    admin : state._id,
+    isWaiting: false,
+    isCancel: true,
+  }
+  const notify={
+    userId: user._id,
+    title: "TIN CỦA BẠN KHÔNG ĐƯỢC CHẤP NHẬN",
+    text: "Có thể tin chưa đầy đủ thông tin",
+  }
+  Alert.alert("Thông báo!","Xác nhận duyệt tin đăng người dùng này",[
+    {text:"Cancel", onPress:()=>console.log("alert closed")},
+    {text:"OK", onPress:()=>completeProcess(editPost,notify)}
+  ]);
+}
 
 const completeProcess = (editPost,notify)=>{
   updatePost(editPost);

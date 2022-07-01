@@ -104,6 +104,11 @@ const AboutScreen = () => {
     navigation.navigate("UpdateInfor", state);
   }
 
+  const handleLogout = () => {
+    setState([]);
+    navigation.navigate("SignIn")
+  }
+
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Thông tin"/>
@@ -211,6 +216,7 @@ const AboutScreen = () => {
             logo="log-out-outline"
             bgColor={COLORS.red}
             fgColor={COLORS.white}
+            onPress={handleLogout}
           />
         </View>
       </ScrollView>

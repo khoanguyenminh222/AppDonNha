@@ -34,9 +34,9 @@ const ManagePostScreen = () => {
   useEffect(()=>{
     const fetchPosts = async()=>{
       const res = await fetch(`${baseURL}/postUser/${state._id}`)
-      res.json()
-      .then(p=>{
-        setPosts(p);
+      .then(res=>res.json())
+      .then(resJson=>{
+        setPosts(resJson);
       })
     };
     fetchPosts();

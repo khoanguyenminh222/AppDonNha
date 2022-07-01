@@ -65,7 +65,7 @@ router.get("/:id/getPostWaiting", async (req, res) => {
 });
 
 //xem tin của người dùng
-router.put("/:userId", async (req, res) => {
+router.get("/:userId", async (req, res) => {
   try {
     const posts = await PostUser.find(
       {userId: req.params.userId}

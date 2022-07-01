@@ -23,68 +23,72 @@ import { COLORS } from "../Colors";
 import AuthContext from "../context/AuthContext";
 import Item from "../components/Item";
 
-
 const ManagePostScreen = () => {
-
   //lấy ra người dùng hiện tại
   const [state, setState] = useContext(AuthContext);
 
   const [posts, setPosts] = useState([]);
 
-  useEffect(()=>{
-    const fetchPosts = async()=>{
+  useEffect(() => {
+    const fetchPosts = async () => {
       const res = await fetch(`${baseURL}/postUser/${state._id}`)
-      .then(res=>res.json())
-      .then(resJson=>{
-        setPosts(resJson);
-      })
+        .then((res) => res.json())
+        .then((resJson) => {
+          setPosts(resJson);
+        });
     };
     fetchPosts();
     console.log(posts);
-  },[])
+  }, []);
 
   const FirstRoute = () => (
-    <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }} >
-      {posts && posts.map((post)=>(
-            post.isWaiting==false && post.isCancel==false ? 
-            <Item key={post._id} post={post}/>
-            :
-            undefined
-          ))}
-    </View>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }}>
+        {posts &&
+          posts.map((post) =>
+            post.isWaiting == false && post.isCancel == false ? (
+              <Item key={post._id} post={post} />
+            ) : undefined
+          )}
+      </View>
+    </ScrollView>
   );
 
   const SecondRoute = () => (
-    <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }} >
-      {posts && posts.map((post)=>(
-            post.isCancel==true ? 
-            <Item key={post._id} post={post}/>
-            :
-            undefined
-          ))}
-    </View>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }}>
+        {posts &&
+          posts.map((post) =>
+            post.isCancel == true ? (
+              <Item key={post._id} post={post} />
+            ) : undefined
+          )}
+      </View>
+    </ScrollView>
   );
   const ThirdRoute = () => (
-    <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }} >
-      {posts && posts.map((post)=>(
-            post.isWaiting==true && post.isCancel==false ? 
-            <Item key={post._id} post={post}/>
-            :
-            undefined
-          ))}
-    </View>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }}>
+        {posts &&
+          posts.map((post) =>
+            post.isWaiting == true && post.isCancel == false ? (
+              <Item key={post._id} post={post} />
+            ) : undefined
+          )}
+      </View>
+    </ScrollView>
   );
 
   const renderScene = SceneMap({
     first: FirstRoute,
     second: SecondRoute,
-    third: ThirdRoute
+    third: ThirdRoute,
   });
 
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: "first", title: "Tin đang hiển thị"},
+    { key: "first", title: "Tin đang hiển thị" },
     { key: "second", title: "Tin bị từ chối" },
     { key: "third", title: "Tin chờ xác nhận" },
   ]);
@@ -92,26 +96,22 @@ const ManagePostScreen = () => {
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Quản lý tin đăng" />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.topbar}>
-          <TabView
-            
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            initialLayout={{ width: layout.width }}
-            renderTabBar={props=>
-            <TabBar {...props}
-              renderLabel={({route, color}) => (
-                <Text style={{ color: 'white', margin: 8, textAlign:'center'}}>
-                  {route.title}
-                </Text>
-              )}
-            />}
-            
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: layout.width }}
+        renderTabBar={(props) => (
+          <TabBar
+            {...props}
+            renderLabel={({ route, color }) => (
+              <Text style={{ color: "white", margin: 8, textAlign: "center" }}>
+                {route.title}
+              </Text>
+            )}
           />
-        </View>
-      </ScrollView>
+        )}
+      />
     </SafeAreaView>
   );
 };
@@ -121,6 +121,5 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.backgroundColor,
     padding: 10,
   },
-  
-})
+});
 export default ManagePostScreen;

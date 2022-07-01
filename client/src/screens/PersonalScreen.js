@@ -26,10 +26,12 @@ import { COLORS } from "../Colors";
 import CustomInput from "../components/CustomInput";
 import { useForm } from "react-hook-form";
 import ReviewScreen from "./ReviewScreen";
+import Item from "../components/Item";
 const PersonalScreen = ({ route }) => {
-  const { width } = useWindowDimensions();
+  const { width, height} = useWindowDimensions();
   const navigation = useNavigation();
   const [user, setUser] = useState([]);
+  const [posts , setPosts] = useState([]);
   const { control, handleSubmit } = useForm();
   const getFullnameById = async () => {
     try {
@@ -45,6 +47,22 @@ const PersonalScreen = ({ route }) => {
   useEffect(() => {
     getFullnameById();
   }, []);
+  useEffect(() => {
+  const Posting = async()=>{
+    try {
+      const res = await fetch(`${baseURL}/postUser/${route.params._id}`)
+      .then((res) => res.json())
+      .then((resJson) =>{
+        setPosts(resJson);
+      })    
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+  Posting();
+  }, []);
+console.log(user)
   const sendOnReviewScreen = ()=>{
     navigation.navigate("Review")
   };
@@ -65,9 +83,18 @@ const PersonalScreen = ({ route }) => {
               style={styles.logo}
               resizeMode="cover"
             />
-            <Text style={{ paddingLeft: 10, fontSize: 20, fontWeight: "bold" }}>
-              {route.params.fullname}
-            </Text>
+            <View style={styles.button}>
+              <Text style={{ paddingLeft: 10, fontSize: height * 0.03, fontWeight: "bold" , paddingBottom: 5}}>
+                {route.params.fullname}
+              </Text>
+              <CustomButton
+                text="ĐÁNH GIÁ"
+                bgColor={COLORS.green}
+                fgColor={COLORS.white}
+                size= {'70%'}
+                onPress={sendOnReviewScreen}
+             />
+            </View>
           </View>
 
           <CustomInput
@@ -108,6 +135,9 @@ const PersonalScreen = ({ route }) => {
             defaultValue={route.params.city}
             logo="location-outline"
             editable={false}
+            numberOfLines={3}
+            underlineColorAndroid="transparent"
+            multiline={true}
             color="black"
           />
           <CustomInput
@@ -121,14 +151,12 @@ const PersonalScreen = ({ route }) => {
         </View>
         <View style={styles.text}>
           <Text>Tin đang đăng</Text>
-        </View>
-        <View style={styles.container}>
-          <CustomButton
-            text="ĐÁNH GIÁ"
-            bgColor={COLORS.blue}
-            fgColor={COLORS.white}
-            onPress={sendOnReviewScreen}
-          />
+          {
+            posts && posts.map((post) => 
+            post.isWaiting == false && post.isCancel == false ?(
+              <Item key = {post.id} post={post}/>
+            ): undefined
+            )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -171,6 +199,11 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 10,
   },
+  button:{
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  }
 });
 
 export default PersonalScreen;

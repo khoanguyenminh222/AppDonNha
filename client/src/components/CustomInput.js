@@ -76,10 +76,12 @@ const styles = StyleSheet.create({
   wrapperLogo: {
     paddingHorizontal: 5,
     borderRightWidth: 1,
+    justifyContent: "center",
   },
   input: {
     paddingLeft: 10,
     width: '100%',
+    flex: 1
   },
 });
 

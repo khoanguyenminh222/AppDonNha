@@ -93,7 +93,7 @@ const UpdateInforScreen = ({ route }) => {
             control={control}
             name="email"
             rules={{
-              required: "Email không được để trống"
+              required: "Email không được để trống",
             }}
             editable={false}
             defaultValue={route.params.email}
@@ -117,8 +117,11 @@ const UpdateInforScreen = ({ route }) => {
             }}
             logo="person-outline"
           />
-          
-          <TouchableOpacity style={styles.containerDate} onPress={showDatepicker}>
+
+          <TouchableOpacity
+            style={styles.containerDate}
+            onPress={showDatepicker}
+          >
             <View style={styles.wrapperLogo}>
               <Ionicons name="calendar-outline" size={30} />
             </View>
@@ -130,8 +133,7 @@ const UpdateInforScreen = ({ route }) => {
               editable={false}
             />
           </TouchableOpacity>
-          
-          
+
           <CustomInput
             control={control}
             name="from"
@@ -164,14 +166,15 @@ const UpdateInforScreen = ({ route }) => {
             }}
             logo="call-outline"
           />
-         
-        </View>
-        
-      </ScrollView>
       <CustomButton
-            text="HOÀN TẤT"
-            onPress={handleSubmit(onSendUpdateInfor)}
-          />
+        text="ĐÁNH GIÁ"
+        bgColor={COLORS.blue}
+        fgColor={COLORS.white}
+        onPress={handleSubmit(onSendUpdateInfor)}
+      />
+        </View>
+      </ScrollView>
+    
     </SafeAreaView>
   );
 };

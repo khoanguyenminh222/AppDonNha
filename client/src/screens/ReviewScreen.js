@@ -79,17 +79,17 @@ const ReviewScreen = () => {
             />
           </View>
         </View>
-        <View style={styles.text}>
-          <Text>Các đánh giá khác</Text>
-        </View>
         <View style={styles.container}>
           <CustomButton
             text="HOÀN TẤT"
             bgColor={COLORS.blue}
             fgColor={COLORS.white}
-           
           />
         </View>
+        <View style={styles.text}>
+          <Text>Các đánh giá khác</Text>
+        </View>
+       
       </ScrollView>
     </SafeAreaView>
   );

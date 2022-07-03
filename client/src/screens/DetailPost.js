@@ -173,20 +173,6 @@ const DetailPost = ({ route }) => {
             {route.params.title}
           </Text>
 
-          {/* phần tổ chức */}
-          {route.params.nameOrganization ? (
-            <View style={[styles.detail]}>
-              <Ionicons
-                name="home-sharp"
-                size={height * 0.06}
-                color={"brown"}
-              ></Ionicons>
-              <Text style={{ paddingTop: 20, fontSize: height * 0.03, paddingHorizontal: 5, textAlign: "center" }}>
-                {route.params.nameOrganization}
-              </Text>
-            </View>
-          ) : undefined}
-
             {/* phần vị trí */}
           <TouchableOpacity
             style={{
@@ -248,13 +234,15 @@ const DetailPost = ({ route }) => {
               </View>
               <View style={{flex:1, flexDirection:'row' ,justifyContent: 'space-around', alignItems: 'center'}}>
                 <View style={{justifyContent: 'center', alignItems:'center'}}>
-                  <Text style={{color:COLORS.gray}}>Cá nhân</Text>
-                  <Ionicons name="person-circle-outline" size={height*0.03}/>
+                  {route.params.nameOrganization ? (
+                    <><Text style={{ color: COLORS.gray }}>Tổ chức</Text><Ionicons name="briefcase-outline" size={height * 0.03} /></>
+                  ): <><Text style={{ color: COLORS.gray }}>Cá nhân</Text><Ionicons name="person-circle-outline" size={height * 0.03} /></>}
+                  
                 </View>
                 <View style={{height:'80%', width:1, backgroundColor:COLORS.gray}}></View>
                 <View style={{justifyContent: 'center', alignItems:'center'}}>
                   <Text style={{color:COLORS.gray}}>Đánh giá</Text>
-                  <Ionicons name="star-outline" size={height*0.03}/>
+                  <Text style={{color:COLORS.red}}>2.9</Text>
                 </View>
               </View>
               
@@ -266,28 +254,42 @@ const DetailPost = ({ route }) => {
               {route.params.desc}
             </Text>
           </View>
+
+          {route.params.nameOrganization ? (
+            <View style={[styles.detail]}>
+              <Ionicons
+                name="briefcase-outline"
+                size={height * 0.03}
+                color={COLORS.yellow}
+              ></Ionicons>
+              <Text style={[styles.textdetail, {fontWeight: 'bold'}]}>
+                {route.params.nameOrganization}
+              </Text>
+            </View>
+          ) : undefined}
+
           <View style={[styles.detail]}>
             <Ionicons
               name="navigate-outline"
               size={height * 0.03}
-              color={"brown"}
+              color={COLORS.yellow}
             ></Ionicons>
             <Text style={styles.textdetail}>{route.params.address}</Text>
           </View>
           <View style={[styles.detail]}>
             <Ionicons
-              name="grid"
+              name="grid-outline"
               size={height * 0.03}
-              color={"brown"}
+              color={COLORS.yellow}
             ></Ionicons>
             <Text style={styles.textdetail}>{route.params.category}</Text>
           </View>
           {route.params.emailOrgazization ? (
             <View style={[styles.detail]}>
               <Ionicons
-                name="mail"
+                name="mail-outline"
                 size={height * 0.03}
-                color={"brown"}
+                color={COLORS.yellow}
               ></Ionicons>
               <Text style={styles.textdetail}>
                 {route.params.emailOrgazization}
@@ -297,9 +299,9 @@ const DetailPost = ({ route }) => {
 
           <View style={[styles.detail]}>
             <Ionicons
-              name="call"
+              name="call-outline"
               size={height * 0.03}
-              color={"brown"}
+              color={COLORS.yellow}
             ></Ionicons>
             <Text style={styles.textdetail}>{route.params.phonenumber}</Text>
           </View>
@@ -308,7 +310,7 @@ const DetailPost = ({ route }) => {
               <Ionicons
                 name="globe"
                 size={height * 0.03}
-                color={"brown"}
+                color={COLORS.yellow}
               ></Ionicons>
               <Text style={styles.textdetail}>{route.params.website}</Text>
             </View>
@@ -340,6 +342,7 @@ const DetailPost = ({ route }) => {
 
 const styles = StyleSheet.create({
   container: {
+    paddingHorizontal: 5,
     flex: 1,
     marginHorizontal: 10,
     marginBottom: 20,
@@ -362,6 +365,7 @@ const styles = StyleSheet.create({
   },
   address: {
     paddingVertical: 10,
+    paddingHorizontal: 10,
   },
   info: {
     paddingHorizontal:5,
@@ -385,8 +389,8 @@ const styles = StyleSheet.create({
   detail: {
     alignItems: "center",
     flexDirection: "row",
-    paddingHorizontal: 20,
     paddingVertical: 10,
+    paddingHorizontal: 5,
   },
   textdetail: {
     paddingHorizontal: 5,

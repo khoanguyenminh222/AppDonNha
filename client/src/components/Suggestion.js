@@ -27,6 +27,7 @@ const Suggestion = ({content, source}) => {
 
 const styles = StyleSheet.create({
   container: {
+    marginRight: 10,
     paddingHorizontal: 10,
     flexDirection: "row",
     justifyContent: "space-around",

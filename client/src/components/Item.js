@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { COLORS } from '../Colors';
 import PublicFolder from '../api/PublicFolder';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from "@expo/vector-icons";
 
 const Item = ({post}) => {
     const { height } = useWindowDimensions();
@@ -25,6 +26,10 @@ const Item = ({post}) => {
           <Text style={[styles.title,{fontSize:height*0.02}]}>{post.title}</Text>
           <Text style={[styles.content,{fontSize:height*0.02}]}>{post.category}</Text>
           <Text style={[styles.content,{fontSize:height*0.02}]}>{post.address}</Text>
+          {post.nameOrganization ? (
+            <Ionicons style={styles.icon} name="briefcase-outline" size={height * 0.03} color={COLORS.primary}></Ionicons>
+          ):<Ionicons style={styles.icon} name="person-circle-outline" size={height * 0.03} color={COLORS.yellow}></Ionicons>}
+          
         </View>
         
       </View>
@@ -48,6 +53,7 @@ const styles = StyleSheet.create({
     flex: 2,
     marginLeft: 20,
     justifyContent: 'center',
+    position: 'relative',
   },
   logo: {
     flex: 1,
@@ -64,6 +70,11 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: COLORS.gray,
   },
+  icon:{
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+  }
 })
 
 export default Item

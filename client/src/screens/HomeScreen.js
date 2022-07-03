@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
   FlatList,
+  TouchableOpacity,
 } from "react-native";
 import React, { useEffect, useState, useContext, useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -34,6 +35,7 @@ import imageNhaO from "../../assets/images/nha-o.jpg";
 import imageVanPhong from "../../assets/images/van-phong.jpg";
 import PublicFolder from "../api/PublicFolder";
 import { set } from "react-hook-form";
+import { COLORS } from "../Colors";
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -122,7 +124,7 @@ const HomeScreen = () => {
       <Text style={[styles.txtheader, { fontSize: height * 0.03 }]}>
         Vị trí
       </Text>
-      <ScrollView style={styles.containSuggestion} horizontal={true}>
+      <ScrollView style={styles.containSuggestion} horizontal={true} showsHorizontalScrollIndicator={false}>
         <Suggestion content="TP.Hồ Chí Minh" source={imageHCM} />
         <Suggestion content="TP.Đà nẵng" source={imageDN} />
         <Suggestion content="Hà Nội" source={imageHN} />
@@ -144,6 +146,17 @@ const HomeScreen = () => {
       <Text style={[styles.txtheader, { fontSize: height * 0.03 }]}>
         Tin mới nhất
       </Text>
+      <ScrollView style={styles.sugesstion} horizontal={true} showsHorizontalScrollIndicator={false}>
+        <TouchableOpacity style={styles.btnSugession}>
+          <Text style={styles.txtSugession}>Cá nhân tìm kiếm dịch vụ</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btnSugession}>
+          <Text style={styles.txtSugession}>Tổ chức cung cấp dịch vụ</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btnSugession}>
+          <Text style={styles.txtSugession}>Tổ chức đánh giá cao</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 
@@ -224,6 +237,21 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 100,
     overflow: "hidden",
+  },
+  sugesstion:{
+    flexDirection: "row",
+    paddingHorizontal:20,
+  },
+  btnSugession:{
+    borderColor: COLORS.yellow,
+    borderWidth: 1,
+    borderRadius: 50,
+    marginRight: 30,
+    paddingHorizontal: 10,
+    paddingVertical: 5
+  },
+  txtSugession:{
+
   },
 });
 

@@ -151,7 +151,7 @@ const OrganizationPostScreen = ({ route }) => {
       picture: arrayFilename,
       title: data.title,
       desc: data.desciption,
-      emailOrgazization: data.emailOrgazization,
+      emailOrgazization: data.emailOrganization,
       website: data.website,
       address: textAddress,
       phonenumber: data.phonenumber,
@@ -228,7 +228,7 @@ const OrganizationPostScreen = ({ route }) => {
             rules={{
               required: "Tên không được để trống",
               maxLength: { value: 70, message: "Tiêu đề tối đa 70 ký tự" },
-              minLength: { value: 20, message: "Tiêu đề tối thiểu 20 ký tự" },
+              minLength: { value: 5, message: "Tiêu đề tối thiểu 5 ký tự" },
             }}
           />
           <Text style={styles.title}>EMAIL NHÀ CUNG CẤP DỊCH VỤ</Text>
@@ -272,7 +272,7 @@ const OrganizationPostScreen = ({ route }) => {
             rules={{
               required: "Tiêu đề không được để trống",
               maxLength: { value: 70, message: "Tiêu đề tối đa 70 ký tự" },
-              minLength: { value: 20, message: "Tiêu đề tối thiểu 20 ký tự" },
+              minLength: { value: 10, message: "Tiêu đề tối thiểu 10 ký tự" },
             }}
           />
           <View style={styles.textAreaContainer}>
@@ -286,7 +286,7 @@ const OrganizationPostScreen = ({ route }) => {
               rules={{
                 required: "Mô tả chi tiết không được để trống",
                 maxLength: { value: 200, message: "Mô tả tối đa 200 ký tự" },
-                minLength: { value: 20, message: "Mô tả tối thiểu 20 ký tự" },
+                minLength: { value: 10, message: "Mô tả tối thiểu 10 ký tự" },
               }}
             />
           </View>

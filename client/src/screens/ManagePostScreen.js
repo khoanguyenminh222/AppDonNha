@@ -8,8 +8,11 @@ import {
   StyleSheet,
   useWindowDimensions,
   TextInput,
+  FlatList,
+  RefreshControl,
+  ActivityIndicator,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import GlobalStyles from "../GlobalStyles";
 import Back from "../components/Back";
@@ -23,26 +26,44 @@ import { COLORS } from "../Colors";
 import AuthContext from "../context/AuthContext";
 import Item from "../components/Item";
 
+
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
+
 const ManagePostScreen = () => {
   //lấy ra người dùng hiện tại
   const [state, setState] = useContext(AuthContext);
 
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const res = await fetch(`${baseURL}/postUser/${state._id}`)
-        .then((res) => res.json())
-        .then((resJson) => {
-          setPosts(resJson);
-        });
-    };
+  const fetchPosts = async () => {
+    await fetch(`${baseURL}/postUser/${state._id}`)
+      .then((res) => res.json())
+      .then((resJson) => {
+        setPosts(resJson)
+      });
+  };
+
+  //tạo biến refresh trang
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
     fetchPosts();
-    console.log(posts);
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
   }, []);
 
+  useEffect(()=>{
+    fetchPosts();
+  },[])
+
   const FirstRoute = () => (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }}>
         {posts &&
           posts.map((post) =>
@@ -52,10 +73,15 @@ const ManagePostScreen = () => {
           )}
       </View>
     </ScrollView>
+    
   );
 
   const SecondRoute = () => (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }}>
         {posts &&
           posts.map((post) =>
@@ -67,7 +93,11 @@ const ManagePostScreen = () => {
     </ScrollView>
   );
   const ThirdRoute = () => (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={{ flex: 1, backgroundColor: COLORS.backgroundColor }}>
         {posts &&
           posts.map((post) =>

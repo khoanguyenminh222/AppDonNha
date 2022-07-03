@@ -52,6 +52,7 @@ const HomeScreen = () => {
   const [pageCurrent, setPageCurrent] = useState(1);
 
   const [isLoading, setIsLoading] = useState(false);
+  const [lastItem, setLastItem] = useState(0);
 
   // lấy ra người dùng hiện tại
   const fetchData = async () => {
@@ -72,9 +73,11 @@ const HomeScreen = () => {
         if (pageCurrent == 1) {
           setPosts(resJson);
           setIsLoading(false);
+          setLastItem(posts.length)
         } else {
           setPosts([...posts, ...resJson]);
           setIsLoading(false);
+          setLastItem(posts.length)
         }
       });
   };
@@ -94,7 +97,6 @@ const HomeScreen = () => {
 
   const onRefresh = useCallback(() => {
     setPageCurrent(1);
-    console.log(pageCurrent);
     fetchData();
     fetchPost();
     setRefreshing(true);
@@ -102,9 +104,8 @@ const HomeScreen = () => {
   }, []);
 
   useEffect(() => {
-    console.log("useEffect", pageCurrent);
-    fetchPost();
-    setIsLoading(false);
+    fetchPost()
+    
   }, [pageCurrent]);
 
   const renderHeader = () => (
@@ -185,11 +186,14 @@ const HomeScreen = () => {
           ) : null
         }
         onEndReached={() => {
-          setIsLoading(true);
-          console.log("load more");
-          setTimeout(() => {
-            setPageCurrent(pageCurrent + 1);
-          }, 2000);
+          if(lastItem!==posts.length){
+            setIsLoading(true);
+            setTimeout(() => {
+              setPageCurrent(pageCurrent + 1);
+              
+            }, 2000);
+          }
+          
         }}
         onEndReachedThreshold={0.4}
       />

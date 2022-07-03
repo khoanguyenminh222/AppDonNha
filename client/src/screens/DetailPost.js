@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  Button,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import GlobalStyles from "../GlobalStyles";
@@ -141,6 +142,8 @@ const DetailPost = ({ route }) => {
       <Back textCenter="Chi tiết" />
 
       <ScrollView showsVerticalScrollIndicator={false}>
+
+        {/* hình ảnh */}
         <ScrollView
           style={styles.containBanner}
           horizontal={true}
@@ -156,15 +159,21 @@ const DetailPost = ({ route }) => {
             </View>
           ))}
         </ScrollView>
+
+        
         <View style={styles.container}>
+
+          {/* phần tiêu đề */}
           <Text
             style={[
               styles.title,
-              { textTransform: "uppercase", fontSize: height * 0.035 },
+              { textTransform: "uppercase", fontSize: height * 0.03 },
             ]}
           >
             {route.params.title}
           </Text>
+
+          {/* phần tổ chức */}
           {route.params.nameOrganization ? (
             <View style={[styles.detail]}>
               <Ionicons
@@ -178,11 +187,13 @@ const DetailPost = ({ route }) => {
             </View>
           ) : undefined}
 
+            {/* phần vị trí */}
           <TouchableOpacity
             style={{
               flexDirection: "row",
               alignItems: "center",
-              paddingTop: 10,
+              borderBottomColor: "gray",
+              borderBottomWidth: StyleSheet.hairlineWidth,
             }}
             onPress={handleLocation}
           >
@@ -200,31 +211,55 @@ const DetailPost = ({ route }) => {
               {route.params.address}
             </Text>
           </TouchableOpacity>
+
+              {/* phần avatar */}
           <TouchableOpacity
             style={{
+              justifyContent: 'center',
+              alignItems: 'center',
               flexDirection: "row",
-              paddingBottom: 4,
-              borderBottomColor: "blue",
+              paddingVertical: 5,
+              borderBottomColor: "gray",
               borderBottomWidth: StyleSheet.hairlineWidth,
             }}
             onPress={onPress}
           >
-            <Avatar
-              size={"medium"}
-              rounded
-              source={{
-                uri:
-                  user.profilePicture === ""
-                    ? PublicFolder + user.profilePicture
-                    : PublicFolder + "persons/noAvatar.png",
-              }}
-            ></Avatar>
-            <Text style={[styles.info, { fontSize: height * 0.027 }]}>
-              {user.fullname}
-            </Text>
-            <TouchableOpacity style={styles.button} onPress={onPress}>
-              <Text style={styles.text}>Xem trang</Text>
-            </TouchableOpacity>
+            <View style={{flex: 1}}>
+              <View style={{flex: 1 ,flexDirection:'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10}}>
+                <View style={{flexDirection:'row', alignItems: 'center'}}>
+                  <Avatar
+                    size={"small"}
+                    rounded
+                    source={{
+                      uri:
+                        user.profilePicture === ""
+                          ? PublicFolder + user.profilePicture
+                          : PublicFolder + "persons/noAvatar.png",
+                    }}
+                  ></Avatar>
+                  <Text style={[styles.info, { fontSize: height * 0.02 }]}>
+                    {user.fullname}
+                  </Text>
+                </View>
+                
+                <TouchableOpacity style={styles.button} onPress={onPress}>
+                  <Text style={styles.text}>Xem trang</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={{flex:1, flexDirection:'row' ,justifyContent: 'space-around', alignItems: 'center'}}>
+                <View style={{justifyContent: 'center', alignItems:'center'}}>
+                  <Text style={{color:COLORS.gray}}>Cá nhân</Text>
+                  <Ionicons name="person-circle-outline" size={height*0.03}/>
+                </View>
+                <View style={{height:'80%', width:1, backgroundColor:COLORS.gray}}></View>
+                <View style={{justifyContent: 'center', alignItems:'center'}}>
+                  <Text style={{color:COLORS.gray}}>Đánh giá</Text>
+                  <Ionicons name="star-outline" size={height*0.03}/>
+                </View>
+              </View>
+              
+            </View>
+            
           </TouchableOpacity>
           <View>
             <Text style={[styles.detail, { fontSize: height * 0.02 }]}>
@@ -321,42 +356,31 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   title: {
-    paddingTop: 10,
+    paddingVertical: 5,
     paddingHorizontal: 5,
-    borderBottomColor: "blue",
-    borderBottomWidth: StyleSheet.hairlineWidth,
     fontWeight: "bold",
   },
   address: {
-    paddingTop: 10,
+    paddingVertical: 10,
   },
   info: {
-    paddingTop: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal:5,
+    textAlign: 'center',
+    fontWeight: 'bold'
   },
   img: {
     width: "100%",
     height: "100%",
   },
   button: {
-    paddingTop: 20,
-    position: "absolute",
-    left: 270,
-    bottom: 5,
-    display: "flex",
+    borderColor: COLORS.yellow,
+    borderWidth: 1,
+    borderRadius: 50,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
   },
   text: {
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 20,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: "green",
-    color: "white",
-    lineHeight: 21,
-    fontWeight: "bold",
-    letterSpacing: 0.25,
+    color: COLORS.yellow,
   },
   detail: {
     alignItems: "center",

@@ -36,7 +36,7 @@ const DetailPost = ({ route }) => {
   // fetch data lấy dữ liệu người dùng set lại user
   const getFullnameById = async () => {
     try {
-      const response = await fetch(baseURL + `/user/${route.params.userId}`)
+      const response = await fetch(`${baseURL}/user/${route.params.userId}`)
         .then((user) => user.json())
         .then((userJson) => {
           setUser(userJson);
@@ -45,7 +45,6 @@ const DetailPost = ({ route }) => {
       console.log(error);
     }
   };
-  console.log(route.params);
   //gọi hàm khi load lần đầu load trang lấy ra người dùng đổ dữ liệu vào view
   useEffect(() => {
     getFullnameById();

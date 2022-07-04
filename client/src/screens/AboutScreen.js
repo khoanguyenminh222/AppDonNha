@@ -108,6 +108,7 @@ const AboutScreen = () => {
     setState([]);
     navigation.navigate("SignIn")
   }
+  
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -120,7 +121,7 @@ const AboutScreen = () => {
           <View style={styles.headerWrapper}>
             <Image
               source={{
-                uri: state.profilePicture === ""
+                uri: state.profilePicture !== ""
                   ? PublicFolder + state.profilePicture
                   : PublicFolder + "persons/noAvatar.png",
               }}

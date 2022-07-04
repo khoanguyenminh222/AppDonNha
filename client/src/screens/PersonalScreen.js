@@ -28,14 +28,14 @@ import { useForm } from "react-hook-form";
 import ReviewScreen from "./ReviewScreen";
 import Item from "../components/Item";
 const PersonalScreen = ({ route }) => {
-  const { width, height} = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
   const [user, setUser] = useState([]);
-  const [posts , setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const { control, handleSubmit } = useForm();
   const getFullnameById = async () => {
     try {
-      const response = await fetch(`$baseURL + /user/${route.params._id}`)
+      const response = await fetch(`${baseURL} + /user/${route.params._id}`)
         .then((user) => user.json())
         .then((userJson) => {
           setUser(userJson);
@@ -48,23 +48,21 @@ const PersonalScreen = ({ route }) => {
     getFullnameById();
   }, []);
   useEffect(() => {
-  const Posting = async()=>{
-    try {
-      const res = await fetch(`${baseURL}/postUser/${route.params._id}`)
-      .then((res) => res.json())
-      .then((resJson) =>{
-        setPosts(resJson);
-      })    
-    }
-    catch(error){
-      console.log(error)
-    }
-  }
-  Posting();
+    const Posting = async () => {
+      try {
+        const res = await fetch(`${baseURL}/postUser/${route.params._id}`)
+          .then((res) => res.json())
+          .then((resJson) => {
+            setPosts(resJson);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    Posting();
   }, []);
-console.log(user)
-  const sendOnReviewScreen = ()=>{
-    navigation.navigate("Review")
+  const sendOnReviewScreen = () => {
+    navigation.navigate("Review", route.params);
   };
 
   return (
@@ -76,24 +74,31 @@ console.log(user)
             <Image
               source={{
                 uri:
-                  user.profilePicture === ""
-                    ? PublicFolder + user.profilePicture
+                  route.params.profilePicture === ""
+                    ? PublicFolder + route.params.profilePicture
                     : PublicFolder + "persons/noAvatar.png",
               }}
               style={styles.logo}
               resizeMode="cover"
             />
             <View style={styles.button}>
-              <Text style={{ paddingLeft: 10, fontSize: height * 0.03, fontWeight: "bold" , paddingBottom: 5}}>
+              <Text
+                style={{
+                  paddingLeft: 10,
+                  fontSize: height * 0.03,
+                  fontWeight: "bold",
+                  paddingBottom: 5,
+                }}
+              >
                 {route.params.fullname}
               </Text>
               <CustomButton
                 text="ĐÁNH GIÁ"
                 bgColor={COLORS.green}
                 fgColor={COLORS.white}
-                size= {'70%'}
+                size={"70%"}
                 onPress={sendOnReviewScreen}
-             />
+              />
             </View>
           </View>
 
@@ -151,11 +156,11 @@ console.log(user)
         </View>
         <View style={styles.text}>
           <Text>Tin đang đăng</Text>
-          {
-            posts && posts.map((post) => 
-            post.isWaiting == false && post.isCancel == false ?(
-              <Item key = {post.id} post={post}/>
-            ): undefined
+          {posts &&
+            posts.map((post) =>
+              post.isWaiting == false && post.isCancel == false ? (
+                <Item key={post.id} post={post} />
+              ) : undefined
             )}
         </View>
       </ScrollView>
@@ -199,11 +204,11 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 10,
   },
-  button:{
+  button: {
     flex: 1,
     justifyContent: "center",
-    alignItems: "center"
-  }
+    alignItems: "center",
+  },
 });
 
 export default PersonalScreen;

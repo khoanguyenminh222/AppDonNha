@@ -11,6 +11,7 @@ const userRoute = require("./routes/user");
 const verifyRoute = require("./routes/verify");
 const notifyRoute = require("./routes/notify");
 const postUserRoute = require("./routes/postUser");
+const reviewRoute = require("./routes/review");
 
 const router = express.Router();
 const path = require("path");
@@ -70,6 +71,7 @@ app.use("/api/user", userRoute);
 app.use("/api/verify", verifyRoute);
 app.use("/api/notify", notifyRoute);
 app.use("/api/postUser", postUserRoute)
+app.use("/api/review", reviewRoute);
 
 app.listen(3000, () => {
   console.log("Backend server is running!");

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   handleSubmit,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import GlobalStyles from "../GlobalStyles";
 import Back from "../components/Back";
 import Banner from "../components/Banner";
@@ -17,7 +17,6 @@ import { Avatar } from "react-native-elements";
 import { Ionicons } from "@expo/vector-icons";
 import PublicFolder from "../api/PublicFolder";
 import imageBanner1 from "../../assets/images/banner1.png";
-
 import baseURL from "../api/BaseURL";
 import CustomButton from "../components/CustomButton";
 import { stopLocationUpdatesAsync } from "expo-location";
@@ -25,8 +24,12 @@ import { useNavigation } from "@react-navigation/native";
 import { COLORS } from "../Colors";
 import CustomInput from "../components/CustomInput";
 import { useForm } from "react-hook-form";
-const ReviewScreen = () => {
+import AuthContext from "../context/AuthContext";
+import ReviewItem from "../components/ReviewItem";
+const ReviewScreen = ({ route }) => {
   const { control, handleSubmit } = useForm();
+  const [state, setState] = useContext(AuthContext);
+  const [review, setReview] = useState([]);
   const [defaultRating, setDefaultRating] = useState(2);
   const [maxRating, setmaxRating] = useState([1, 2, 3, 4, 5]);
   const starImgFilled =
@@ -34,14 +37,47 @@ const ReviewScreen = () => {
   const starImgCorner =
     "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
 
-  const CustomRatingBar = async () => {};
-
+  const Review = async (data) => {
+    let dataReview = {
+      userId: route.params._id, // ID người đánh giá
+      idReviewer: state._id, //ID của người được đánh giá
+      ratingStar: parseInt(defaultRating),
+      ratingText: data.reviewText,
+    };
+    try {
+      const response = await fetch(`${baseURL}/review`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataReview),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchReview = async () =>{
+    try {
+      const res = await fetch(`${baseURL}/review/${route.params._id}`)
+        .then((res) => res.json())
+        .then((resJson) => {
+          setReview(resJson);
+          console.log(resJson)
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchReview();
+  }, []);
+ 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Đánh giá" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          <Text style={{ fontSize: 32}}>ĐÁNH GIÁ NGƯỜI DÙNG</Text>
+          <Text style={{ fontSize: 32 }}>ĐÁNH GIÁ NGƯỜI DÙNG</Text>
           <View style={styles.customRatingBarStyle}>
             {maxRating.map((item, key) => {
               return (
@@ -66,7 +102,7 @@ const ReviewScreen = () => {
           <View style={styles.textAreaContainer}>
             <CustomInput
               control={control}
-              name="review"
+              name="reviewText"
               placehoder="Hãy chia sẻ những điều mà bạn thích."
               numberOfLines={20}
               multiline={true}
@@ -84,12 +120,18 @@ const ReviewScreen = () => {
             text="HOÀN TẤT"
             bgColor={COLORS.blue}
             fgColor={COLORS.white}
+            onPress={handleSubmit(Review)}
           />
         </View>
         <View style={styles.text}>
           <Text>Các đánh giá khác</Text>
-        </View>
-       
+          {review &&
+            review.map((r) =>
+              (
+                <ReviewItem key={r.id} r={r}/>
+              ) 
+            )}
+         </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -102,7 +144,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
-   
   },
   customRatingBarStyle: {
     justifyContent: "center",
@@ -123,7 +164,7 @@ const styles = StyleSheet.create({
   },
   text: {
     paddingLeft: 15,
-    fontSize: 16,
+    fontSize: 24,
     color: COLORS.gray,
     borderBottomColor: "gray",
     borderTopColor: "gray",

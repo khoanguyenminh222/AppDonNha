@@ -167,7 +167,7 @@ const UpdateInforScreen = ({ route }) => {
             logo="call-outline"
           />
       <CustomButton
-        text="ĐÁNH GIÁ"
+        text="HOÀN TẤT"
         bgColor={COLORS.blue}
         fgColor={COLORS.white}
         onPress={handleSubmit(onSendUpdateInfor)}

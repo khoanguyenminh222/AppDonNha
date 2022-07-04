@@ -115,12 +115,12 @@ const DetailUser = ({ route }) => {
             <InfoText name="Số điện thoại" data={user.phone} />
           </View>
 
-          {/* Giấy CCCD mặt sau */}
+          {/* Ảnh 3x4 */}
           <View style={styles.wrapper}>
             <Text style={styles.txtContent}>Hình 3*4 cm</Text>
             <View style={styles.coverImg}>
               <Image
-                source={{ uri: PublicFolder + user.crimCertificate }}
+                source={{ uri: PublicFolder + user.profilePicture }}
                 style={styles.img}
                 resizeMode="contain"
               ></Image>
@@ -132,7 +132,7 @@ const DetailUser = ({ route }) => {
             <Text style={styles.txtContent}>Mặt trước CMND/CCCD/HC</Text>
             <View style={styles.coverImg}>
               <Image
-                source={{ uri: PublicFolder + user.crimCertificate }}
+                source={{ uri: PublicFolder + user.idCardPicture[0] }}
                 style={styles.img}
                 resizeMode="contain"
               ></Image>
@@ -144,7 +144,7 @@ const DetailUser = ({ route }) => {
             <Text style={styles.txtContent}>Mặt sau CMND/CCCD/HC</Text>
             <View style={styles.coverImg}>
               <Image
-                source={{ uri: PublicFolder + user.crimCertificate }}
+                source={{ uri: PublicFolder + user.idCardPicture[1] }}
                 style={styles.img}
                 resizeMode="contain"
               ></Image>
@@ -208,12 +208,16 @@ const styles = StyleSheet.create({
     height: "100%",
     maxWidth: 500,
     height: 200,
-    marginHorizontal: 20,
-    marginBottom: 25,
   },
   wrapperBtn: {
     flexDirection: "row",
     justifyContent: "space-around",
+  },
+  coverImg: {
+    width: "100%",
+    maxWidth: 300,
+    justifyContent: 'center',
+    alignItems:"center",
   },
 });
 

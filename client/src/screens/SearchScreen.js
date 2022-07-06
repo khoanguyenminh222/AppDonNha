@@ -31,10 +31,16 @@ const SearchScreen = ({route}) => {
       {tempPost.slice(0,end).map((post)=>(
         <Item key={post._id} post={post}/>
       ))}
-      <TouchableOpacity style={styles.btnLoadmore} onPress={handleLoadMore}>
-        <Text>Xem thêm</Text>
-        <Ionicons size={width*0.05} name="chevron-down-outline"></Ionicons>
-      </TouchableOpacity>
+      {end>=posts[0].length ? (
+          <View style={styles.btnLoadmore}>
+            <Text>Hết tin</Text>
+          </View>
+        ): (
+          <TouchableOpacity style={styles.btnLoadmore} onPress={handleLoadMore}>
+          <Text>Xem thêm</Text>
+          <Ionicons size={width * 0.05} name="chevron-down-outline"></Ionicons>
+        </TouchableOpacity>
+        )}
     </ScrollView>
     </SafeAreaView>
   )

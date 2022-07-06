@@ -33,16 +33,16 @@ import imagePhongTro from "../../assets/images/phong-tro.jpg";
 import imageCanHo from "../../assets/images/can-ho.jpg";
 import imageNhaO from "../../assets/images/nha-o.jpg";
 import imageVanPhong from "../../assets/images/van-phong.jpg";
-import PublicFolder from "../api/PublicFolder";
-import { set } from "react-hook-form";
+
 import { COLORS } from "../Colors";
+import { Ionicons } from "@expo/vector-icons";
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
 
   //lấy ra người dùng hiện tại
   const [state, setState] = useContext(AuthContext);
@@ -58,7 +58,7 @@ const HomeScreen = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [lastItem, setLastItem] = useState(0);
-  
+
   // lấy ra người dùng hiện tại
   const fetchData = async () => {
     await fetch(`${BaseURL}/user/${state._id}`)
@@ -124,26 +124,32 @@ const HomeScreen = () => {
     if (state.coordinates[0] !== null) {
       fetchPost();
     }
-    console.log(state)
     fetchPostNew();
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
-  useEffect(()=>{
-    fetchPost();
-  }, [state.coordinates[0]])
-
   useEffect(() => {
-    let abortController = new AbortController();
     if (state.coordinates[0] !== null) {
       fetchPost();
     }
-    return () => {
-      abortController.abort();
-    };
-  }, [pageCurrent]);
+    console.log(state.coordinates[0]);
+  }, [state.coordinates[0]]);
 
+  const [end, setEnd] = useState(5);
+  const [start, setStart] = useState(0);
+  const [tempPost, setTempPost] = useState([]);
+
+  const handleLoadMore = () => {
+    setEnd(end + 5);
+    setStart(start + 5);
+    console.log(end, start);
+  };
+  useEffect(() => {
+    for (let index = start; index < posts.length; index++) {
+      setTempPost([...tempPost, ...posts[index]]);
+    }
+  }, [end]);
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       {state.city === "" ? (
@@ -162,6 +168,7 @@ const HomeScreen = () => {
         />
       )}
       <ScrollView
+        style={styles.container}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -170,7 +177,8 @@ const HomeScreen = () => {
         <ScrollView
           style={styles.containBanner}
           horizontal={true}
-          showsHorizontalScrollIndicator={false}>
+          showsHorizontalScrollIndicator={false}
+        >
           <Banner source={imageBanner1} />
           <Banner source={imageBanner2} />
         </ScrollView>
@@ -266,12 +274,22 @@ const HomeScreen = () => {
             <Text style={styles.txtSugession}>Tổ chức cung cấp dịch vụ</Text>
           </TouchableOpacity>
         </ScrollView>
-        {posts
-          .map((item) =>
-            item.isWaiting == false && item.isCancel == false ? (
-              <Item key={item._id} post={item} />
-            ) : undefined
-          )}
+        {posts.slice(0,end).map((item) =>
+          item.isWaiting == false && item.isCancel == false ? (
+            <Item key={item._id} post={item} />
+          ) : undefined
+        )}
+        {end>=posts.length ? (
+          <View style={styles.btnLoadmore}>
+            <Text>Hết tin</Text>
+          </View>
+        ): (
+          <TouchableOpacity style={styles.btnLoadmore} onPress={handleLoadMore}>
+          <Text>Xem thêm</Text>
+          <Ionicons size={width * 0.05} name="chevron-down-outline"></Ionicons>
+        </TouchableOpacity>
+        )}
+        
       </ScrollView>
     </SafeAreaView>
   );
@@ -315,6 +333,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   txtSugession: {},
+  btnLoadmore: {
+    padding:20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    flexDirection: 'row',
+},
 });
 
 export default HomeScreen;

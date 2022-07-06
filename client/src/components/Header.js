@@ -34,8 +34,13 @@ const Header = ({
     navigation.navigate("Location");
   }
 
-  const changeScreenNotify = ()=>{
-    navigation.navigate("Notification");
+  const changeScreenNotify = async()=>{
+    let response = await fetch(`${BaseURL}/notify/user/${state._id}`)
+    .then((res)=>res.json())
+    .then((resJson)=>
+      navigation.navigate("Notification", resJson)
+    )
+    
   }
 
   const fetchNotifies = async () => {

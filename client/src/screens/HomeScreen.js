@@ -50,12 +50,15 @@ const HomeScreen = () => {
   //lưu tin đăng
   const [posts, setPosts] = useState([]);
 
+  // lưu tin mới nhất
+  const [postsNew, setPostsNew] = useState([]);
+
   // load more
   const [pageCurrent, setPageCurrent] = useState(1);
 
   const [isLoading, setIsLoading] = useState(false);
   const [lastItem, setLastItem] = useState(0);
-
+  
   // lấy ra người dùng hiện tại
   const fetchData = async () => {
     await fetch(`${BaseURL}/user/${state._id}`)
@@ -75,21 +78,39 @@ const HomeScreen = () => {
         if (pageCurrent == 1) {
           setPosts(resJson);
           setIsLoading(false);
-          setLastItem(posts.length)
+          setLastItem(posts.length);
         } else {
           setPosts([...posts, ...resJson]);
           setIsLoading(false);
-          setLastItem(posts.length)
+          setLastItem(posts.length);
         }
+      });
+  };
+
+  // lấy ra tin mới nhất
+  const fetchPostNew = async () => {
+    await fetch(`${BaseURL}/postUser/new`)
+      .then((res) => res.json())
+      .then((resJson) => {
+        setPostsNew(resJson);
       });
   };
 
   // gọi sau khi navigate trang
   useEffect(() => {
     fetchData();
-    fetchPost();
+    if (state.coordinates[0] !== null) {
+      fetchPost();
+    }
+
+    fetchPostNew();
     const willFocusSubscription = navigation.addListener("focus", () => {
       fetchData();
+      if (state.coordinates[0] !== null) {
+        fetchPost();
+      }
+
+      fetchPostNew();
     });
     return willFocusSubscription;
   }, []);
@@ -100,65 +121,28 @@ const HomeScreen = () => {
   const onRefresh = useCallback(() => {
     setPageCurrent(1);
     fetchData();
-    fetchPost();
+    if (state.coordinates[0] !== null) {
+      fetchPost();
+    }
+    console.log(state)
+    fetchPostNew();
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));
   }, []);
 
+  useEffect(()=>{
+    fetchPost();
+  }, [state.coordinates[0]])
+
   useEffect(() => {
-    fetchPost()
-    
+    let abortController = new AbortController();
+    if (state.coordinates[0] !== null) {
+      fetchPost();
+    }
+    return () => {
+      abortController.abort();
+    };
   }, [pageCurrent]);
-
-  const renderHeader = () => (
-    <View style={styles.container}>
-      <ScrollView
-        style={styles.containBanner}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-      >
-        <Banner source={imageBanner1} />
-        <Banner source={imageBanner2} />
-      </ScrollView>
-
-      <Text style={[styles.txtheader, { fontSize: height * 0.03 }]}>
-        Vị trí
-      </Text>
-      <ScrollView style={styles.containSuggestion} horizontal={true} showsHorizontalScrollIndicator={false}>
-        <Suggestion content="TP.Hồ Chí Minh" source={imageHCM} />
-        <Suggestion content="TP.Đà nẵng" source={imageDN} />
-        <Suggestion content="Hà Nội" source={imageHN} />
-      </ScrollView>
-
-      <Text style={[styles.txtheader, { fontSize: height * 0.03 }]}>
-        Danh mục
-      </Text>
-      <ScrollView
-        style={styles.containSuggestion}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-      >
-        <Suggestion content="Phòng trọ" source={imagePhongTro} />
-        <Suggestion content="Căn hộ" source={imageCanHo} />
-        <Suggestion content="Nhà ở" source={imageNhaO} />
-        <Suggestion content="Văn phòng" source={imageVanPhong} />
-      </ScrollView>
-      <Text style={[styles.txtheader, { fontSize: height * 0.03 }]}>
-        Tin mới nhất
-      </Text>
-      <ScrollView style={styles.sugesstion} horizontal={true} showsHorizontalScrollIndicator={false}>
-        <TouchableOpacity style={styles.btnSugession}>
-          <Text style={styles.txtSugession}>Cá nhân tìm kiếm dịch vụ</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btnSugession}>
-          <Text style={styles.txtSugession}>Tổ chức cung cấp dịch vụ</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btnSugession}>
-          <Text style={styles.txtSugession}>Tổ chức đánh giá cao</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </View>
-  );
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -177,39 +161,118 @@ const HomeScreen = () => {
           textLeft={state.city}
         />
       )}
-      <FlatList
+      <ScrollView
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        showsVerticalScrollIndicator={false}
-        horizontal={false}
-        data={posts}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) =>
-          item.isWaiting == false && item.isCancel == false ? (
-            <Item post={item} />
-          ) : undefined
-        }
-        ListHeaderComponent={renderHeader}
-        ListFooterComponent={() =>
-          isLoading ? (
-            <View style={{ marginTop: 10, alignItems: "center" }}>
-              <ActivityIndicator size="large" />
-            </View>
-          ) : null
-        }
-        onEndReached={() => {
-          if(lastItem!==posts.length){
-            setIsLoading(true);
-            setTimeout(() => {
-              setPageCurrent(pageCurrent + 1);
-              
-            }, 2000);
-          }
-          
-        }}
-        onEndReachedThreshold={0.4}
-      />
+      >
+        <ScrollView
+          style={styles.containBanner}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}>
+          <Banner source={imageBanner1} />
+          <Banner source={imageBanner2} />
+        </ScrollView>
+
+        <Text style={[styles.txtheader, { fontSize: height * 0.03 }]}>
+          Vị trí
+        </Text>
+        <ScrollView
+          style={styles.containSuggestion}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          <Suggestion content="Hồ Chí Minh" source={imageHCM} />
+          <Suggestion content="Đà Nẵng" source={imageDN} />
+          <Suggestion content="Hà Nội" source={imageHN} />
+        </ScrollView>
+
+        <Text style={[styles.txtheader, { fontSize: height * 0.03 }]}>
+          Danh mục
+        </Text>
+        <ScrollView
+          style={styles.containSuggestion}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          <Suggestion content="Phòng trọ" source={imagePhongTro} />
+          <Suggestion content="Chung cư" source={imageNhaO} />
+          <Suggestion content="Văn phòng" source={imageVanPhong} />
+        </ScrollView>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text style={[styles.txtheader, { fontSize: height * 0.03 }]}>
+            Tin mới nhất
+          </Text>
+          <TouchableOpacity
+            style={{
+              marginHorizontal: 20,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {
+              navigation.navigate("SearchScreen", postsNew);
+            }}
+          >
+            <Text style={{ fontSize: height * 0.02, color: COLORS.gray }}>
+              Xem tất cả
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {postsNew
+          .slice(0, 5)
+          .map((item) =>
+            item.isWaiting == false && item.isCancel == false ? (
+              <Item key={item._id} post={item} />
+            ) : undefined
+          )}
+        <Text style={[styles.txtheader, { fontSize: height * 0.03 }]}>
+          Tin theo vị trí
+        </Text>
+        <ScrollView
+          style={styles.sugesstion}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          <TouchableOpacity
+            style={styles.btnSugession}
+            onPress={async () => {
+              await fetch(`${BaseURL}/postUser/filter?txt=false`)
+                .then((res) => res.json())
+                .then((resJson) => {
+                  navigation.navigate("SearchScreen", resJson);
+                });
+            }}
+          >
+            <Text style={styles.txtSugession}>Cá nhân tìm kiếm dịch vụ</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.btnSugession}
+            onPress={async () => {
+              await fetch(`${BaseURL}/postUser/filter?txt=true`)
+                .then((res) => res.json())
+                .then((resJson) => {
+                  navigation.navigate("SearchScreen", resJson);
+                });
+            }}
+          >
+            <Text style={styles.txtSugession}>Tổ chức cung cấp dịch vụ</Text>
+          </TouchableOpacity>
+        </ScrollView>
+        {posts
+          .map((item) =>
+            item.isWaiting == false && item.isCancel == false ? (
+              <Item key={item._id} post={item} />
+            ) : undefined
+          )}
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -238,21 +301,20 @@ const styles = StyleSheet.create({
     height: 100,
     overflow: "hidden",
   },
-  sugesstion:{
+  sugesstion: {
     flexDirection: "row",
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
   },
-  btnSugession:{
+  btnSugession: {
     borderColor: COLORS.yellow,
     borderWidth: 1,
     borderRadius: 50,
     marginRight: 30,
     paddingHorizontal: 10,
-    paddingVertical: 5
+    paddingVertical: 5,
+    marginBottom: 20,
   },
-  txtSugession:{
-
-  },
+  txtSugession: {},
 });
 
 export default HomeScreen;

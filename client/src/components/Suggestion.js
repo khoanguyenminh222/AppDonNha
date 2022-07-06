@@ -7,13 +7,33 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import baseURL from "../api/BaseURL";
 
 const Suggestion = ({content, source}) => {
   const { width, height } = useWindowDimensions();
+  const navigation = useNavigation();
+  
+  const handleSearch = async() => {
+    const txt = content.split(" ");
+    await fetch(
+      `${baseURL}/postUser/search?txt=${txt[0]}`
+    )
+    .then((res)=>
+      res.json()
+    )
+    .then((resJson)=>{
+      console.log(content)
+      console.log(resJson)
+      navigation.navigate("SearchScreen", resJson);
+    })
+    
+    
+  }
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.wrapper}>
+      <TouchableOpacity style={styles.wrapper} onPress={handleSearch}>
         <Image
           source={source}
           style={[styles.img, { width: width * 0.25, height: height * 0.1 }]}

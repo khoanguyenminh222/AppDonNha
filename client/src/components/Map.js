@@ -22,7 +22,7 @@ import baseURL from "../api/BaseURL";
 import { useNavigation } from "@react-navigation/native";
 
 const Map = ({ action, name, location, textAddress }) => {
-  console.log(textAddress);
+
   const navigation = useNavigation();
 
   const [state, setState] = useContext(AuthContext);
@@ -60,6 +60,7 @@ const Map = ({ action, name, location, textAddress }) => {
 
   //gọi khi điểm đánh dấu thay đổi
   useEffect(() => {
+    let abortController = new AbortController(); 
     // lần đầu không gọi
     if (region.latitudeDelta === 0.0122) {
       (async () => {
@@ -79,10 +80,14 @@ const Map = ({ action, name, location, textAddress }) => {
           (address.region !== null ? address.region : "")
       );
     }
+    return () => {  
+      abortController.abort();  
+    } 
   }, [region]);
 
   // gọi khi tên đường thay đổi
   useEffect(() => {
+    let abortController = new AbortController(); 
     if (address) {
       setText(
         (address.streetNumber !== null ? address.streetNumber + ", " : "") +
@@ -93,6 +98,9 @@ const Map = ({ action, name, location, textAddress }) => {
           (address.region !== null ? address.region : "")
       );
     }
+    return () => {  
+      abortController.abort();  
+    } 
   }, [address]);
 
   // nhấn nút tìm kiếm

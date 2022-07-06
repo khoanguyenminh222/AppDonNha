@@ -18,6 +18,7 @@ import ManagePostScreen from '../screens/ManagePostScreen';
 import DetailPost from '../screens/DetailPost';
 import PersonalScreen from '../screens/PersonalScreen'
 import ReviewScreen from '../screens/ReviewScreen';
+import SearchScreen from '../screens/SearchScreen';
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
@@ -61,6 +62,10 @@ const StackNavigator = () => {
         <Stack.Screen
           name="DetailPost"
           component={DetailPost}
+        />
+        <Stack.Screen
+          name="SearchScreen"
+          component={SearchScreen}
         />
 
         <Stack.Screen 

@@ -74,7 +74,7 @@ const PersonalScreen = ({ route }) => {
             <Image
               source={{
                 uri:
-                  route.params.profilePicture === ""
+                  route.params.profilePicture !== ""
                     ? PublicFolder + route.params.profilePicture
                     : PublicFolder + "persons/noAvatar.png",
               }}

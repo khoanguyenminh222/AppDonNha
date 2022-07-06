@@ -7,7 +7,7 @@ import Back from '../components/Back'
 import GooglePlacesInput from '../components/GooglePlacesInput'
 
 const LocationScreen = ({route}) => {
-  console.log(route.params)
+
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       

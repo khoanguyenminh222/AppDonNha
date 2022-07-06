@@ -25,6 +25,7 @@ import { stopLocationUpdatesAsync } from "expo-location";
 import { useNavigation } from "@react-navigation/native";
 import AuthContext from "../context/AuthContext";
 import { COLORS } from "../Colors";
+
 const DetailPost = ({ route }) => {
   const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
@@ -47,7 +48,11 @@ const DetailPost = ({ route }) => {
   };
   //gọi hàm khi load lần đầu load trang lấy ra người dùng đổ dữ liệu vào view
   useEffect(() => {
+    let abortController = new AbortController(); 
     getFullnameById();
+    return () => {  
+      abortController.abort();  
+    } 
   }, []);
 
   //hàm chuyển qua trang LocationScreen
@@ -115,11 +120,11 @@ const DetailPost = ({ route }) => {
         },
         body: JSON.stringify(editPost),
       });
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
   };
+  console.log(user)
 
   //tạo thông báo
   const createNotify = async (notify) => {
@@ -148,7 +153,7 @@ const DetailPost = ({ route }) => {
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         >
-          {route.params.picture.map((p) => (
+          {route.params.picture && route.params.picture.map((p) => (
             <View key={p} style={[styles.containerImage, { width: width }]}>
               <Image
                 style={[styles.img, { width: width }]}
@@ -217,7 +222,7 @@ const DetailPost = ({ route }) => {
                     rounded
                     source={{
                       uri:
-                        user.profilePicture === ""
+                        user.profilePicture !== ""
                           ? PublicFolder + user.profilePicture
                           : PublicFolder + "persons/noAvatar.png",
                     }}

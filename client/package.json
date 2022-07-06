@@ -41,7 +41,9 @@
     "react-native-screens": "~3.11.1",
     "react-native-tab-view": "^3.1.1",
     "react-native-vector-icons": "^9.1.0",
-    "react-native-web": "0.17.7"
+    "react-native-web": "0.17.7",
+    "timeago.js": "^4.0.2",
+    "utf-8": "^2.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

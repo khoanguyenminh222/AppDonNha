@@ -2,7 +2,7 @@ const router = require("express").Router();
 const User = require("../models/User");
 const PostUser = require("../models/PostUser");
 const geolib = require("geolib");
-
+var sd = require('string_decoder').StringDecoder;
 // đăng tin
 router.post("/", async (req, res) => {
   const newPost = new PostUser(req.body);
@@ -64,6 +64,51 @@ router.get("/:id/getPostWaiting", async (req, res) => {
     }
   } catch (err) {
     res.status(500).json(err);
+  }
+});
+
+//lấy ra tin dược tìm kiếm
+router.get("/search", async (req, res) => {
+  
+  try {
+
+    const txt = req.query.txt;
+    console.log(txt)
+    const posts = await PostUser.find({isWaiting:false , $text: {$search: "'"+txt+"'"}})
+      .sort({createdAt:-1});
+      
+    res.status(200).json(posts);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+//lấy ra tin dược tìm kiếm
+router.get("/filter", async (req, res) => {
+  
+  try {
+    const txt = req.query.txt;
+    console.log(txt)
+    const posts = await PostUser.find({isWaiting:false , nameOrganization: {$exists : txt}})
+      .sort({createdAt:-1});
+      
+    res.status(200).json(posts);
+  } catch (e) {
+    res.status(500).json(e);
+  }
+});
+
+//lấy ra tin mới nhất
+router.get("/new", async (req, res) => {
+  
+  try {
+    const txt = req.query.txt;
+    const posts = await PostUser.find({isWaiting:false})
+      .sort({createdAt:-1});
+      
+    res.status(200).json(posts);
+  } catch (e) {
+    res.status(500).json(e);
   }
 });
 

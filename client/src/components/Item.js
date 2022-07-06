@@ -13,51 +13,21 @@ import PublicFolder from "../api/PublicFolder";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import baseURL from "../api/BaseURL";
+import {format} from "timeago.js"
 
 const Item = ({ post }) => {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
 
   const handleChangeScreen = (post) => {
-    getFullnameById().then((res)=> res.json())
-    .then((res)=> console.log(res))
-   
-    if(getFullnameById() === true){
-      Alert.alert("Thông báo!", userJson.message, [
-        { text: "OK", onPress: () => console.log("alert closed") },
-      ]);
-      return;
-    } else{
-      navigation.navigate("DetailPost", post);
-    }
+    navigation.navigate("DetailPost", post);
       
   };
-  const getFullnameById = async () => {
-    try {
-      const response = await fetch(`${baseURL}/user/${post.userId}`)
-        .then((user) => user.json())
-        .then((userJson) => {
-          if (userJson.message) {
-            console.log(userJson)
-            return true;
-            
-          }else{
-            return false;
-          } 
-        });
-        
-    } catch (error) {
-      console.log(error);
-    }
-    
-  };
-  
-
   return (
     <TouchableOpacity onPress={() => handleChangeScreen(post)}>
       <View style={styles.container}>
         <Image
-          source={{ uri: PublicFolder + post.picture[0] }}
+          source={{ uri: !post.picture || post.picture[0]!=="" ? PublicFolder + post.picture[0] : PublicFolder + "/persons/noAvatar.png"}}
           style={[styles.logo, { height: height * 0.3 }]}
           resizeMode="cover"
         />
@@ -72,19 +42,25 @@ const Item = ({ post }) => {
             {post.address}
           </Text>
           {post.nameOrganization ? (
+            <>
+            <Text>{format(post.createdAt)}</Text>
             <Ionicons
               style={styles.icon}
               name="briefcase-outline"
               size={height * 0.03}
               color={COLORS.primary}
             ></Ionicons>
+            </>
           ) : (
+            <>
+            <Text>{format(post.createdAt)}</Text>
             <Ionicons
               style={styles.icon}
               name="person-circle-outline"
               size={height * 0.03}
               color={COLORS.yellow}
             ></Ionicons>
+            </>
           )}
         </View>
       </View>

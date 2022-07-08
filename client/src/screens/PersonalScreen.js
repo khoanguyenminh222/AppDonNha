@@ -27,6 +27,8 @@ import CustomInput from "../components/CustomInput";
 import { useForm } from "react-hook-form";
 import ReviewScreen from "./ReviewScreen";
 import Item from "../components/Item";
+import {format} from "timeago.js"
+
 const PersonalScreen = ({ route }) => {
   const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
@@ -35,7 +37,7 @@ const PersonalScreen = ({ route }) => {
   const { control, handleSubmit } = useForm();
   const getFullnameById = async () => {
     try {
-      const response = await fetch(`${baseURL} + /user/${route.params._id}`)
+      const response = await fetch(`${baseURL}/user/${route.params._id}`)
         .then((user) => user.json())
         .then((userJson) => {
           setUser(userJson);
@@ -64,6 +66,12 @@ const PersonalScreen = ({ route }) => {
   const sendOnReviewScreen = () => {
     navigation.navigate("Review", route.params);
   };
+
+  const [end, setEnd] = useState(5);
+  const handleLoadMore = () => {
+    setEnd(end+5);
+    console.log(posts)
+}
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -157,11 +165,19 @@ const PersonalScreen = ({ route }) => {
         <View style={styles.text}>
           <Text>Tin đang đăng</Text>
           {posts &&
-            posts.map((post) =>
+            posts.slice(0,end).map((post) =>
               post.isWaiting == false && post.isCancel == false ? (
                 <Item key={post.id} post={post} />
               ) : undefined
             )}
+          {end>=posts.length ? (
+            undefined
+          ): (
+            <TouchableOpacity style={styles.btnLoadmore} onPress={handleLoadMore}>
+            <Text>Xem thêm</Text>
+            <Ionicons size={width * 0.05} name="chevron-down-outline"></Ionicons>
+          </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -209,6 +225,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  btnLoadmore: {
+    padding:20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    flexDirection: 'row',
+},
 });
 
 export default PersonalScreen;

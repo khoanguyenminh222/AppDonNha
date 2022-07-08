@@ -43,6 +43,13 @@ const Header = ({
     
   }
 
+  const handleChangeSearchScreen = ()=>{
+    const req = {
+      data: false
+    }
+    navigation.navigate("SearchScreen",req);
+  }
+
   const fetchNotifies = async () => {
     const response = await fetch(`${BaseURL}/notify/notread/user/${state._id}`);
     const responseJson = await response.json();
@@ -98,7 +105,7 @@ const Header = ({
           }
       </View>
       {isSearch ? (
-        <View style={styles.bottom}>
+        <TouchableOpacity style={styles.bottom} onPress={handleChangeSearchScreen}>
           <Ionicons
             style={styles.icon}
             name="search-outline"
@@ -108,8 +115,9 @@ const Header = ({
           <TextInput
             style={styles.search}
             placeholder="Tìm kiếm ..."
+            editable={false}
           ></TextInput>
-        </View>
+        </TouchableOpacity>
       ) : undefined}
     </View>
   );

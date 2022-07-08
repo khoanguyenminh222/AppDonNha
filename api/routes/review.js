@@ -17,7 +17,7 @@ router.get("/:userId", async (req, res) => {
     try {
       const newReview = await Review.find(
         {userId: req.params.userId}
-      );
+      ).sort({createdAt:-1});
       res.status(200).json(newReview);
     } catch (e) {
       res.status(500).json(e);

@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from '../Colors';
 import { useNavigation } from '@react-navigation/native';
 
-const Search = () => {
+const Search = ({autoFocus, value, onChangeText}) => {
     const {width} = useWindowDimensions();
     const navigation = useNavigation();
     const handleBackScreen = ()=>{
@@ -29,15 +29,13 @@ const Search = () => {
                 name="search-outline"
             ></Ionicons>
           <TextInput
+          autoFocus={autoFocus}
+            value={value}
+            onChangeText={onChangeText}
             style={styles.search}
             placeholder="Tìm kiếm ..."
           ></TextInput>
         </View>
-        <TouchableOpacity style={styles.rightWrapper}>
-            <Ionicons
-                size={width*0.05}
-                color={COLORS.primary} name="send-outline"></Ionicons>
-        </TouchableOpacity>
     </View>
   )
 }
@@ -75,6 +73,7 @@ const styles = StyleSheet.create({
         borderColor: COLORS.gray,
         borderWidth:1,
         borderRadius: 50,
+        marginHorizontal: 10,
       },
       iconSearch:{
         position: 'absolute',

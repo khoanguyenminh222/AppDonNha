@@ -53,11 +53,6 @@ const HomeScreen = () => {
   // lưu tin mới nhất
   const [postsNew, setPostsNew] = useState([]);
 
-  // load more
-  const [pageCurrent, setPageCurrent] = useState(1);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [lastItem, setLastItem] = useState(0);
 
   // lấy ra người dùng hiện tại
   const fetchData = async () => {
@@ -71,19 +66,11 @@ const HomeScreen = () => {
   // lấy ra các tin vị trí gần nhất
   const fetchPost = async () => {
     await fetch(
-      `${BaseURL}/postUser?lng=${state.coordinates[0]}&lat=${state.coordinates[1]}&page=${pageCurrent}`
+      `${BaseURL}/postUser?lng=${state.coordinates[0]}&lat=${state.coordinates[1]}`
     )
       .then((res) => res.json())
       .then((resJson) => {
-        if (pageCurrent == 1) {
-          setPosts(resJson);
-          setIsLoading(false);
-          setLastItem(posts.length);
-        } else {
-          setPosts([...posts, ...resJson]);
-          setIsLoading(false);
-          setLastItem(posts.length);
-        }
+        setPosts(resJson);
       });
   };
 
@@ -102,14 +89,13 @@ const HomeScreen = () => {
     if (state.coordinates[0] !== null) {
       fetchPost();
     }
-
     fetchPostNew();
+
     const willFocusSubscription = navigation.addListener("focus", () => {
       fetchData();
       if (state.coordinates[0] !== null) {
         fetchPost();
       }
-
       fetchPostNew();
     });
     return willFocusSubscription;
@@ -119,7 +105,6 @@ const HomeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(() => {
-    setPageCurrent(1);
     fetchData();
     if (state.coordinates[0] !== null) {
       fetchPost();
@@ -133,23 +118,16 @@ const HomeScreen = () => {
     if (state.coordinates[0] !== null) {
       fetchPost();
     }
-    console.log(state.coordinates[0]);
   }, [state.coordinates[0]]);
 
   const [end, setEnd] = useState(5);
   const [start, setStart] = useState(0);
-  const [tempPost, setTempPost] = useState([]);
 
   const handleLoadMore = () => {
     setEnd(end + 5);
     setStart(start + 5);
-    console.log(end, start);
   };
-  useEffect(() => {
-    for (let index = start; index < posts.length; index++) {
-      setTempPost([...tempPost, ...posts[index]]);
-    }
-  }, [end]);
+
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       {state.city === "" ? (
@@ -225,7 +203,10 @@ const HomeScreen = () => {
               alignItems: "center",
             }}
             onPress={() => {
-              navigation.navigate("SearchScreen", postsNew);
+              const req = {
+                post: postsNew
+              }
+              navigation.navigate("SearchScreen", req);
             }}
           >
             <Text style={{ fontSize: height * 0.02, color: COLORS.gray }}>
@@ -255,7 +236,10 @@ const HomeScreen = () => {
               await fetch(`${BaseURL}/postUser/filter?txt=false`)
                 .then((res) => res.json())
                 .then((resJson) => {
-                  navigation.navigate("SearchScreen", resJson);
+                  const req = {
+                    post: resJson
+                  }
+                  navigation.navigate("SearchScreen", req);
                 });
             }}
           >
@@ -267,7 +251,10 @@ const HomeScreen = () => {
               await fetch(`${BaseURL}/postUser/filter?txt=true`)
                 .then((res) => res.json())
                 .then((resJson) => {
-                  navigation.navigate("SearchScreen", resJson);
+                  const req = {
+                    post: resJson
+                  }
+                  navigation.navigate("SearchScreen", req);
                 });
             }}
           >
@@ -280,9 +267,7 @@ const HomeScreen = () => {
           ) : undefined
         )}
         {end>=posts.length ? (
-          <View style={styles.btnLoadmore}>
-            <Text>Hết tin</Text>
-          </View>
+          undefined
         ): (
           <TouchableOpacity style={styles.btnLoadmore} onPress={handleLoadMore}>
           <Text>Xem thêm</Text>

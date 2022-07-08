@@ -32,9 +32,7 @@ router.get("/", (req, res) => {
           spherical: true,
         },
       },
-      {$match:{isWaiting: false}},
-      {$skip: (parseFloat(req.query.page)-1)*5},
-      {$limit: 5}
+      {$match:{isWaiting: false}}
     ]).then(function (posts) {
       res.status(200).json(posts);
     });

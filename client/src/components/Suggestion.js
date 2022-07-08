@@ -24,9 +24,10 @@ const Suggestion = ({content, source}) => {
       res.json()
     )
     .then((resJson)=>{
-      console.log(content)
-      console.log(resJson)
-      navigation.navigate("SearchScreen", resJson);
+      const req={
+        post: resJson,
+      }
+      navigation.navigate("SearchScreen", req);
     })
     
     

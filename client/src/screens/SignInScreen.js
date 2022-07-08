@@ -13,15 +13,20 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller, get } from "react-hook-form";
 
+
+
 import GlobalStyles from "../GlobalStyles";
 import { COLORS } from "../Colors";
 import BaseURL from "../api/BaseURL";
+
+import * as Facebook from 'expo-facebook';
 
 import AuthContext from "../context/AuthContext";
 
 import Logo from "../../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
+
 
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -103,12 +108,34 @@ const SignInScreen = () => {
     navigation.navigate("ForgotPassword");
     
   };
-  const onSignInFacebook = () => {
-    
-    
+  const onSignInFacebook = async() => {
+    try {
+      await Facebook.initializeAsync({
+        appId: '740695290579398',
+      });
+      const { type, token, expirationDate, permissions, declinedPermissions } =
+        await Facebook.logInWithReadPermissionsAsync({
+          permissions: ['public_profile', 'email'],
+        });
+      if (type === 'success') {
+        // Get the user's name using Facebook's Graph API
+        const response = await fetch(`https://graph.facebook.com/me?fields=id,name,email,birthday&access_token=${token}`)
+        .then((res)=>res.json())
+        .then((resJson)=>{
+          // Alert.alert('Logged in!', `Hi ${(await response.json())}!`);
+          console.log("ok", resJson)
+        })
+        
+        
+      } else {
+        // type === 'cancel'
+      }
+    } catch ({ message }) {
+      console.log(`Facebook Login Error: ${message}`);
+    }
   };
-  const onSignInGoogle = () => {
-   
+  const onSignInGoogle = async() => {
+    
   };
   const onSignUpPressed = () => {
     navigation.navigate("SignUp");

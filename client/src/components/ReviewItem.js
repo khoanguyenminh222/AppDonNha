@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import baseURL from "../api/BaseURL";
 import { Avatar } from "react-native-elements";
+import {format} from "timeago.js"
 
 const ReviewItem = ({ r }) => {
   const [user, setUser] = useState([]);
@@ -32,7 +33,7 @@ const ReviewItem = ({ r }) => {
 
   return (
     <View style={styles.container}>
-       <View style={{flexDirection: "row"}}>
+       <View style={{flex:1,flexDirection: "row"}}>
         <View style={styles.avt}>
             <Avatar
               size={"small"}
@@ -46,6 +47,10 @@ const ReviewItem = ({ r }) => {
             ></Avatar>
           </View>
           <Text style={styles.fullname}>{user.fullname}</Text>
+          <View style={{flex:1, justifyContent: 'center', alignItems: 'flex-end', marginHorizontal: 10}}>
+            <Text>{format(r.createdAt)}</Text>
+          </View>
+          
       </View>
     
       <Text style={[styles.title, { fontSize: height * 0.02 , paddingLeft: 50 } ]}>
@@ -180,6 +185,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 24,
     color: COLORS.gray,
+    marginRight: 10,
   },
   fullname:{
     flexDirection:"row",

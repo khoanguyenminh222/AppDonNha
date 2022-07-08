@@ -37,6 +37,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.@@png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-facebook",
+        {
+          "userTrackingPermission": false
+        }
+      ],
+      ["@react-native-google-signin/google-signin"]
+    ]
   }
 }

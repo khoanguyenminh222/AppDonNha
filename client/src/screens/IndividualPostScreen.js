@@ -240,7 +240,6 @@ const IndividualPostScreen = ({route}) => {
             placehoder="Tiêu đề*"
             rules={{
               required: "Tiêu đề không được để trống",
-              maxLength: { value: 70, message: "Tiêu đề tối đa 70 ký tự" },
               minLength: { value: 20, message: "Tiêu đề tối thiểu 20 ký tự" },
             }}
           />
@@ -254,7 +253,6 @@ const IndividualPostScreen = ({route}) => {
             underlineColorAndroid="transparent"
             rules={{
               required: "Mô tả chi tiết không được để trống",
-              maxLength: { value: 200, message: "Mô tả tối đa 200 ký tự" },
               minLength: { value: 20, message: "Mô tả tối thiểu 20 ký tự" },
             }}
           />

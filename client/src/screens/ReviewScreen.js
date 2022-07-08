@@ -26,7 +26,9 @@ import CustomInput from "../components/CustomInput";
 import { useForm } from "react-hook-form";
 import AuthContext from "../context/AuthContext";
 import ReviewItem from "../components/ReviewItem";
+
 const ReviewScreen = ({ route }) => {
+  const {width} = useWindowDimensions();
   const { control, handleSubmit } = useForm();
   const [state, setState] = useContext(AuthContext);
   const [review, setReview] = useState([]);
@@ -52,6 +54,7 @@ const ReviewScreen = ({ route }) => {
         },
         body: JSON.stringify(dataReview),
       });
+      fetchReview();
     } catch (error) {
       console.log(error);
     }
@@ -71,7 +74,12 @@ const ReviewScreen = ({ route }) => {
   useEffect(() => {
     fetchReview();
   }, []);
- 
+
+  const [end, setEnd] = useState(5);
+  const handleLoadMore = () => {
+    setEnd(end+5);
+}
+ console.log(review.length)
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Đánh giá" />
@@ -126,11 +134,19 @@ const ReviewScreen = ({ route }) => {
         <View style={styles.text}>
           <Text>Các đánh giá khác</Text>
           {review &&
-            review.map((r) =>
+            review.slice(0,end).map((r) =>
               (
                 <ReviewItem key={r.id} r={r}/>
               ) 
             )}
+          {end>=review.length ? (
+            undefined
+          ): (
+            <TouchableOpacity style={styles.btnLoadmore} onPress={handleLoadMore}>
+            <Text>Xem thêm</Text>
+            <Ionicons size={width * 0.05} name="chevron-down-outline"></Ionicons>
+          </TouchableOpacity>
+          )}
          </View>
       </ScrollView>
     </SafeAreaView>
@@ -173,6 +189,13 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 10,
   },
+  btnLoadmore: {
+    padding:20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    flexDirection: 'row',
+}
 });
 
 export default ReviewScreen;

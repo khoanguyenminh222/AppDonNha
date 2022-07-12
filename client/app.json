@@ -33,7 +33,8 @@
         "googleMaps" : {
           "apiKey": "AIzaSyD9OXYLGgT1cSQ5XX7pi0vmSSJ9AY1x4y8" 
         }
-      }
+      },
+      "package": "com.example.AppDonNha"
     },
     "web": {
       "favicon": "./assets/favicon.@@png"

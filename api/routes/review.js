@@ -24,16 +24,24 @@ router.get("/:userId", async (req, res) => {
     }
   });
 
-// router.get("/averageRating/:userId", async (req, res) => {
-//     try {
-//       const newReview = await Review.find(
-//         {userId: req.params.userId}
-//       ).sort({createdAt:-1});
-//       for(var i = 0 ; i< newReview.length; i++){
-//         console.log(newReview.userId)
-//       }
-//     } catch (e) {
-//       res.status(500).json(e);
-//     }
-//   });
+router.get("/averageRating/:userId", async (req, res) => {
+    try {
+      const newReview = await Review.find(
+        {userId: req.params.userId}
+      ).sort({createdAt:-1});
+      let sum = 0;
+      if(newReview.length==0){
+        res.status(200).json({message: 'Chưa có đánh giá'});
+      }else{
+        newReview.forEach(element => {
+          sum = sum+ parseInt(element.ratingStar);
+        });
+        const average = parseFloat(sum/newReview.length).toFixed(1);
+        res.status(200).json(average);
+      }
+      
+    } catch (e) {
+      res.status(500).json(e);
+    }
+  });
 module.exports = router;

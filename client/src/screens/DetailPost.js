@@ -46,6 +46,24 @@ const DetailPost = ({ route }) => {
       console.log(error);
     }
   };
+  // lấy ra đánh giá
+  const [rating, setRating] = useState("");
+  useEffect(() => {
+    const fetchRating = async () => {
+      await fetch(`${baseURL}/review/averageRating/${user._id}`)
+        .then((res) => res.json())
+        .then((resJson) => {
+          if (resJson.message) {
+            setRating(resJson.message);
+          } else {
+            setRating(resJson);
+            console.log(resJson)
+          }
+        });
+    };
+    fetchRating();
+  }, []);
+
   //gọi hàm khi load lần đầu load trang lấy ra người dùng đổ dữ liệu vào view
   useEffect(() => {
     let abortController = new AbortController(); 
@@ -140,6 +158,8 @@ const DetailPost = ({ route }) => {
       console.log(error);
     }
   };
+
+
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -246,7 +266,7 @@ const DetailPost = ({ route }) => {
                 <View style={{height:'80%', width:1, backgroundColor:COLORS.gray}}></View>
                 <View style={{justifyContent: 'center', alignItems:'center'}}>
                   <Text style={{color:COLORS.gray}}>Đánh giá</Text>
-                  <Text style={{color:COLORS.red}}>2.9</Text>
+                  <Text style={{color:COLORS.red}}>{rating}</Text>
                 </View>
               </View>
               

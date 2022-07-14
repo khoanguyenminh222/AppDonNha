@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   handleSubmit,
+  TextInput,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import GlobalStyles from "../GlobalStyles";
@@ -27,7 +28,7 @@ import CustomInput from "../components/CustomInput";
 import { useForm } from "react-hook-form";
 import ReviewScreen from "./ReviewScreen";
 import Item from "../components/Item";
-import {format} from "timeago.js"
+import { format } from "timeago.js";
 
 const PersonalScreen = ({ route }) => {
   const { width, height } = useWindowDimensions();
@@ -67,11 +68,27 @@ const PersonalScreen = ({ route }) => {
     navigation.navigate("Review", route.params);
   };
 
+  const [rating, setRating] = useState("");
+  useEffect(() => {
+    const fetchRating = async () => {
+      await fetch(`${baseURL}/review/averageRating/${route.params._id}`)
+        .then((res) => res.json())
+        .then((resJson) => {
+          if (resJson.message) {
+            setRating(resJson.message);
+          } else {
+            setRating(resJson);
+            console.log(resJson);
+          }
+        });
+    };
+    fetchRating();
+  }, []);
+
   const [end, setEnd] = useState(5);
   const handleLoadMore = () => {
-    setEnd(end+5);
-    console.log(posts)
-}
+    setEnd(end + 5);
+  };
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -120,14 +137,6 @@ const PersonalScreen = ({ route }) => {
           />
           <CustomInput
             control={control}
-            name="desc"
-            defaultValue={route.params.desc}
-            logo="pencil-outline"
-            editable={false}
-            color="black"
-          />
-          <CustomInput
-            control={control}
             name="dayofbirth"
             defaultValue={route.params.dayOfBirth}
             logo="calendar-outline"
@@ -153,30 +162,155 @@ const PersonalScreen = ({ route }) => {
             multiline={true}
             color="black"
           />
-          <CustomInput
-            control={control}
-            name="vote"
-            defaultValue={route.params.desc}
-            logo="star-outline"
-            editable={false}
-            color="black"
-          />
+          {/* <View style={styles.containerInput}>
+            <View style={styles.wrapperLogo}>
+              <Ionicons name="star-outline" size={30} />
+            </View>
+            <TextInput
+              value={rating}
+              placeholder="Đánh giá"
+              style={styles.input}
+              editable={false}
+            />
+          </View> */}
+          <View style={{flex: 1, justifyContent: 'center', alignContent: 'center'}}>
+            <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            {rating >= 5 ? (
+              <>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+              </>
+            ) : rating >= 4 ? (
+              <>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+              </>
+            ) : rating >= 3 ? (
+              <>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+              </>
+            ) : rating >= 2 ? (
+              <>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+              </>
+            ) : (
+              <>
+                <Ionicons
+                  name="star"
+                  size={height * 0.04}
+                  color={"rgb(186, 126, 6)"}
+                ></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+                <Ionicons name="star" size={height * 0.04}></Ionicons>
+              </>
+            )}
+            <View>
+              
+            </View>
+            </View>
+            <Text style={{textAlign:'center', color: COLORS.red}}>{rating}/5.0</Text>
+          </View>
+          
         </View>
         <View style={styles.text}>
           <Text>Tin đang đăng</Text>
           {posts &&
-            posts.slice(0,end).map((post) =>
-              post.isWaiting == false && post.isCancel == false ? (
-                <Item key={post.id} post={post} />
-              ) : undefined
-            )}
-          {end>=posts.length ? (
-            undefined
-          ): (
-            <TouchableOpacity style={styles.btnLoadmore} onPress={handleLoadMore}>
-            <Text>Xem thêm</Text>
-            <Ionicons size={width * 0.05} name="chevron-down-outline"></Ionicons>
-          </TouchableOpacity>
+            posts
+              .slice(0, end)
+              .map((post) =>
+                post.isWaiting == false && post.isCancel == false ? (
+                  <Item key={post.id} post={post} />
+                ) : undefined
+              )}
+          {end >= posts.length ? undefined : (
+            <TouchableOpacity
+              style={styles.btnLoadmore}
+              onPress={handleLoadMore}
+            >
+              <Text>Xem thêm</Text>
+              <Ionicons
+                size={width * 0.05}
+                name="chevron-down-outline"
+              ></Ionicons>
+            </TouchableOpacity>
           )}
         </View>
       </ScrollView>
@@ -226,12 +360,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   btnLoadmore: {
-    padding:20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-    flexDirection: 'row',
-},
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    flexDirection: "row",
+  },
+  containerInput: {
+    backgroundColor: COLORS.white,
+    width: "100%",
+    borderColor: "#e8e8e8",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    marginVertical: 8,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  wrapperLogo: {
+    paddingHorizontal: 5,
+    borderRightWidth: 1,
+  },
+  input: {
+    flex: 1,
+    paddingLeft: 10,
+    width: "100%",
+    height: "100%",
+    color: COLORS.black,
+  },
 });
 
 export default PersonalScreen;

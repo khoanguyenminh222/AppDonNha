@@ -2,7 +2,7 @@ const router = require("express").Router();
 const User = require("../models/User");
 const PostUser = require("../models/PostUser");
 const geolib = require("geolib");
-var sd = require('string_decoder').StringDecoder;
+var sd = require("string_decoder").StringDecoder;
 // đăng tin
 router.post("/", async (req, res) => {
   const newPost = new PostUser(req.body);
@@ -15,7 +15,6 @@ router.post("/", async (req, res) => {
     res.status(500).json(error.message);
   }
 });
-
 
 //lấy ra tin với vị trí gần người dùng
 router.get("/", (req, res) => {
@@ -32,7 +31,7 @@ router.get("/", (req, res) => {
           spherical: true,
         },
       },
-      {$match:{isWaiting: false}}
+      { $match: { isWaiting: false } },
     ]).then(function (posts) {
       res.status(200).json(posts);
     });
@@ -67,14 +66,14 @@ router.get("/:id/getPostWaiting", async (req, res) => {
 
 //lấy ra tin dược tìm kiếm
 router.get("/search", async (req, res) => {
-  
   try {
-
     const txt = req.query.txt;
-    console.log(txt)
-    const posts = await PostUser.find({isWaiting:false , $text: {$search: "'"+txt+"'"}})
-      .sort({createdAt:-1});
-      
+    console.log(txt);
+    const posts = await PostUser.find({
+      isWaiting: false,
+      $text: { $search: "'" + txt + "'" },
+    }).sort({ createdAt: -1 });
+
     res.status(200).json(posts);
   } catch (e) {
     res.status(500).json(e);
@@ -83,13 +82,14 @@ router.get("/search", async (req, res) => {
 
 //lấy ra tin dược tìm kiếm
 router.get("/filter", async (req, res) => {
-  
   try {
     const txt = req.query.txt;
-    console.log(txt)
-    const posts = await PostUser.find({isWaiting:false , nameOrganization: {$exists : txt}})
-      .sort({createdAt:-1});
-      
+    console.log(txt);
+    const posts = await PostUser.find({
+      isWaiting: false,
+      nameOrganization: { $exists: txt },
+    }).sort({ createdAt: -1 });
+
     res.status(200).json(posts);
   } catch (e) {
     res.status(500).json(e);
@@ -98,12 +98,12 @@ router.get("/filter", async (req, res) => {
 
 //lấy ra tin mới nhất
 router.get("/new", async (req, res) => {
-  
   try {
     const txt = req.query.txt;
-    const posts = await PostUser.find({isWaiting:false})
-      .sort({createdAt:-1});
-      
+    const posts = await PostUser.find({ isWaiting: false }).sort({
+      createdAt: -1,
+    });
+
     res.status(200).json(posts);
   } catch (e) {
     res.status(500).json(e);
@@ -113,9 +113,7 @@ router.get("/new", async (req, res) => {
 //xem tin của người dùng
 router.get("/:userId", async (req, res) => {
   try {
-    const posts = await PostUser.find(
-      {userId: req.params.userId}
-    );
+    const posts = await PostUser.find({ userId: req.params.userId });
     res.status(200).json(posts);
   } catch (e) {
     res.status(500).json(e);
@@ -125,16 +123,20 @@ router.get("/:userId", async (req, res) => {
 //cập nhật tin
 router.put("/:id", async (req, res) => {
   const user = await User.findById(req.body.admin);
-  if (req.body.userId === req.params.id || user.isAdmin) {
+  const post = await PostUser.findById(req.params.id);
+  if (req.body.userId === post.userId || user.isAdmin) {
     try {
-      const post = await PostUser.findByIdAndUpdate(
+      const editPost = await PostUser.findByIdAndUpdate(
         req.params.id,
         {
-          $set: req.body,
+          $set : req.body
         },
         { new: true }
       );
-      res.status(200).json(post);
+      if (req.body.coordinates) {
+        editPost.location.coordinates = req.body.coordinates;
+      }
+      res.status(200).json(editPost);
     } catch (e) {
       res.status(500).json(e);
     }
@@ -142,5 +144,15 @@ router.put("/:id", async (req, res) => {
     return res.status(403).json("Chỉ có thể cập nhật tin của mình!");
   }
 });
+
+// xoá tin
+router.delete("/:id", async(req,res)=>{
+  try {
+    const post = await PostUser.findByIdAndDelete(req.params.id);
+    res.status(200).json({message: 'Xoá thành công'});
+  } catch (error) {
+    res.status(500).json(error);
+  }
+})
 
 module.exports = router;

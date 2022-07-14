@@ -26,6 +26,7 @@ import CustomButton from "../components/CustomButton";
 import { useNavigation } from "@react-navigation/native";
 import baseURL from "../api/BaseURL";
 import AuthContext from "../context/AuthContext";
+import PublicFolder from "../api/PublicFolder";
 const IndividualPostScreen = ({route}) => {
   const [state, setState] = useContext(AuthContext);
 
@@ -41,6 +42,24 @@ const IndividualPostScreen = ({route}) => {
   const [address, setAddress] = useState([]);
   const [coordinate, setCoordinate] = useState([]);
 
+  const [post, setPost] = useState(null)
+  const [title, setTitle] = useState('')
+  const [desc, setDesc] = useState('')
+  const [phonenumber, setPhonenumber] = useState('')
+  useEffect(()=>{
+    if(route.params?.post){
+      setPost(route.params.post);
+      setTitle(route.params.post.title);
+      setDesc(route.params.post.desc);
+      setPhonenumber(route.params.post.phonenumber);
+      let arr = []
+      route.params.post.picture.forEach(element => {
+        arr.push(PublicFolder+element)
+      });
+      setArrayPicture(arr);
+    }
+  }, [route.params?.post])
+  console.log(arrayPicture)
   // set lại address khi có tham số route.params
   useEffect(() => {
     if (route.params?.address) {
@@ -80,11 +99,33 @@ const IndividualPostScreen = ({route}) => {
     }
   },[arrayPicture.length])
   
+
+  //hàm xử lý xoá ảnh
+  const handleDeleteImage = (image) => {
+    console.log(image)
+    arrayPicture.forEach((element,i) => {
+      if(image===element){
+        arrayPicture.splice(i,1);
+        console.log(arrayPicture)
+        setArrayPicture([...arrayPicture]);
+      }
+    });
+  }
+
+
   // hàm xử lý khi bấm nút đăng
-  const onSendIndividualPost = async (data) => {
+  const onSendIndividualPost = async () => {
     // kiểm tra bắt người dùng nhập đầy đủ
     if (category == "") {
       setErrMessage("Chưa chọn Danh mục");
+      return;
+    }
+    if (title == "") {
+      setErrMessage("Chưa có tiêu đề");
+      return;
+    }
+    if (desc == "") {
+      setErrMessage("Chưa có nội dung");
       return;
     }
     if (address == null || route.params == undefined) {
@@ -96,7 +137,16 @@ const IndividualPostScreen = ({route}) => {
       setErrMessage("Chưa chọn ảnh");
       return;
     }
-
+    if (phonenumber == "") {
+      setErrMessage("Chưa có số điện thoại");
+      return;
+    }
+    console.log(VNF_REGEX.test(phonenumber))
+    if(VNF_REGEX.test(phonenumber) || phonenumber.length!==10){
+      setErrMessage("Số điện thoại không đúng định dạng");
+      return;
+    }
+    
     // lấy ra text địa chỉ để lưu vào DB
     const textAddress =
       (address.streetNumber !== null ? address.streetNumber + ", " : "") +
@@ -140,10 +190,10 @@ const IndividualPostScreen = ({route}) => {
       coordinates: [coordinate.longitude, coordinate.latitude],
       category: category,
       picture: arrayFilename,
-      title: data.title,
-      desc: data.desciption,
+      title: title,
+      desc: desc,
       address: textAddress,
-      phonenumber: data.phonenumber,
+      phonenumber: phonenumber,
     };
     // fetch post tin đăng
     try {
@@ -154,7 +204,6 @@ const IndividualPostScreen = ({route}) => {
         },
         body: JSON.stringify(postIndividual),
       });
-      console.log(postIndi);
     } catch (err) {
       console.log(err);
     }
@@ -169,6 +218,133 @@ const IndividualPostScreen = ({route}) => {
       {text:"OK", onPress:()=>navigation.navigate("Main")}
     ]);
   };
+
+  // chỉnh sửa tin
+  const handleModifyPost = async() => {
+    // kiểm tra bắt người dùng nhập đầy đủ
+    if (category == "") {
+      setErrMessage("Chưa chọn Danh mục");
+      return;
+    }
+    if (title == "") {
+      setErrMessage("Chưa có tiêu đề");
+      return;
+    }
+    if (desc == "") {
+      setErrMessage("Chưa có nội dung");
+      return;
+    }
+    if (address == null || route.params == undefined) {
+      setErrMessage("Chưa chọn vị trí");
+      return;
+    }
+
+    if (arrayPicture.length === 0) {
+      setErrMessage("Chưa chọn ảnh");
+      return;
+    }
+    if (phonenumber == "") {
+      setErrMessage("Chưa có số điện thoại");
+      return;
+    }
+
+    console.log(VNF_REGEX.test(phonenumber))
+    if(VNF_REGEX.test(phonenumber) || phonenumber.length!==10){
+      setErrMessage("Số điện thoại không đúng định dạng");
+      return;
+    }
+
+    // lấy ra text địa chỉ để lưu vào DB
+    let textAddress;
+    if(address.length===0){
+
+    }else{
+      textAddress =
+      (address.streetNumber !== null ? address.streetNumber + ", " : "") +
+      (address.street !== null ? address.street + ", " : "") +
+      (address.city !== null ? address.city + ", " : "") +
+      (address.district !== null ? address.district + ", " : "") +
+      (address.subregion !== null ? address.subregion + ", " : "") +
+      (address.region !== null ? address.region : "");
+    }
+    
+    
+    // tạo formData để upload ảnh lên DB
+    const formData = new FormData();
+    //mảng chưa tên ảnh
+    const arrayFilename = [];
+    //duyệt qua tất cả đường dẫn uri
+    arrayPicture.forEach(a=>{
+      const arrPicture = a.split("/");
+      const filename = `file_${Date.now()}_${arrPicture[arrPicture.length-1]}`;
+      arrayFilename.push(filename);
+      formData.append('file',{
+        name: filename,
+        uri: a,
+        type: 'image/*'
+      })
+    })
+
+    //upload ảnh lên server
+    try {
+      //fetch api
+      const res = await fetch(`${baseURL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+    
+    
+    // Các thuộc tính cần thiết của một tin đăng
+    let postIndividual;
+    if(address.length===0){
+      postIndividual = {
+        userId: state._id,
+        category: category,
+        picture: arrayFilename,
+        title: title,
+        desc: desc,
+        phonenumber: phonenumber,
+      };
+    }else{
+      postIndividual = {
+        userId: state._id,
+        coordinates: [coordinate.longitude, coordinate.latitude],
+        category: category,
+        picture: arrayFilename,
+        title: title,
+        desc: desc,
+        address: textAddress,
+        phonenumber: phonenumber,
+      };
+    }
+    
+    // fetch put chỉnh sửa tin
+    try {
+      const postIndi = await fetch(`${baseURL}/postUser/${post._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postIndividual),
+      });
+      console.log(postIndi);
+    } catch (err) {
+      console.log(err);
+    }
+
+    const notify={
+      userId: state._id,
+      title: "CHỈNH SỬA THÀNH CÔNG, HÃY ĐỢI ĐỂ TIN ĐƯỢC DUYỆT !",
+      text: "Có thể mất vài tiếng để tin được duyệt.",
+    }
+    createNotify(notify);
+    Alert.alert("CẬP NHẬT THÀNH CÔNG !","Hãy chờ thông báo mới nhất",[
+      {text:"OK", onPress:()=>navigation.goBack()}
+    ]);
+  }
 
   //tạo thông báo
   const createNotify = async(notify)=>{
@@ -192,12 +368,12 @@ const IndividualPostScreen = ({route}) => {
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Back textCenter="Đăng tin" />
+      <Back textCenter={post ? "Chỉnh sửa": "Đăng tin"} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <Text style={styles.title}>DANH MỤC</Text>
           <RNPickerSelect
-            placeholder={{ label: "Chọn danh mục*", value: null }}
+            placeholder={{ label: post ? post.category : "Chọn danh mục*", value: post ? post.category : null }}
             onValueChange={(category) => setCategory(category)}
             items={[
               { label: "Văn phòng", value: "Văn phòng" },
@@ -209,57 +385,70 @@ const IndividualPostScreen = ({route}) => {
 
           <Text style={styles.title}>THÔNG TIN CHI TIẾT</Text>
           <View style={styles.image}>
-            {arrayPicture.length<3 ? 
-              (
-                <TouchableOpacity style={styles.icon} onPress={()=>onUploadImage()}>
-              <Ionicons name="camera-outline" size={90}></Ionicons>
-              <Text> ĐĂNG TỪ 1 ĐẾN 3 ẢNH </Text>
-            </TouchableOpacity>
-              )
-              :
-              undefined
-            }
+
             
-            {arrayPicture.map((element,i) => (
-                <View key={i} style={styles.coverImg}>
-                <Image
-                  source={{ uri: element}}
-                  style={styles.img}
-                  resizeMode="contain"
-                ></Image>
-              </View>
-            ))}
+          {arrayPicture.length<3 ? 
+                (
+                  <TouchableOpacity style={styles.icon} onPress={()=>onUploadImage()}>
+                <Ionicons name="camera-outline" size={90}></Ionicons>
+                <Text> ĐĂNG TỪ 1 ĐẾN 3 ẢNH </Text>
+              </TouchableOpacity>
+                )
+                :
+                undefined
+              }
+              
+              {arrayPicture.map((element,i) => (
+                  <View key={i} style={styles.coverImg}>
+                  <Image
+                    source={{ uri: element}}
+                    style={styles.img}
+                    resizeMode="contain"
+                  ></Image>
+                  <Ionicons onPress={()=>handleDeleteImage(element)} style={{position: 'absolute', top: 0, right:0}} name="close-circle-outline" size={30}></Ionicons>
+                </View>
+              ))}
+            
             
             
           </View>
 
           <Text style={styles.title}>TIÊU ĐỀ VÀ MÔ TẢ</Text>
-          <CustomInput
-            control={control}
-            name="title"
-            placehoder="Tiêu đề*"
-            rules={{
-              required: "Tiêu đề không được để trống",
-              minLength: { value: 20, message: "Tiêu đề tối thiểu 20 ký tự" },
-            }}
-          />
+
+          <View style={styles.containerInput}>
+            <TextInput
+              value={title!=="" ? title : null}
+              onChangeText={setTitle}
+              placeholder="Tiêu đề*"
+              style={styles.input}
+            />
+          </View>
           <View style={styles.textAreaContainer}>
-          <CustomInput
-            control={control}
-            name="desciption"
-            placehoder="Mô tả chi tiết*"
-            numberOfLines={20}
-            multiline={true}
-            underlineColorAndroid="transparent"
-            rules={{
-              required: "Mô tả chi tiết không được để trống",
-              minLength: { value: 20, message: "Mô tả tối thiểu 20 ký tự" },
-            }}
-          />
+          <View style={styles.containerInput}>
+            <TextInput
+              value={desc!=="" ? desc : null}
+              onChangeText={setDesc}
+              placeholder="Mô tả chi tiết*"
+              style={styles.input}
+              numberOfLines={20}
+              multiline={true}
+            />
+          </View>
           </View>
           
 
           <Text style={styles.title}>ĐỊA CHỈ</Text>
+          {post && address.length==0 ? (
+            <View style={styles.containerInput}>
+            <TextInput
+              value={post ? post.address : null}
+              placeholder="Địa chỉ*"
+              style={styles.input}
+              editable={false}
+            />
+          </View>
+          ): undefined}
+          
           <TouchableOpacity
             style={{
               paddingHorizontal: 10,
@@ -332,22 +521,14 @@ const IndividualPostScreen = ({route}) => {
           ) : undefined}
           
           <Text style={styles.title}>SỐ ĐIỆN THOẠI</Text>
-          <CustomInput
-            control={control}
-            name="phonenumber"
-            placehoder="Số điện thoại*"
-            rules={{
-              required: "Số điện thoại không được để trống",
-              pattern: {
-                value: VNF_REGEX,
-                message: "Số điện thoại sai định dạng",
-              },
-              minLength: {
-                value: 10,
-                message: "Số điện thoại tối thiểu 10 ký tự",
-              },
-            }}
-          />
+          <View style={styles.containerInput}>
+            <TextInput
+              value={phonenumber!=="" ? phonenumber : null}
+              onChangeText={setPhonenumber}
+              placeholder="Số điện thoại*"
+              style={styles.input}
+            />
+          </View>
           {errMessage !== "" ? (
             <CustomButton
               text={errMessage}
@@ -355,10 +536,23 @@ const IndividualPostScreen = ({route}) => {
               fgColor={COLORS.white}
             />
           ) : undefined}
-          <CustomButton
+
+          {post ? 
+          (
+            <CustomButton
+            text="Chỉnh sửa"
+            onPress={handleModifyPost}
+            />
+          )
+          :
+          (
+            <CustomButton
             text="ĐĂNG TIN"
-            onPress={handleSubmit(onSendIndividualPost)}
-          />
+            onPress={onSendIndividualPost}
+            />
+          )
+          }
+          
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -394,6 +588,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     backgroundColor: COLORS.white,
     flex:1,
+    position: 'relative'
   },
   img:{
     width: '100%',

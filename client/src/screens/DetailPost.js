@@ -46,24 +46,7 @@ const DetailPost = ({ route }) => {
       console.log(error);
     }
   };
-  // lấy ra đánh giá
-  const [rating, setRating] = useState("");
-  useEffect(() => {
-    const fetchRating = async () => {
-      await fetch(`${baseURL}/review/averageRating/${user._id}`)
-        .then((res) => res.json())
-        .then((resJson) => {
-          if (resJson.message) {
-            setRating(resJson.message);
-          } else {
-            setRating(resJson);
-            console.log(resJson)
-          }
-        });
-    };
-    fetchRating();
-  }, []);
-
+  
   //gọi hàm khi load lần đầu load trang lấy ra người dùng đổ dữ liệu vào view
   useEffect(() => {
     let abortController = new AbortController(); 
@@ -71,6 +54,24 @@ const DetailPost = ({ route }) => {
     return () => {  
       abortController.abort();  
     } 
+  }, []);
+
+  // lấy ra đánh giá
+  const [rating, setRating] = useState("");
+  useEffect(() => {
+    const fetchRating = async () => {
+      await fetch(`${baseURL}/review/averageRating/${route.params.userId}`)
+        .then((res) => res.json())
+        .then((resJson) => {
+          console.log(resJson)
+          if (resJson.message) {
+            setRating(resJson.message);
+          } else {
+            setRating(resJson);
+          }
+        });
+    };
+    fetchRating();
   }, []);
 
   //hàm chuyển qua trang LocationScreen

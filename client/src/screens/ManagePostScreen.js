@@ -102,7 +102,7 @@ const ManagePostScreen = () => {
         {posts &&
           posts.map((post) =>
             post.isWaiting == true && post.isCancel == false ? (
-              <Item key={post._id} post={post} />
+              <Item key={post._id} post={post} action='action'/>
             ) : undefined
           )}
       </View>

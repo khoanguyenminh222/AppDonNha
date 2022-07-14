@@ -24,4 +24,16 @@ router.get("/:userId", async (req, res) => {
     }
   });
 
+// router.get("/averageRating/:userId", async (req, res) => {
+//     try {
+//       const newReview = await Review.find(
+//         {userId: req.params.userId}
+//       ).sort({createdAt:-1});
+//       for(var i = 0 ; i< newReview.length; i++){
+//         console.log(newReview.userId)
+//       }
+//     } catch (e) {
+//       res.status(500).json(e);
+//     }
+//   });
 module.exports = router;

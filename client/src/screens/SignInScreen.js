@@ -10,10 +10,10 @@ import {
   Alert,
 } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, validatePathConfig } from "@react-navigation/native";
 import { useForm, Controller, get } from "react-hook-form";
-import * as Google from 'expo-auth-session/providers/google';
-
+import * as Google from "expo-auth-session/providers/google";
+import * as WebBrowser from "expo-web-browser";
 import GlobalStyles from "../GlobalStyles";
 import { COLORS } from "../Colors";
 import BaseURL from "../api/BaseURL";
@@ -25,7 +25,7 @@ import AuthContext from "../context/AuthContext";
 import Logo from "../../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
-
+WebBrowser.maybeCompleteAuthSession()
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
@@ -39,7 +39,8 @@ const SignInScreen = () => {
   const [messageType, setMessageType] = useState();
   const [message, setMessage] = useState();
   const [googleSubmitting, setGoogleSubmitting] = useState(false);
-
+  const [accessToken, setAccessToken] = useState();
+  const [userInfo, setUserInfo] = useState();
   //useForm
   const {
     control,
@@ -134,6 +135,7 @@ const SignInScreen = () => {
           .then((resJson) => {
             // Alert.alert('Logged in!', `Hi ${(await response.json())}!`);
             console.log("ok", resJson);
+            navigation.navigate("SignIn")
           });
       } else {
         // type === 'cancel'
@@ -142,34 +144,41 @@ const SignInScreen = () => {
       console.log(`Facebook Login Error: ${message}`);
     }
   };
-const handleMessage = (message, type = 'FAILED') =>{
-  setMessage(message);
-  setMessageType(type);
-}
 
-  const onSignInGoogle =  async () => {
-    const [accessToken, setAccessToken]= useState();
-    const [userInfo, setUserInfo]= useState();
-    const [request, required, promptAsync] = Google.useAuthRequest({
-      androidClientId: `335235065740-av76nbhdp4qkk4jfkld8vpsk250es2b7.apps.googleusercontent.com`,
-      iosClientId: `335235065740-u06rbbp63ouadmv0n3navn5tj7ov5jts.apps.googleusercontent.com`,
-    })
 
-    useEffect(()=>{
-      if (response?.type === "success"){
-        setAccessToken(response.authentication.accessToken);
+  const [response, request, promptAsync] = Google.useAuthRequest({
+    androidClientId: `335235065740-av76nbhdp4qkk4jfkld8vpsk250es2b7.apps.googleusercontent.com`,
+    iosClientId: `335235065740-u06rbbp63ouadmv0n3navn5tj7ov5jts.apps.googleusercontent.com`,
+    expoClientId: `335235065740-0p2as0hsf0d1f0s7iqer0kcuumv0afg0.apps.googleusercontent.com`,
+  });
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const { authentication } = response;
       }
-    }, [response]);
+  }, [response]);
 
-    async function getUserData(){
-      let userInfoResponse = await fetch("https://www.googleapis.com/userinfo/v2/me", {
-        headers: {Authorization: `Bearer ${accessToken}`}
-      });
-      userInfoResponse.json().then( data => {
-        setUserInfo(data);
-      })
+  async function getUserData() {
+    let userInfoResponse = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+      headers: { Authorization: `Bearer ${accessToken}`}
+    });
+
+    userInfoResponse.json().then(data => {
+      setUserInfo(data);
+    });
+  }
+
+  function showUserInfo() {
+    if (userInfo) {
+      return (
+        <View style={styles.userInfo}>
+          <Image source={{uri: userInfo.picture}} style={styles.profilePic} />
+          <Text>Welcome {userInfo.name}</Text>
+          <Text>{userInfo.email}</Text>
+        </View>
+      );
     }
-  };
+  }
   const onSignUpPressed = () => {
     navigation.navigate("SignUp");
   };
@@ -223,15 +232,14 @@ const handleMessage = (message, type = 'FAILED') =>{
             fgColor="#4765a9"
             logo="logo-facebook"
           />
-
-          
-            <CustomButton
-              text="Đăng nhập với Google"
-              onPress={accessToken ? getUserData : () => {promptAsync({useProxy:false, showInRevents: true})}}
-              bgColor="#fae9ea"
-              fgColor="#dd4d44"
-              logo="logo-google"
-            />
+          {showUserInfo()}
+          <CustomButton
+            text="Đăng nhập với Google"
+            onPress={accessToken ? getUserData : () => { promptAsync({useProxy: false, showInRecents: true}) }}
+            bgColor="#fae9ea"
+            fgColor="#dd4d44"
+            logo="logo-google"
+          />
 
           <CustomButton
             text="Chưa có tài khoản? Đăng kí ngay"

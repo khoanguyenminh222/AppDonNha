@@ -96,7 +96,6 @@ const ConfirmEmail = ({ route }) => {
   };
   const onSignInPressed = () => {
     navigation.navigate("SignIn");
-    console.warn("Sign in");
   };
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>

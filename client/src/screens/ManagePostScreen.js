@@ -25,7 +25,7 @@ import CustomButton from "../components/CustomButton";
 import { COLORS } from "../Colors";
 import AuthContext from "../context/AuthContext";
 import Item from "../components/Item";
-
+import ItemReject from "../components/ItemReject";
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
@@ -102,7 +102,7 @@ const ManagePostScreen = () => {
         {posts &&
           posts.map((post) =>
             post.isWaiting == true && post.isCancel == false ? (
-              <Item key={post._id} post={post} action='action'/>
+              <ItemReject key={post._id} post={post} action='action'/>
             ) : undefined
           )}
       </View>

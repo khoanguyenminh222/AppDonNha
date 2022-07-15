@@ -117,8 +117,8 @@ const ReviewScreen = ({ route }) => {
               underlineColorAndroid="transparent"
               rules={{
                 required: "Đánh giá không được để trống",
-                maxLength: { value: 200, message: "Mô tả tối đa 200 ký tự" },
-                minLength: { value: 20, message: "Mô tả tối thiểu 20 ký tự" },
+                maxLength: { value: 1000, message: "Mô tả tối đa 1000 ký tự" },
+                minLength: { value: 10, message: "Mô tả tối thiểu 10 ký tự" },
               }}
             />
           </View>

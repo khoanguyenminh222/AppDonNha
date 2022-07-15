@@ -17,8 +17,8 @@ import baseURL from "../api/BaseURL";
 import { format } from "timeago.js";
 import CustomButton from "./CustomButton";
 import OptionsMenu from "react-native-option-menu";
-const Item = ({ post, action }) => {
-  const { width,height } = useWindowDimensions();
+const ItemReject = ({ post, action }) => {
+  const { width, height } = useWindowDimensions();
   const navigation = useNavigation();
   const handleChangeScreen = (post) => {
     navigation.navigate("DetailPost", post);
@@ -27,13 +27,12 @@ const Item = ({ post, action }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const handleChangeEditScreen = () => {
     const req = {
-      post: post
-    }
+      post: post,
+    };
     setModalVisible(!modalVisible);
-    navigation.navigate("IndividualPost", req)
+    navigation.navigate("IndividualPost", req);
   };
-  const handleDeletePost = async() => {
-    
+  const handleDeletePost = async () => {
     const postIndi = await fetch(`${baseURL}/postUser/${post._id}`, {
       method: "DELETE",
       headers: {
@@ -42,7 +41,7 @@ const Item = ({ post, action }) => {
     });
     setModalVisible(!modalVisible);
   };
-  const handleOpenModel = () =>{
+  const handleOpenModel = () => {
     setModalVisible(!modalVisible);
   };
   return (
@@ -95,25 +94,15 @@ const Item = ({ post, action }) => {
           )}
         </View>
       </View>
-
-      {/* <Modal animationType='fade' transparent={true} visible={modalVisible}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Ionicons onPress={handleOpenModel} style={styles.btnClose} name="close-outline" size={width*0.05}/>
-            <CustomButton onPress={handleChangeEditScreen} text='Chỉnh sửa' logo='create-outline' bgColor={COLORS.primary} fgColor={COLORS.backgroundColor}/>
-            <CustomButton onPress={handleDeletePost} text='Xoá' logo='trash-outline' bgColor={COLORS.light} fgColor={COLORS.red}/>
-          </View>
-        </View>
-      </Modal> */}
-      
-        {/* <View style={styles.btnOption}>
-          <OptionsMenu
-            customButton={(<Ionicons name="ellipsis-vertical-outline" size={height * 0.03}/>)}
-            options={["Chỉnh sửa", "Xóa tin", "Hủy"]}
-            actions={[handleChangeEditScreen, handleDeletePost]}
-          />
-        </View> */}
-      
+      <View style={styles.btnOption}>
+        <OptionsMenu
+          customButton={
+            <Ionicons name="ellipsis-vertical-outline" size={height * 0.03} />
+          }
+          options={["Chỉnh sửa", "Xóa tin", "Hủy"]}
+          actions={[handleChangeEditScreen, handleDeletePost]}
+        />
+      </View>
     </TouchableOpacity>
   );
 };
@@ -161,8 +150,8 @@ const styles = StyleSheet.create({
     marginTop: 22,
   },
   modalView: {
-    width: '80%',
-    position: 'relative',
+    width: "80%",
+    position: "relative",
     margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
@@ -171,17 +160,17 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
-  btnOption:{
-    position: 'absolute',
+  btnOption: {
+    position: "absolute",
     top: 10,
     right: 10,
-  }
+  },
 });
 
-export default Item;
+export default ItemReject;

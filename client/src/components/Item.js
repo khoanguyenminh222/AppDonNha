@@ -107,7 +107,6 @@ const Item = ({ post, action }) => {
       </Modal> */}
       
         {/* <View style={styles.btnOption}>
-          <OptionsMenu
             customButton={(<Ionicons name="ellipsis-vertical-outline" size={height * 0.03}/>)}
             options={["Chỉnh sửa", "Xóa tin", "Hủy"]}
             actions={[handleChangeEditScreen, handleDeletePost]}

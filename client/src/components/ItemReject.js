@@ -30,7 +30,12 @@ const ItemReject = ({ post, action }) => {
       post: post,
     };
     setModalVisible(!modalVisible);
-    navigation.navigate("IndividualPost", req);
+    if(!post.nameOrganization){
+      navigation.navigate("IndividualPost", req);
+    }else{
+      navigation.navigate("OrganizationPost", req);
+    }
+   
   };
   const handleDeletePost = async () => {
     const postIndi = await fetch(`${baseURL}/postUser/${post._id}`, {

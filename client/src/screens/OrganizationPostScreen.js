@@ -16,6 +16,7 @@ import RNPickerSelect from "react-native-picker-select";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import Map from "../components/Map";
+import PublicFolder from "../api/PublicFolder";
 import GlobalStyles from "../GlobalStyles";
 import Back from "../components/Back";
 import { COLORS } from "../Colors";
@@ -37,14 +38,34 @@ const OrganizationPostScreen = ({ route }) => {
 
   const VNF_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/g;
   const EMAIL_REGEX =
-  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
   const [errMessage, setErrMessage] = useState("");
-
   const [arrayPicture, setArrayPicture] = useState([]);
   const [address, setAddress] = useState([]);
   const [coordinate, setCoordinate] = useState([]);
-
+  const [post, setPost] = useState(null);
+  const [nameOrganization, setNameOrganization] = useState("");
+  const [emailOrganization, setEmailOrganization] = useState("");
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
+  const [phonenumber, setPhonenumber] = useState("");
+  useEffect(() => {
+    if (route.params?.post) {
+      setPost(route.params.post);
+      setNameOrganization(route.params.post.nameOrganization);
+      setEmailOrganization(route.params.post.emailOrgazization);
+      setTitle(route.params.post.title);
+      setDesc(route.params.post.desc);
+      setPhonenumber(route.params.post.phonenumber);
+      let arr = [];
+      route.params.post.picture.forEach((element) => {
+        arr.push(PublicFolder + element);
+      });
+      setArrayPicture(arr);
+    }
+  }, [route.params?.post]);
+  console.log(arrayPicture);
   // set lại address khi có tham số route.params
   useEffect(() => {
     if (route.params?.address) {
@@ -86,12 +107,42 @@ const OrganizationPostScreen = ({ route }) => {
       arrayPicture.pop();
     }
   }, [arrayPicture.length]);
-
+  //hàm xử lý xoá ảnh
+  const handleDeleteImage = (image) => {
+    console.log(image);
+    arrayPicture.forEach((element, i) => {
+      if (image === element) {
+        arrayPicture.splice(i, 1);
+        console.log(arrayPicture);
+        setArrayPicture([...arrayPicture]);
+      }
+    });
+  };
   // hàm xử lý khi bấm nút đăng
-  const onSendOrganizationPost = async (data) => {
+  const onSendOrganizationPost = async () => {
     // kiểm tra bắt người dùng nhập đầy đủ
     if (category == "") {
       setErrMessage("Chưa chọn Danh mục");
+      return;
+    }
+    if (nameOrganization == "") {
+      setErrMessage("Chưa có tên nhà cung cấp dịch vụ");
+      return;
+    }
+    if (emailOrganization == "") {
+      setErrMessage("Chưa có Email nhà cung cấp dịch vụ");
+      return;
+    }
+    if (!EMAIL_REGEX.test(emailOrganization)) {
+      setErrMessage("Email chưa đúng định dạng");
+      return;
+    }
+    if (title == "") {
+      setErrMessage("Chưa có tiêu đề");
+      return;
+    }
+    if (desc == "") {
+      setErrMessage("Chưa có nội dung");
       return;
     }
     if (address == null || route.params == undefined) {
@@ -103,7 +154,15 @@ const OrganizationPostScreen = ({ route }) => {
       setErrMessage("Chưa chọn ảnh");
       return;
     }
-
+    if (phonenumber == "") {
+      setErrMessage("Chưa có số điện thoại");
+      return;
+    }
+    console.log(VNF_REGEX.test(phonenumber));
+    if (VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
+      setErrMessage("Số điện thoại không đúng định dạng");
+      return;
+    }
     // lấy ra text địa chỉ để lưu vào DB
     const textAddress =
       (address.streetNumber !== null ? address.streetNumber + ", " : "") +
@@ -147,14 +206,13 @@ const OrganizationPostScreen = ({ route }) => {
       userId: state._id,
       coordinates: [coordinate.longitude, coordinate.latitude],
       category: category,
-      nameOrganization: data.nameOrganization,
+      nameOrganization: nameOrganization,
+      emailOrganization: emailOrganization,
       picture: arrayFilename,
-      title: data.title,
-      desc: data.desciption,
-      emailOrgazization: data.emailOrganization,
-      website: data.website,
+      title: title,
+      desc: desc,
       address: textAddress,
-      phonenumber: data.phonenumber,
+      phonenumber: phonenumber,
     };
 
     //fetch post tin đăng
@@ -170,38 +228,175 @@ const OrganizationPostScreen = ({ route }) => {
     } catch (err) {
       console.log(err);
     }
-
-    const notify={
+    const notify = {
       userId: state._id,
       title: "VUI LÒNG CHỜ CHO TIN CỦA BẠN ĐƯỢC DUYỆT !",
       text: "Có thể mất vài tiếng để tin được duyệt.",
-    }
+    };
     createNotify(notify);
-    Alert.alert("TIN ĐANG CHỜ DUYỆT !","Hãy chờ thông báo mới nhất",[
-      {text:"OK", onPress:()=>navigation.navigate("Main")}
+    Alert.alert("TIN ĐANG CHỜ DUYỆT !", "Hãy chờ thông báo mới nhất", [
+      { text: "OK", onPress: () => navigation.navigate("Main") },
     ]);
   };
 
-  //tạo thông báo
-  const createNotify = async(notify)=>{
+  // chỉnh sửa tin
+  const handleModifyPost = async () => {
+    // kiểm tra bắt người dùng nhập đầy đủ
+    if (category == "") {
+      setErrMessage("Chưa chọn Danh mục");
+      return;
+    }
+    if (title == "") {
+      setErrMessage("Chưa có tiêu đề");
+      return;
+    }
+    if (nameOrganization == "") {
+      setErrMessage("Chưa có tên nhà cung cấp dịch vụ");
+      return;
+    }
+    if (emailOrganization == "") {
+      setErrMessage("Chưa có Email nhà cung cấp dịch vụ");
+      return;
+    }
+    if (EMAIL_REGEX.test(emailOrganization)) {
+      setErrMessage("Email chưa đúng định dạng");
+      return;
+    }
+    if (desc == "") {
+      setErrMessage("Chưa có nội dung");
+      return;
+    }
+    if (address == null || route.params == undefined) {
+      setErrMessage("Chưa chọn vị trí");
+      return;
+    }
+
+    if (arrayPicture.length === 0) {
+      setErrMessage("Chưa chọn ảnh");
+      return;
+    }
+    if (phonenumber == "") {
+      setErrMessage("Chưa có số điện thoại");
+      return;
+    }
+
+    if (VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
+      setErrMessage("Số điện thoại không đúng định dạng");
+      return;
+    }
+
+    // lấy ra text địa chỉ để lưu vào DB
+    let textAddress;
+    if (address.length === 0) {
+    } else {
+      textAddress =
+        (address.streetNumber !== null ? address.streetNumber + ", " : "") +
+        (address.street !== null ? address.street + ", " : "") +
+        (address.city !== null ? address.city + ", " : "") +
+        (address.district !== null ? address.district + ", " : "") +
+        (address.subregion !== null ? address.subregion + ", " : "") +
+        (address.region !== null ? address.region : "");
+    }
+
+    // tạo formData để upload ảnh lên DB
+    const formData = new FormData();
+    //mảng chưa tên ảnh
+    const arrayFilename = [];
+    //duyệt qua tất cả đường dẫn uri
+    arrayPicture.forEach((a) => {
+      const arrPicture = a.split("/");
+      const filename = `file_${Date.now()}_${
+        arrPicture[arrPicture.length - 1]
+      }`;
+      arrayFilename.push(filename);
+      formData.append("file", {
+        name: filename,
+        uri: a,
+        type: "image/*",
+      });
+    });
+
+    //upload ảnh lên server
     try {
-      const response = await fetch(`${baseURL}/notify`,{
+      //fetch api
+      const res = await fetch(`${baseURL}/upload`, {
+        method: "POST",
+        body: formData,
+      });
+    } catch (error) {
+      console.log(error.message);
+    }
+
+    // Các thuộc tính cần thiết của một tin đăng
+    let postOrganization;
+    if (address.length === 0) {
+      postOrganization = {
+        userId: state._id,
+        category: category,
+        nameOrganization: nameOrganization,
+        emailOrganization: emailOrganization,
+        picture: arrayFilename,
+        title: title,
+        desc: desc,
+        phonenumber: phonenumber,
+      };
+    } else {
+      postOrganization = {
+        userId: state._id,
+        coordinates: [coordinate.longitude, coordinate.latitude],
+        category: category,
+        nameOrganization: nameOrganization,
+        emailOrganization: emailOrganization,
+        picture: arrayFilename,
+        title: title,
+        desc: desc,
+        address: textAddress,
+        phonenumber: phonenumber,
+      };
+    }
+
+    // fetch put chỉnh sửa tin
+    try {
+      const postOrgan = await fetch(`${baseURL}/postUser/${post._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postOrganization),
+      });
+      console.log(postOrganization);
+    } catch (err) {
+      console.log(err);
+    }
+    const notify = {
+      userId: state._id,
+      title: "CHỈNH SỬA THÀNH CÔNG, HÃY ĐỢI ĐỂ TIN ĐƯỢC DUYỆT !",
+      text: "Có thể mất vài tiếng để tin được duyệt.",
+    };
+    createNotify(notify);
+    Alert.alert("CẬP NHẬT THÀNH CÔNG !", "Hãy chờ thông báo mới nhất", [
+      { text: "OK", onPress: () => navigation.goBack() },
+    ]);
+  };
+  //tạo thông báo
+  const createNotify = async (notify) => {
+    try {
+      const response = await fetch(`${baseURL}/notify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(notify),
-      })
+      });
     } catch (error) {
       console.log(error);
     }
-  }
-
+  };
   // nút chuyển qua trang location nhập vị trí
   const onChangeScreen = () => {
-    const req = { action: "fill", name:"OrganizationPost"};
+    const req = { action: "fill", name: "OrganizationPost" };
     navigation.navigate("Location", req);
-  }
+  };
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
@@ -221,25 +416,25 @@ const OrganizationPostScreen = ({ route }) => {
           />
 
           <Text style={styles.title}>TÊN NHÀ CUNG CẤP DỊCH VỤ</Text>
-          <CustomInput
-            control={control}
-            name="nameOrganization"
-            placehoder="Tên*"
-            rules={{
-              required: "Tên không được để trống",
-              minLength: { value: 5, message: "Tiêu đề tối thiểu 5 ký tự" },
-            }}
-          />
+          <View style={styles.containerInput}>
+            <TextInput
+              value={nameOrganization !== "" ? nameOrganization : null}
+              onChangeText={setNameOrganization}
+              placeholder="Tên*"
+              style={styles.input}
+            />
+          </View>
+
           <Text style={styles.title}>EMAIL NHÀ CUNG CẤP DỊCH VỤ</Text>
-          <CustomInput
-            control={control}
-            name="emailOrganization"
-            placehoder="Email*"
-            rules={{
-              required: "Email không được để trống",
-              pattern: { value: EMAIL_REGEX, message: "Email sai định dạng" },
-            }}
-          />
+          <View style={styles.containerInput}>
+            <TextInput
+              value={emailOrganization !== "" ? emailOrganization : null}
+              onChangeText={setEmailOrganization}
+              placeholder="Email*"
+              style={styles.input}
+            />
+          </View>
+
           <Text style={styles.title}>THÔNG TIN CHI TIẾT</Text>
           <View style={styles.image}>
             {arrayPicture.length < 3 ? (
@@ -252,43 +447,58 @@ const OrganizationPostScreen = ({ route }) => {
               </TouchableOpacity>
             ) : undefined}
 
-            {arrayPicture.map((element,i) => (
+            {arrayPicture.map((element, i) => (
               <View key={i} style={styles.coverImg}>
                 <Image
                   source={{ uri: element }}
                   style={styles.img}
                   resizeMode="contain"
                 ></Image>
+                <Ionicons
+                  onPress={() => handleDeleteImage(element)}
+                  style={{ position: "absolute", top: 0, right: 0 }}
+                  name="close-circle-outline"
+                  size={30}
+                ></Ionicons>
               </View>
             ))}
           </View>
 
           <Text style={styles.title}>TIÊU ĐỀ VÀ MÔ TẢ</Text>
-          <CustomInput
-            control={control}
-            name="title"
-            placehoder="Tiêu đề*"
-            rules={{
-              required: "Tiêu đề không được để trống",
-              minLength: { value: 10, message: "Tiêu đề tối thiểu 10 ký tự" },
-            }}
-          />
-          <View style={styles.textAreaContainer}>
-            <CustomInput
-              control={control}
-              name="desciption"
-              placehoder="Mô tả chi tiết*"
-              numberOfLines={20}
-              multiline={true}
-              underlineColorAndroid="transparent"
-              rules={{
-                required: "Mô tả chi tiết không được để trống",
-                minLength: { value: 10, message: "Mô tả tối thiểu 10 ký tự" },
-              }}
+
+          <View style={styles.containerInput}>
+            <TextInput
+              value={title !== "" ? title : null}
+              onChangeText={setTitle}
+              placeholder="Tiêu đề*"
+              style={styles.input}
             />
+          </View>
+          <View style={styles.textAreaContainer}>
+            <View style={styles.containerInput}>
+              <TextInput
+                value={desc !== "" ? desc : null}
+                onChangeText={setDesc}
+                placeholder="Mô tả chi tiết*"
+                style={styles.input}
+                numberOfLines={20}
+                multiline={true}
+              />
+            </View>
           </View>
 
           <Text style={styles.title}>ĐỊA CHỈ</Text>
+          {post && address.length == 0 ? (
+            <View style={styles.containerInput}>
+              <TextInput
+                value={post ? post.address : null}
+                placeholder="Địa chỉ*"
+                style={styles.input}
+                editable={false}
+              />
+            </View>
+          ) : undefined}
+
           <TouchableOpacity
             style={{
               paddingHorizontal: 10,
@@ -361,24 +571,14 @@ const OrganizationPostScreen = ({ route }) => {
           ) : undefined}
 
           <Text style={styles.title}>SỐ ĐIỆN THOẠI</Text>
-          <CustomInput
-            control={control}
-            name="phonenumber"
-            placehoder="Số điện thoại*"
-            rules={{
-              required: "Số điện thoại không được để trống",
-              pattern: {
-                value: VNF_REGEX,
-                message: "Số điện thoại sai định dạng",
-              },
-              minLength: {
-                value: 10,
-                message: "Số điện thoại tối thiểu 10 ký tự",
-              },
-            }}
-          />
-          <Text style={styles.title}>Website</Text>
-          <CustomInput control={control} name="website" placehoder="Website" />
+          <View style={styles.containerInput}>
+            <TextInput
+              value={phonenumber !== "" ? phonenumber : null}
+              onChangeText={setPhonenumber}
+              placeholder="Số điện thoại*"
+              style={styles.input}
+            />
+          </View>
           {errMessage !== "" ? (
             <CustomButton
               text={errMessage}
@@ -386,10 +586,12 @@ const OrganizationPostScreen = ({ route }) => {
               fgColor={COLORS.white}
             />
           ) : undefined}
-          <CustomButton
-            text="ĐĂNG TIN"
-            onPress={handleSubmit(onSendOrganizationPost)}
-          />
+
+          {post ? (
+            <CustomButton text="Chỉnh sửa" onPress={handleModifyPost} />
+          ) : (
+            <CustomButton text="ĐĂNG TIN" onPress={onSendOrganizationPost} />
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -425,16 +627,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     backgroundColor: COLORS.white,
     flex: 1,
+    position: "relative",
   },
   img: {
     width: "100%",
     height: "100%",
-  },
-  textAreaContainer: {
-    borderColor: "#e8e8e8",
-    borderWidth: 1,
-    padding: 5,
-    height: 200,
   },
   containerInput: {
     backgroundColor: COLORS.white,
@@ -455,6 +652,12 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     width: "100%",
     color: COLORS.black,
+  },
+  textAreaContainer: {
+    borderColor: "#e8e8e8",
+    borderWidth: 1,
+    padding: 5,
+    height: 200,
   },
 });
 const pickerSelectStyles = StyleSheet.create({

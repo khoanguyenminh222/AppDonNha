@@ -28,8 +28,8 @@ const EMAIL_REGEX =
 const ConfirmEmail = ({ route }) => {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
-  const [code, setCode] = useState('');
-  const [message, setMessage] = useState('');
+  const [code, setCode] = useState("");
+  const [message, setMessage] = useState("");
   //useForm
   const {
     control,
@@ -39,48 +39,44 @@ const ConfirmEmail = ({ route }) => {
   } = useForm();
   const pwd = watch(route.params.code);
 
-  const onConfirmCodePressed = async() => {
+  const onConfirmCodePressed = async () => {
     compareCodeConfirm();
     let editUser = {
       userId: route.params._id,
       status: true,
     };
-      try {
-        const response = await fetch(`${BaseURL}/user/${route.params._id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(editUser),
-        });
-        console.log(response);
-      } catch (error) {
-        console.log(error);
-      }
-  };
-  const compareCodeConfirm = async() =>{
     try {
-      const response = await fetch(`${BaseURL}/user/${route.params._id}`)
-      response.json().then(userA => {
-      console.log(userA)
-        if(code === userA.code){
-          setMessage()
-          navigation.navigate("SignIn");
-          return;
-        }
-        else if(code === ""){
-          setMessage("Mã xác thực không được để trống")
-          return;
-        }else{
-          setMessage("Mã xác nhận không chính xác")
-          return;
-        }
+      const response = await fetch(`${BaseURL}/user/${route.params._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editUser),
       });
-     
     } catch (error) {
       console.log(error);
     }
-  } 
+  };
+  const compareCodeConfirm = async () => {
+    try {
+      const response = await fetch(`${BaseURL}/user/${route.params._id}`);
+      response.json().then((userA) => {
+        if (code === userA.code) {
+          setMessage();
+          navigation.navigate("SignIn");
+          return;
+        } else if (code === "") {
+          setMessage("Mã xác thực không được để trống");
+          return;
+        } else {
+          setMessage("Mã xác nhận không chính xác");
+          return;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const onResendPressed = async () => {
     const saveCodeToUser = await fetch(`${BaseURL}/auth/savecode`, {
@@ -89,9 +85,9 @@ const ConfirmEmail = ({ route }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(route.params),
-    })
-    Alert.alert("Thông báo!","Mã xác nhận của bạn đã được gửi",[
-      {text:"OK", onPress:()=>console.log("alert closed")}
+    });
+    Alert.alert("Thông báo!", "Mã xác nhận của bạn đã được gửi", [
+      { text: "OK", onPress: () => console.log("alert closed") },
     ]);
   };
   const onSignInPressed = () => {
@@ -102,20 +98,16 @@ const ConfirmEmail = ({ route }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <Text> XÁC THỰC TÀI KHOẢN EMAIL </Text>
-          
+
           <View style={styles.wraperTextInput}>
-            <TextInput style={styles.TextInput}
-            onChangeText={setCode}
-            value = {code}
-            placeholder= "Nhập mã xác thực" 
-                 
-          />
+            <TextInput
+              style={styles.TextInput}
+              onChangeText={setCode}
+              value={code}
+              placeholder="Nhập mã xác thực"
+            />
           </View>
-          <Text>
-            {
-              message
-            }
-          </Text>
+          <Text>{message}</Text>
           <CustomButton
             text="Xác thực"
             onPress={handleSubmit(onConfirmCodePressed)}
@@ -160,7 +152,7 @@ const styles = StyleSheet.create({
   },
   TextInput: {
     paddingLeft: 10,
-    width: '100%',
+    width: "100%",
   },
 
   wraperTextInput: {

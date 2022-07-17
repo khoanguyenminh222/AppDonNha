@@ -41,7 +41,7 @@ const PostUserSchema = new mongoose.Schema(
     nameOrganization: {
       type: String,
     },
-    emailOrgazization: {
+    emailOrganization: {
       type: String,
     },
     phonenumber: {

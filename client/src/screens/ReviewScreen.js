@@ -65,7 +65,6 @@ const ReviewScreen = ({ route }) => {
         .then((res) => res.json())
         .then((resJson) => {
           setReview(resJson);
-          console.log(resJson)
         });
     } catch (error) {
       console.log(error);
@@ -79,7 +78,6 @@ const ReviewScreen = ({ route }) => {
   const handleLoadMore = () => {
     setEnd(end+5);
 }
- console.log(review.length)
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Đánh giá" />

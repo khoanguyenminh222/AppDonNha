@@ -78,7 +78,6 @@ const PersonalScreen = ({ route }) => {
             setRating(resJson.message);
           } else {
             setRating(resJson);
-            console.log(resJson);
           }
         });
     };

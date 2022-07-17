@@ -141,7 +141,6 @@ const SignInScreen = () => {
             fullname: user.name,
             email: user.email
           }
-          console.log(req)
           const signInAuth =  await fetch(`${BaseURL}/auth/loginAuth`, {
             method: "POST",
             headers: {
@@ -151,7 +150,6 @@ const SignInScreen = () => {
           })
           .then((res)=>res.json())
           .then((resJson)=>{
-            console.log(resJson)
             setState(resJson);
             navigation.navigate("Main")
           })

@@ -8,9 +8,15 @@ import {
   TextInput,
   ScrollView,
   Alert,
-  RefreshControl
+  RefreshControl,
 } from "react-native";
-import React, { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import AuthContext from "../context/AuthContext";
@@ -27,19 +33,15 @@ import Back from "../components/Back";
 import CustomInput from "../components/CustomInput";
 import { useForm } from "react-hook-form";
 
-const wait = timeout => {
-  return new Promise(resolve => setTimeout(resolve, timeout));
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
 const AboutScreen = () => {
   const { height } = useWindowDimensions();
 
   //useForm
-  const {
-    control,
-    handleSubmit,
-    
-  } = useForm();
+  const { control, handleSubmit } = useForm();
 
   const navigation = useNavigation();
 
@@ -49,38 +51,37 @@ const AboutScreen = () => {
   //tạo biến refresh trang
   const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = useCallback( async() => {
+  const onRefresh = useCallback(async () => {
     const res = await fetch(`${BaseURL}/user/${state._id}`)
-    .then(res=>res.json())
-    .then(resJson=>{
-      setState(resJson);
-    })
+      .then((res) => res.json())
+      .then((resJson) => {
+        setState(resJson);
+      });
 
     setRefreshing(true);
     wait(1000).then(() => setRefreshing(false));
   }, []);
-  
-  const fetchUser = async()=>{
+
+  const fetchUser = async () => {
     const res = await fetch(`${BaseURL}/user/${state._id}`)
-    .then(res=>res.json())
-    .then(resJson=>{
-      setState(resJson);
-    })
-  }
+      .then((res) => res.json())
+      .then((resJson) => {
+        setState(resJson);
+      });
+  };
 
   // gọi sau khi navigate trang
-  useEffect(()=>{
+  useEffect(() => {
     fetchUser();
-    const willFocusSubscription = navigation.addListener('focus',()=>{
+    const willFocusSubscription = navigation.addListener("focus", () => {
       fetchUser();
     });
     return willFocusSubscription;
-  }, [])
-
+  }, []);
 
   useEffect(() => {
     fetchUser();
-  },[]);
+  }, []);
 
   const VerifyUser = () => {
     //kiểm tra thông tin đầy đủ
@@ -102,28 +103,31 @@ const AboutScreen = () => {
 
   const onUpdateInfor = () => {
     navigation.navigate("UpdateInfor", state);
-  }
+  };
 
   const handleLogout = () => {
     setState([]);
-    navigation.navigate("SignIn")
-  }
-  
+    navigation.navigate("SignIn");
+  };
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Back textCenter="Thông tin"/>
-      <ScrollView showsVerticalScrollIndicator={false}
+      <Back textCenter="Thông tin" />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollView}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <View style={styles.container}>
           <View style={styles.headerWrapper}>
             <Image
               source={{
-                uri: state.profilePicture !== ""
-                  ? PublicFolder + state.profilePicture
-                  : PublicFolder + "persons/noAvatar.png",
+                uri:
+                  state.profilePicture !== ""
+                    ? PublicFolder + state.profilePicture
+                    : PublicFolder + "persons/noAvatar.png",
               }}
               style={styles.logo}
               resizeMode="cover"
@@ -156,56 +160,59 @@ const AboutScreen = () => {
           </View>
 
           <View style={styles.bodyWrapper}>
-
-          <View style={styles.containerInput}>
-            <View style={styles.wrapperLogo}>
-              <Ionicons name="mail-outline" size={30} />
+            <View style={styles.containerInput}>
+              <View style={styles.wrapperLogo}>
+                <Ionicons name="mail-outline" size={30} />
+              </View>
+              <TextInput
+                value={state.email}
+                style={styles.input}
+                editable={false}
+              />
             </View>
-            <TextInput
-              value={state.email}
-              style={styles.input}
-              editable={false}
-            />
-          </View>
-           <View style={styles.containerInput}>
-            <View style={styles.wrapperLogo}>
-              <Ionicons name="person-outline" size={30} />
+            <View style={styles.containerInput}>
+              <View style={styles.wrapperLogo}>
+                <Ionicons name="person-outline" size={30} />
+              </View>
+              <TextInput
+                value={state.fullname}
+                style={styles.input}
+                editable={false}
+              />
             </View>
-            <TextInput
-              value={state.fullname}
-              style={styles.input}
-              editable={false}
-            />
-          </View>
-          <View style={styles.containerInput}>
-            <View style={styles.wrapperLogo}>
-              <Ionicons name="home-outline" size={30} />
+            <View style={styles.containerInput}>
+              <View style={styles.wrapperLogo}>
+                <Ionicons name="home-outline" size={30} />
+              </View>
+              <TextInput
+                value={state.city}
+                placeholder="Địa chỉ"
+                style={styles.input}
+                numberOfLines={3}
+                underlineColorAndroid="transparent"
+                multiline={true}
+                editable={false}
+              />
             </View>
-            <TextInput
-              value={state.city}
-              placeholder="Địa chỉ"
-              style={styles.input}
-              numberOfLines={3}
-              underlineColorAndroid="transparent"
-              multiline={true}
-              editable={false}
-            />
-          </View>
-          <View style={styles.containerInput}>
-            <View style={styles.wrapperLogo}>
-              <Ionicons name="call-outline" size={30} />
+            <View style={styles.containerInput}>
+              <View style={styles.wrapperLogo}>
+                <Ionicons name="call-outline" size={30} />
+              </View>
+              <TextInput
+                value={state.phone}
+                placeholder="Số điện thoại"
+                style={styles.input}
+                editable={false}
+              />
             </View>
-            <TextInput
-              value={state.phone}
-              placeholder="Số điện thoại"
-              style={styles.input}
-              editable={false}
-            />
-          </View>
           </View>
 
           <View style={styles.footer}>
-            <CustomButton size="48%" text="Chỉnh sửa thông tin" onPress={onUpdateInfor}/>
+            <CustomButton
+              size="48%"
+              text="Chỉnh sửa thông tin"
+              onPress={onUpdateInfor}
+            />
             <CustomButton
               size="48%"
               text="Đổi mật khẩu"
@@ -243,7 +250,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderWidth: 3,
     borderColor: COLORS.light,
-    
   },
   bodyWrapper: {
     width: "100%",
@@ -260,8 +266,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginVertical: 8,
     flexDirection: "row",
-    justifyContent:'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   wrapperLogo: {
     paddingHorizontal: 5,
@@ -271,7 +277,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 10,
     width: "100%",
-    height:"100%",
+    height: "100%",
     color: COLORS.black,
   },
   footer: {

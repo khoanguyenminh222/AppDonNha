@@ -46,14 +46,14 @@ const DetailPost = ({ route }) => {
       console.log(error);
     }
   };
-  
+
   //gọi hàm khi load lần đầu load trang lấy ra người dùng đổ dữ liệu vào view
   useEffect(() => {
-    let abortController = new AbortController(); 
+    let abortController = new AbortController();
     getFullnameById();
-    return () => {  
-      abortController.abort();  
-    } 
+    return () => {
+      abortController.abort();
+    };
   }, []);
 
   // lấy ra đánh giá
@@ -63,7 +63,6 @@ const DetailPost = ({ route }) => {
       await fetch(`${baseURL}/review/averageRating/${route.params.userId}`)
         .then((res) => res.json())
         .then((resJson) => {
-          console.log(resJson)
           if (resJson.message) {
             setRating(resJson.message);
           } else {
@@ -143,7 +142,6 @@ const DetailPost = ({ route }) => {
       console.log(error);
     }
   };
-  console.log(user)
 
   //tạo thông báo
   const createNotify = async (notify) => {
@@ -160,34 +158,30 @@ const DetailPost = ({ route }) => {
     }
   };
 
-
-
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
       <Back textCenter="Chi tiết" />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-
         {/* hình ảnh */}
         <ScrollView
           style={styles.containBanner}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
         >
-          {route.params.picture && route.params.picture.map((p) => (
-            <View key={p} style={[styles.containerImage, { width: width }]}>
-              <Image
-                style={[styles.img, { width: width }]}
-                source={{ uri: PublicFolder + p }}
-                resizeMode="contain"
-              />
-            </View>
-          ))}
+          {route.params.picture &&
+            route.params.picture.map((p) => (
+              <View key={p} style={[styles.containerImage, { width: width }]}>
+                <Image
+                  style={[styles.img, { width: width }]}
+                  source={{ uri: PublicFolder + p }}
+                  resizeMode="contain"
+                />
+              </View>
+            ))}
         </ScrollView>
 
-        
         <View style={styles.container}>
-
           {/* phần tiêu đề */}
           <Text
             style={[
@@ -198,7 +192,7 @@ const DetailPost = ({ route }) => {
             {route.params.title}
           </Text>
 
-            {/* phần vị trí */}
+          {/* phần vị trí */}
           <TouchableOpacity
             style={{
               flexDirection: "row",
@@ -223,11 +217,11 @@ const DetailPost = ({ route }) => {
             </Text>
           </TouchableOpacity>
 
-              {/* phần avatar */}
+          {/* phần avatar */}
           <TouchableOpacity
             style={{
-              justifyContent: 'center',
-              alignItems: 'center',
+              justifyContent: "center",
+              alignItems: "center",
               flexDirection: "row",
               paddingVertical: 5,
               borderBottomColor: "gray",
@@ -235,9 +229,17 @@ const DetailPost = ({ route }) => {
             }}
             onPress={onPress}
           >
-            <View style={{flex: 1}}>
-              <View style={{flex: 1 ,flexDirection:'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10}}>
-                <View style={{flexDirection:'row', alignItems: 'center'}}>
+            <View style={{ flex: 1 }}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 10,
+                }}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Avatar
                     size={"small"}
                     rounded
@@ -252,27 +254,52 @@ const DetailPost = ({ route }) => {
                     {user.fullname}
                   </Text>
                 </View>
-                
+
                 <TouchableOpacity style={styles.button} onPress={onPress}>
                   <Text style={styles.text}>Xem trang</Text>
                 </TouchableOpacity>
               </View>
-              <View style={{flex:1, flexDirection:'row' ,justifyContent: 'space-around', alignItems: 'center'}}>
-                <View style={{justifyContent: 'center', alignItems:'center'}}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
                   {route.params.nameOrganization ? (
-                    <><Text style={{ color: COLORS.gray }}>Tổ chức</Text><Ionicons name="briefcase-outline" size={height * 0.03} /></>
-                  ): <><Text style={{ color: COLORS.gray }}>Cá nhân</Text><Ionicons name="person-circle-outline" size={height * 0.03} /></>}
-                  
+                    <>
+                      <Text style={{ color: COLORS.gray }}>Tổ chức</Text>
+                      <Ionicons name="briefcase-outline" size={height * 0.03} />
+                    </>
+                  ) : (
+                    <>
+                      <Text style={{ color: COLORS.gray }}>Cá nhân</Text>
+                      <Ionicons
+                        name="person-circle-outline"
+                        size={height * 0.03}
+                      />
+                    </>
+                  )}
                 </View>
-                <View style={{height:'80%', width:1, backgroundColor:COLORS.gray}}></View>
-                <View style={{justifyContent: 'center', alignItems:'center'}}>
-                  <Text style={{color:COLORS.gray}}>Đánh giá</Text>
-                  <Text style={{color:COLORS.red}}>{rating}</Text>
+                <View
+                  style={{
+                    height: "80%",
+                    width: 1,
+                    backgroundColor: COLORS.gray,
+                  }}
+                ></View>
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <Text style={{ color: COLORS.gray }}>Đánh giá</Text>
+                  <Text style={{ color: COLORS.red }}>{rating}</Text>
                 </View>
               </View>
-              
             </View>
-            
           </TouchableOpacity>
           <View>
             <Text style={[styles.detail, { fontSize: height * 0.02 }]}>
@@ -287,7 +314,7 @@ const DetailPost = ({ route }) => {
                 size={height * 0.03}
                 color={COLORS.yellow}
               ></Ionicons>
-              <Text style={[styles.textdetail, {fontWeight: 'bold'}]}>
+              <Text style={[styles.textdetail, { fontWeight: "bold" }]}>
                 {route.params.nameOrganization}
               </Text>
             </View>
@@ -309,7 +336,7 @@ const DetailPost = ({ route }) => {
             ></Ionicons>
             <Text style={styles.textdetail}>{route.params.category}</Text>
           </View>
-          {route.params.emailOrgazization ? (
+          {route.params.emailOrganization ? (
             <View style={[styles.detail]}>
               <Ionicons
                 name="mail-outline"
@@ -317,7 +344,7 @@ const DetailPost = ({ route }) => {
                 color={COLORS.yellow}
               ></Ionicons>
               <Text style={styles.textdetail}>
-                {route.params.emailOrgazization}
+                {route.params.emailOrganization}
               </Text>
             </View>
           ) : undefined}
@@ -393,9 +420,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   info: {
-    paddingHorizontal:5,
-    textAlign: 'center',
-    fontWeight: 'bold'
+    paddingHorizontal: 5,
+    textAlign: "center",
+    fontWeight: "bold",
   },
   img: {
     width: "100%",

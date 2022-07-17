@@ -7,7 +7,6 @@ var sd = require("string_decoder").StringDecoder;
 router.post("/", async (req, res) => {
   const newPost = new PostUser(req.body);
   newPost.location.coordinates = req.body.coordinates;
-  console.log(newPost);
   try {
     const savePost = await newPost.save();
     res.status(200).json(savePost);
@@ -52,7 +51,7 @@ router.get("/:id/getPostWaiting", async (req, res) => {
           } else {
             res.status(200).json(docs);
           }
-        });
+        }).sort({ createdAt: -1 });
       } catch (err) {
         res.status(500).json(err);
       }
@@ -68,7 +67,6 @@ router.get("/:id/getPostWaiting", async (req, res) => {
 router.get("/search", async (req, res) => {
   try {
     const txt = req.query.txt;
-    console.log(txt);
     const posts = await PostUser.find({
       isWaiting: false,
       $text: { $search: "'" + txt + "'" },
@@ -84,7 +82,6 @@ router.get("/search", async (req, res) => {
 router.get("/filter", async (req, res) => {
   try {
     const txt = req.query.txt;
-    console.log(txt);
     const posts = await PostUser.find({
       isWaiting: false,
       nameOrganization: { $exists: txt },

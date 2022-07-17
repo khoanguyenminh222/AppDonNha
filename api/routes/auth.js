@@ -108,7 +108,6 @@ const handleSendmail = async (req,res,next) =>{
 //RESET PASSWORD
 router.put("/resetpassword", handleSendmail, async (req, res) => {
   const newPass = req.pass;
-  console.log(newPass);
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(newPass, salt);
 
@@ -141,7 +140,6 @@ router.put("/changepassword", async (req, res) => {
 
     //thay đổi password
     user.password = hashedPassword;
-    console.log(hashedPassword);
     //lưu lại user
     let saveUser = await user.save();
     res.status(200).json(saveUser);
@@ -188,7 +186,6 @@ router.post("/loginAuth", async(req,res)=>{
       });
       //save user and respond
       const usernew = await newUser.save();
-      console.log(usernew)
       res.status(200).json(usernew);
       
     }else{

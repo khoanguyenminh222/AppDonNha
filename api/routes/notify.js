@@ -51,7 +51,6 @@ router.post("/", async (req, res) => {
 //cập nhật thông báo
 router.put("/:id", async (req,res)=>{
   try {
-    console.log(req.body);
     const notify = await Notify.findById(req.params.id);
     if (notify.userId === req.body.userId) {
       await notify.updateOne({ $set: req.body });

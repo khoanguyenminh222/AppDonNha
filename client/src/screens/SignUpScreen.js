@@ -8,11 +8,12 @@ import {
   TextInput,
   Text,
   Alert,
+  Linking,
 } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller, get } from "react-hook-form";
-
+import * as Facebook from "expo-facebook";
 import GlobalStyles from "../GlobalStyles";
 import { COLORS } from "../Colors";
 import BaseURL from "../api/BaseURL";
@@ -30,6 +31,7 @@ const SignUpScreen = () => {
   const { height } = useWindowDimensions();
   const navigation = useNavigation();
   const [checked, setChecked] = React.useState("first");
+  const [state, setState] = useContext(AuthContext);
   //useForm
   const {
     control,
@@ -57,23 +59,64 @@ const SignUpScreen = () => {
       body: JSON.stringify(data),
     });
     saveCodeToUser.json().then((user) => {
-      console.log(user);
       navigation.navigate("ConfirmEmail", user);
     });
   };
 
-  const onTermsOfUserPressed = () => {
-    
+  const onTermsOfUserPressed =  () => {
+    const termsOfUser = Linking.canOpenURL('https://www.termsfeed.com/live/0bdf59a3-f40e-4fe5-b448-62aec8570af2')
+    if (termsOfUser){
+      Linking.openURL('https://www.termsfeed.com/live/0bdf59a3-f40e-4fe5-b448-62aec8570af2')
+    }
   };
-  const onSignInFacebook = () => {
-   
+  const onSignInFacebook = async () => {
+    let user;
+    try {
+      await Facebook.initializeAsync({
+        appId: "740695290579398",
+      });
+      const { type, token, expirationDate, permissions, declinedPermissions } =
+        await Facebook.logInWithReadPermissionsAsync({
+          permissions: ["public_profile", "email"],
+        });
+      if (type === "success") {
+        // Get the user's name using Facebook's Graph API
+        const response = await fetch(
+          `https://graph.facebook.com/me?fields=id,name,email,birthday&access_token=${token}`
+        )
+          .then((res) => res.json())
+          .then((resJson) => {
+            user = resJson;
+            
+          });
+          const req = {
+            fullname: user.name,
+            email: user.email
+          }
+          const signInAuth =  await fetch(`${BaseURL}/auth/loginAuth`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req),
+          })
+          .then((res)=>res.json())
+          .then((resJson)=>{
+            setState(resJson);
+            navigation.navigate("Main")
+          })
+      } else {
+        // type === 'cancel'
+      }
+    } catch ({ message }) {
+      console.log(`Facebook Login Error: ${message}`);
+    }
   };
   const onSignInGoogle = () => {
    
   };
   const onSignInPressed = () => {
     navigation.navigate("SignIn");
- 
   };
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>

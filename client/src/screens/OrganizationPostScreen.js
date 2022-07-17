@@ -50,14 +50,16 @@ const OrganizationPostScreen = ({ route }) => {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [phonenumber, setPhonenumber] = useState("");
+  const [website, setWebsite] = useState("");
   useEffect(() => {
     if (route.params?.post) {
       setPost(route.params.post);
       setNameOrganization(route.params.post.nameOrganization);
-      setEmailOrganization(route.params.post.emailOrgazization);
+      setEmailOrganization(route.params.post.emailOrganization);
       setTitle(route.params.post.title);
       setDesc(route.params.post.desc);
       setPhonenumber(route.params.post.phonenumber);
+      setWebsite(route.params.post.website)
       let arr = [];
       route.params.post.picture.forEach((element) => {
         arr.push(PublicFolder + element);
@@ -65,7 +67,6 @@ const OrganizationPostScreen = ({ route }) => {
       setArrayPicture(arr);
     }
   }, [route.params?.post]);
-  console.log(arrayPicture);
   // set lại address khi có tham số route.params
   useEffect(() => {
     if (route.params?.address) {
@@ -109,11 +110,9 @@ const OrganizationPostScreen = ({ route }) => {
   }, [arrayPicture.length]);
   //hàm xử lý xoá ảnh
   const handleDeleteImage = (image) => {
-    console.log(image);
     arrayPicture.forEach((element, i) => {
       if (image === element) {
         arrayPicture.splice(i, 1);
-        console.log(arrayPicture);
         setArrayPicture([...arrayPicture]);
       }
     });
@@ -158,8 +157,7 @@ const OrganizationPostScreen = ({ route }) => {
       setErrMessage("Chưa có số điện thoại");
       return;
     }
-    console.log(VNF_REGEX.test(phonenumber));
-    if (VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
+    if (!VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
       setErrMessage("Số điện thoại không đúng định dạng");
       return;
     }
@@ -213,6 +211,7 @@ const OrganizationPostScreen = ({ route }) => {
       desc: desc,
       address: textAddress,
       phonenumber: phonenumber,
+      website: website
     };
 
     //fetch post tin đăng
@@ -224,7 +223,6 @@ const OrganizationPostScreen = ({ route }) => {
         },
         body: JSON.stringify(postOrganizationPost),
       });
-      console.log(postOrgan);
     } catch (err) {
       console.log(err);
     }
@@ -258,7 +256,7 @@ const OrganizationPostScreen = ({ route }) => {
       setErrMessage("Chưa có Email nhà cung cấp dịch vụ");
       return;
     }
-    if (EMAIL_REGEX.test(emailOrganization)) {
+    if (!EMAIL_REGEX.test(emailOrganization)) {
       setErrMessage("Email chưa đúng định dạng");
       return;
     }
@@ -280,7 +278,7 @@ const OrganizationPostScreen = ({ route }) => {
       return;
     }
 
-    if (VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
+    if (!VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
       setErrMessage("Số điện thoại không đúng định dạng");
       return;
     }
@@ -339,6 +337,7 @@ const OrganizationPostScreen = ({ route }) => {
         title: title,
         desc: desc,
         phonenumber: phonenumber,
+        website: website
       };
     } else {
       postOrganization = {
@@ -352,7 +351,7 @@ const OrganizationPostScreen = ({ route }) => {
         desc: desc,
         address: textAddress,
         phonenumber: phonenumber,
-      };
+        website: website      };
     }
 
     // fetch put chỉnh sửa tin
@@ -364,7 +363,6 @@ const OrganizationPostScreen = ({ route }) => {
         },
         body: JSON.stringify(postOrganization),
       });
-      console.log(postOrganization);
     } catch (err) {
       console.log(err);
     }
@@ -405,7 +403,7 @@ const OrganizationPostScreen = ({ route }) => {
         <View style={styles.container}>
           <Text style={styles.title}>DANH MỤC</Text>
           <RNPickerSelect
-            placeholder={{ label: "Chọn danh mục*", value: null }}
+            placeholder={{ label: post ? post.category : "Chọn danh mục*", value:  post ? post.category : null  }}
             onValueChange={(category) => setCategory(category)}
             items={[
               { label: "Văn phòng", value: "Văn phòng" },
@@ -576,6 +574,16 @@ const OrganizationPostScreen = ({ route }) => {
               value={phonenumber !== "" ? phonenumber : null}
               onChangeText={setPhonenumber}
               placeholder="Số điện thoại*"
+              style={styles.input}
+            />
+          </View>
+          
+          <Text style={styles.title}>WEBSITE</Text>
+          <View style={styles.containerInput}>
+            <TextInput
+              value={website !== "" ? website : null}
+              onChangeText={setWebsite}
+              placeholder="Website"
               style={styles.input}
             />
           </View>

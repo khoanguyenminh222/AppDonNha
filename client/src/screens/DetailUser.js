@@ -20,7 +20,6 @@ import Header from "../components/Header";
 import Back from "../components/Back";
 const DetailUser = ({ route }) => {
   const user = route.params;
-  console.log(user);
   //const [state, dispatch] = useContext(AuthContext);
   const [state, setState] = useContext(AuthContext);
   const navigation = useNavigation();
@@ -82,7 +81,6 @@ const DetailUser = ({ route }) => {
         },
         body: JSON.stringify(editUser),
       });
-      console.log(response);
     } catch (error) {
       console.log(error);
     }
@@ -216,8 +214,8 @@ const styles = StyleSheet.create({
   coverImg: {
     width: "100%",
     maxWidth: 300,
-    justifyContent: 'center',
-    alignItems:"center",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

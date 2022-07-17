@@ -27,7 +27,7 @@ import { useNavigation } from "@react-navigation/native";
 import baseURL from "../api/BaseURL";
 import AuthContext from "../context/AuthContext";
 import PublicFolder from "../api/PublicFolder";
-const IndividualPostScreen = ({route}) => {
+const IndividualPostScreen = ({ route }) => {
   const [state, setState] = useContext(AuthContext);
 
   const { height, width } = useWindowDimensions();
@@ -37,29 +37,28 @@ const IndividualPostScreen = ({route}) => {
   const VNF_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/g;
   const [errMessage, setErrMessage] = useState("");
 
-  const[arrayPicture, setArrayPicture] = useState([]);
+  const [arrayPicture, setArrayPicture] = useState([]);
 
   const [address, setAddress] = useState([]);
   const [coordinate, setCoordinate] = useState([]);
 
-  const [post, setPost] = useState(null)
-  const [title, setTitle] = useState('')
-  const [desc, setDesc] = useState('')
-  const [phonenumber, setPhonenumber] = useState('')
-  useEffect(()=>{
-    if(route.params?.post){
+  const [post, setPost] = useState(null);
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
+  const [phonenumber, setPhonenumber] = useState("");
+  useEffect(() => {
+    if (route.params?.post) {
       setPost(route.params.post);
       setTitle(route.params.post.title);
       setDesc(route.params.post.desc);
       setPhonenumber(route.params.post.phonenumber);
-      let arr = []
-      route.params.post.picture.forEach(element => {
-        arr.push(PublicFolder+element)
+      let arr = [];
+      route.params.post.picture.forEach((element) => {
+        arr.push(PublicFolder + element);
       });
       setArrayPicture(arr);
     }
-  }, [route.params?.post])
-  console.log(arrayPicture)
+  }, [route.params?.post]);
   // set lại address khi có tham số route.params
   useEffect(() => {
     if (route.params?.address) {
@@ -85,33 +84,32 @@ const IndividualPostScreen = ({route}) => {
     }
 
     let pickerResult = await ImagePicker.launchImageLibraryAsync();
-    
-    if(arrayPicture.includes(undefined)){
+
+    if (arrayPicture.includes(undefined)) {
       arrayPicture.pop();
     }
-    setArrayPicture([...arrayPicture,pickerResult.uri]);
+    setArrayPicture([...arrayPicture, pickerResult.uri]);
   };
 
   // mỗi khi picture thay đổi sẽ cập nhật lại ảnh bị null
-  useEffect(()=>{
-    if(arrayPicture[arrayPicture.length-1]==null || arrayPicture[arrayPicture.length-1]==undefined){
+  useEffect(() => {
+    if (
+      arrayPicture[arrayPicture.length - 1] == null ||
+      arrayPicture[arrayPicture.length - 1] == undefined
+    ) {
       arrayPicture.pop();
     }
-  },[arrayPicture.length])
-  
+  }, [arrayPicture.length]);
 
   //hàm xử lý xoá ảnh
   const handleDeleteImage = (image) => {
-    console.log(image)
-    arrayPicture.forEach((element,i) => {
-      if(image===element){
-        arrayPicture.splice(i,1);
-        console.log(arrayPicture)
+    arrayPicture.forEach((element, i) => {
+      if (image === element) {
+        arrayPicture.splice(i, 1);
         setArrayPicture([...arrayPicture]);
       }
     });
-  }
-
+  };
 
   // hàm xử lý khi bấm nút đăng
   const onSendIndividualPost = async () => {
@@ -141,12 +139,11 @@ const IndividualPostScreen = ({route}) => {
       setErrMessage("Chưa có số điện thoại");
       return;
     }
-    console.log(VNF_REGEX.test(phonenumber))
-    if(VNF_REGEX.test(phonenumber) || phonenumber.length!==10){
+    if (VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
       setErrMessage("Số điện thoại không đúng định dạng");
       return;
     }
-    
+
     // lấy ra text địa chỉ để lưu vào DB
     const textAddress =
       (address.streetNumber !== null ? address.streetNumber + ", " : "") +
@@ -155,22 +152,24 @@ const IndividualPostScreen = ({route}) => {
       (address.district !== null ? address.district + ", " : "") +
       (address.subregion !== null ? address.subregion + ", " : "") +
       (address.region !== null ? address.region : "");
-    
+
     // tạo formData để upload ảnh lên DB
     const formData = new FormData();
     //mảng chưa tên ảnh
     const arrayFilename = [];
     //duyệt qua tất cả đường dẫn uri
-    arrayPicture.forEach(a=>{
+    arrayPicture.forEach((a) => {
       const arrPicture = a.split("/");
-      const filename = `file_${Date.now()}_${arrPicture[arrPicture.length-1]}`;
+      const filename = `file_${Date.now()}_${
+        arrPicture[arrPicture.length - 1]
+      }`;
       arrayFilename.push(filename);
-      formData.append('file',{
+      formData.append("file", {
         name: filename,
         uri: a,
-        type: 'image/*'
-      })
-    })
+        type: "image/*",
+      });
+    });
 
     //upload ảnh lên server
     try {
@@ -182,8 +181,7 @@ const IndividualPostScreen = ({route}) => {
     } catch (error) {
       console.log(error.message);
     }
-    
-    
+
     // Các thuộc tính cần thiết của một tin đăng
     let postIndividual = {
       userId: state._id,
@@ -208,19 +206,19 @@ const IndividualPostScreen = ({route}) => {
       console.log(err);
     }
 
-    const notify={
+    const notify = {
       userId: state._id,
       title: "VUI LÒNG CHỜ CHO TIN CỦA BẠN ĐƯỢC DUYỆT !",
       text: "Có thể mất vài tiếng để tin được duyệt.",
-    }
+    };
     createNotify(notify);
-    Alert.alert("TIN ĐANG CHỜ DUYỆT !","Hãy chờ thông báo mới nhất",[
-      {text:"OK", onPress:()=>navigation.navigate("Main")}
+    Alert.alert("TIN ĐANG CHỜ DUYỆT !", "Hãy chờ thông báo mới nhất", [
+      { text: "OK", onPress: () => navigation.navigate("Main") },
     ]);
   };
 
   // chỉnh sửa tin
-  const handleModifyPost = async() => {
+  const handleModifyPost = async () => {
     // kiểm tra bắt người dùng nhập đầy đủ
     if (category == "") {
       setErrMessage("Chưa chọn Danh mục");
@@ -247,43 +245,40 @@ const IndividualPostScreen = ({route}) => {
       setErrMessage("Chưa có số điện thoại");
       return;
     }
-
-    console.log(VNF_REGEX.test(phonenumber))
-    if(VNF_REGEX.test(phonenumber) || phonenumber.length!==10){
+    if (VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
       setErrMessage("Số điện thoại không đúng định dạng");
       return;
     }
-
     // lấy ra text địa chỉ để lưu vào DB
     let textAddress;
-    if(address.length===0){
-
-    }else{
+    if (address.length === 0) {
+    } else {
       textAddress =
-      (address.streetNumber !== null ? address.streetNumber + ", " : "") +
-      (address.street !== null ? address.street + ", " : "") +
-      (address.city !== null ? address.city + ", " : "") +
-      (address.district !== null ? address.district + ", " : "") +
-      (address.subregion !== null ? address.subregion + ", " : "") +
-      (address.region !== null ? address.region : "");
+        (address.streetNumber !== null ? address.streetNumber + ", " : "") +
+        (address.street !== null ? address.street + ", " : "") +
+        (address.city !== null ? address.city + ", " : "") +
+        (address.district !== null ? address.district + ", " : "") +
+        (address.subregion !== null ? address.subregion + ", " : "") +
+        (address.region !== null ? address.region : "");
     }
-    
-    
+
     // tạo formData để upload ảnh lên DB
     const formData = new FormData();
     //mảng chưa tên ảnh
     const arrayFilename = [];
     //duyệt qua tất cả đường dẫn uri
-    arrayPicture.forEach(a=>{
+    arrayPicture.forEach((a) => {
       const arrPicture = a.split("/");
-      const filename = `file_${Date.now()}_${arrPicture[arrPicture.length-1]}`;
+      const filename = `file_${Date.now()}_${
+        arrPicture[arrPicture.length - 1]
+      }`;
       arrayFilename.push(filename);
-      formData.append('file',{
+      formData.append("file", {
         name: filename,
         uri: a,
-        type: 'image/*'
-      })
-    })
+        type: "image/*",
+      });
+    });
 
     //upload ảnh lên server
     try {
@@ -295,11 +290,10 @@ const IndividualPostScreen = ({route}) => {
     } catch (error) {
       console.log(error.message);
     }
-    
-    
+
     // Các thuộc tính cần thiết của một tin đăng
     let postIndividual;
-    if(address.length===0){
+    if (address.length === 0) {
       postIndividual = {
         userId: state._id,
         category: category,
@@ -308,7 +302,7 @@ const IndividualPostScreen = ({route}) => {
         desc: desc,
         phonenumber: phonenumber,
       };
-    }else{
+    } else {
       postIndividual = {
         userId: state._id,
         coordinates: [coordinate.longitude, coordinate.latitude],
@@ -320,7 +314,7 @@ const IndividualPostScreen = ({route}) => {
         phonenumber: phonenumber,
       };
     }
-    
+
     // fetch put chỉnh sửa tin
     try {
       const postIndi = await fetch(`${baseURL}/postUser/${post._id}`, {
@@ -330,50 +324,52 @@ const IndividualPostScreen = ({route}) => {
         },
         body: JSON.stringify(postIndividual),
       });
-      console.log(postIndi);
     } catch (err) {
       console.log(err);
     }
 
-    const notify={
+    const notify = {
       userId: state._id,
       title: "CHỈNH SỬA THÀNH CÔNG, HÃY ĐỢI ĐỂ TIN ĐƯỢC DUYỆT !",
       text: "Có thể mất vài tiếng để tin được duyệt.",
-    }
+    };
     createNotify(notify);
-    Alert.alert("CẬP NHẬT THÀNH CÔNG !","Hãy chờ thông báo mới nhất",[
-      {text:"OK", onPress:()=>navigation.goBack()}
+    Alert.alert("CẬP NHẬT THÀNH CÔNG !", "Hãy chờ thông báo mới nhất", [
+      { text: "OK", onPress: () => navigation.goBack() },
     ]);
-  }
+  };
 
   //tạo thông báo
-  const createNotify = async(notify)=>{
+  const createNotify = async (notify) => {
     try {
-      const response = await fetch(`${baseURL}/notify`,{
+      const response = await fetch(`${baseURL}/notify`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(notify),
-      })
+      });
     } catch (error) {
       console.log(error);
     }
-  }
+  };
   // nút chuyển qua trang location nhập vị trí
   const onChangeScreen = () => {
-    const req = { action: "fill", name:"IndividualPost"};
+    const req = { action: "fill", name: "IndividualPost" };
     navigation.navigate("Location", req);
-  }
+  };
 
   return (
     <SafeAreaView style={GlobalStyles.droidSafeArea}>
-      <Back textCenter={post ? "Chỉnh sửa": "Đăng tin"} />
+      <Back textCenter={post ? "Chỉnh sửa" : "Đăng tin"} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <Text style={styles.title}>DANH MỤC</Text>
           <RNPickerSelect
-            placeholder={{ label: post ? post.category : "Chọn danh mục*", value: post ? post.category : null }}
+            placeholder={{
+              label: post ? post.category : "Chọn danh mục*",
+              value: post ? post.category : null,
+            }}
             onValueChange={(category) => setCategory(category)}
             items={[
               { label: "Văn phòng", value: "Văn phòng" },
@@ -385,70 +381,68 @@ const IndividualPostScreen = ({route}) => {
 
           <Text style={styles.title}>THÔNG TIN CHI TIẾT</Text>
           <View style={styles.image}>
-
-            
-          {arrayPicture.length<3 ? 
-                (
-                  <TouchableOpacity style={styles.icon} onPress={()=>onUploadImage()}>
+            {arrayPicture.length < 3 ? (
+              <TouchableOpacity
+                style={styles.icon}
+                onPress={() => onUploadImage()}
+              >
                 <Ionicons name="camera-outline" size={90}></Ionicons>
                 <Text> ĐĂNG TỪ 1 ĐẾN 3 ẢNH </Text>
               </TouchableOpacity>
-                )
-                :
-                undefined
-              }
-              
-              {arrayPicture.map((element,i) => (
-                  <View key={i} style={styles.coverImg}>
-                  <Image
-                    source={{ uri: element}}
-                    style={styles.img}
-                    resizeMode="contain"
-                  ></Image>
-                  <Ionicons onPress={()=>handleDeleteImage(element)} style={{position: 'absolute', top: 0, right:0}} name="close-circle-outline" size={30}></Ionicons>
-                </View>
-              ))}
-            
-            
-            
+            ) : undefined}
+
+            {arrayPicture.map((element, i) => (
+              <View key={i} style={styles.coverImg}>
+                <Image
+                  source={{ uri: element }}
+                  style={styles.img}
+                  resizeMode="contain"
+                ></Image>
+                <Ionicons
+                  onPress={() => handleDeleteImage(element)}
+                  style={{ position: "absolute", top: 0, right: 0 }}
+                  name="close-circle-outline"
+                  size={30}
+                ></Ionicons>
+              </View>
+            ))}
           </View>
 
           <Text style={styles.title}>TIÊU ĐỀ VÀ MÔ TẢ</Text>
 
           <View style={styles.containerInput}>
             <TextInput
-              value={title!=="" ? title : null}
+              value={title !== "" ? title : null}
               onChangeText={setTitle}
               placeholder="Tiêu đề*"
               style={styles.input}
             />
           </View>
           <View style={styles.textAreaContainer}>
-          <View style={styles.containerInput}>
-            <TextInput
-              value={desc!=="" ? desc : null}
-              onChangeText={setDesc}
-              placeholder="Mô tả chi tiết*"
-              style={styles.input}
-              numberOfLines={20}
-              multiline={true}
-            />
+            <View style={styles.containerInput}>
+              <TextInput
+                value={desc !== "" ? desc : null}
+                onChangeText={setDesc}
+                placeholder="Mô tả chi tiết*"
+                style={styles.input}
+                numberOfLines={20}
+                multiline={true}
+              />
+            </View>
           </View>
-          </View>
-          
 
           <Text style={styles.title}>ĐỊA CHỈ</Text>
-          {post && address.length==0 ? (
+          {post && address.length == 0 ? (
             <View style={styles.containerInput}>
-            <TextInput
-              value={post ? post.address : null}
-              placeholder="Địa chỉ*"
-              style={styles.input}
-              editable={false}
-            />
-          </View>
-          ): undefined}
-          
+              <TextInput
+                value={post ? post.address : null}
+                placeholder="Địa chỉ*"
+                style={styles.input}
+                editable={false}
+              />
+            </View>
+          ) : undefined}
+
           <TouchableOpacity
             style={{
               paddingHorizontal: 10,
@@ -519,11 +513,11 @@ const IndividualPostScreen = ({route}) => {
               />
             </View>
           ) : undefined}
-          
+
           <Text style={styles.title}>SỐ ĐIỆN THOẠI</Text>
           <View style={styles.containerInput}>
             <TextInput
-              value={phonenumber!=="" ? phonenumber : null}
+              value={phonenumber !== "" ? phonenumber : null}
               onChangeText={setPhonenumber}
               placeholder="Số điện thoại*"
               style={styles.input}
@@ -537,22 +531,11 @@ const IndividualPostScreen = ({route}) => {
             />
           ) : undefined}
 
-          {post ? 
-          (
-            <CustomButton
-            text="Chỉnh sửa"
-            onPress={handleModifyPost}
-            />
-          )
-          :
-          (
-            <CustomButton
-            text="ĐĂNG TIN"
-            onPress={onSendIndividualPost}
-            />
-          )
-          }
-          
+          {post ? (
+            <CustomButton text="Chỉnh sửa" onPress={handleModifyPost} />
+          ) : (
+            <CustomButton text="ĐĂNG TIN" onPress={onSendIndividualPost} />
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -570,29 +553,29 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   image: {
-    width: '100%',
+    width: "100%",
     borderRadius: 3,
     backgroundColor: COLORS.light,
     height: 200,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   icon: {
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
   },
-  coverImg:{
+  coverImg: {
     marginHorizontal: 10,
     marginVertical: 10,
     backgroundColor: COLORS.white,
-    flex:1,
-    position: 'relative'
+    flex: 1,
+    position: "relative",
   },
-  img:{
-    width: '100%',
-    height: '100%',
+  img: {
+    width: "100%",
+    height: "100%",
   },
   containerInput: {
     backgroundColor: COLORS.white,

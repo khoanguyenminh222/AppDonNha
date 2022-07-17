@@ -173,4 +173,31 @@ router.put("/savecode", async (req,res)=>{
   }
 })
 
+//login with fb/gg
+router.post("/loginAuth", async(req,res)=>{
+  try {
+    
+    const user = await User.findOne({email:req.body.email})
+    if(!user){
+      
+      //create new user
+      const newUser = new User({
+        fullname: req.body.fullname,
+        email: req.body.email,
+        password: '123456',
+      });
+      //save user and respond
+      const usernew = await newUser.save();
+      console.log(usernew)
+      res.status(200).json(usernew);
+      
+    }else{
+      res.status(200).json(user);
+    }
+    
+  } catch (error) {
+    res.status(500).json(error);
+  }
+})
+
 module.exports = router;

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Pressable,
   Modal,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { COLORS } from "../Colors";
@@ -37,15 +38,26 @@ const ItemReject = ({ post, action }) => {
     }
    
   };
+
   const handleDeletePost = async () => {
-    const postIndi = await fetch(`${baseURL}/postUser/${post._id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
+    Alert.alert("Xoá tin!", "Bạn chắc chắn muốn xoá tin này", [
+      { text: "Cancel", onPress: () => setModalVisible(!modalVisible) },
+      { text: "OK", onPress: async() => {
+        const postIndi = await fetch(`${baseURL}/postUser/${post._id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        Alert.alert("Xoá thành công", " ",[
+          {text: "OK", onPress: () => console.log("close")}
+        ])
+        setModalVisible(!modalVisible);
+        } 
       },
-    });
-    setModalVisible(!modalVisible);
+    ]);
   };
+
   const handleOpenModel = () => {
     setModalVisible(!modalVisible);
   };

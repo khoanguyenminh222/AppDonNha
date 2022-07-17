@@ -113,7 +113,9 @@ router.get("/new", async (req, res) => {
 //xem tin của người dùng
 router.get("/:userId", async (req, res) => {
   try {
-    const posts = await PostUser.find({ userId: req.params.userId });
+    const posts = await PostUser.find({ userId: req.params.userId }).sort({
+      createdAt: -1,
+    });;
     res.status(200).json(posts);
   } catch (e) {
     res.status(500).json(e);

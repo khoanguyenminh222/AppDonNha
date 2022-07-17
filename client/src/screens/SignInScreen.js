@@ -118,6 +118,7 @@ const SignInScreen = () => {
     navigation.navigate("ForgotPassword");
   };
   const onSignInFacebook = async () => {
+    let user;
     try {
       await Facebook.initializeAsync({
         appId: "740695290579398",
@@ -133,10 +134,27 @@ const SignInScreen = () => {
         )
           .then((res) => res.json())
           .then((resJson) => {
-            // Alert.alert('Logged in!', `Hi ${(await response.json())}!`);
-            console.log("ok", resJson);
-            navigation.navigate("SignIn")
+            user = resJson;
+            
           });
+          const req = {
+            fullname: user.name,
+            email: user.email
+          }
+          console.log(req)
+          const signInAuth =  await fetch(`${BaseURL}/auth/loginAuth`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(req),
+          })
+          .then((res)=>res.json())
+          .then((resJson)=>{
+            console.log(resJson)
+            setState(resJson);
+            navigation.navigate("Main")
+          })
       } else {
         // type === 'cancel'
       }

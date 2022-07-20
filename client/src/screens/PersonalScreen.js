@@ -95,16 +95,23 @@ const PersonalScreen = ({ route }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.headerWrapper}>
-            <Image
-              source={{
-                uri:
-                  route.params.profilePicture !== ""
-                    ? PublicFolder + route.params.profilePicture
-                    : PublicFolder + "persons/noAvatar.png",
-              }}
-              style={styles.logo}
-              resizeMode="cover"
-            />
+            <View style={{position:'relative'}}>
+              <Image
+                source={{
+                  uri:
+                    route.params.profilePicture !== ""
+                      ? PublicFolder + route.params.profilePicture
+                      : PublicFolder + "persons/noAvatar.png",
+                }}
+                style={styles.logo}
+                resizeMode="cover"
+              />
+              {route.params.isVerify===true ? (
+                <Ionicons style={{position:'absolute', bottom:0, right: 0, left: 0, marginLeft:'auto', marginRight: 'auto', textAlign:'center'}} color={COLORS.green} size={width*0.1} name="shield-checkmark"></Ionicons>
+
+              ): undefined}
+            </View>
+            
             <View style={styles.button}>
               <Text
                 style={{

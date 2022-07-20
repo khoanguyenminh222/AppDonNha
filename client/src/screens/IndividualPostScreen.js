@@ -139,7 +139,7 @@ const IndividualPostScreen = ({ route }) => {
       setErrMessage("Chưa có số điện thoại");
       return;
     }
-    if (VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
+    if (!VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
       setErrMessage("Số điện thoại không đúng định dạng");
       return;
     }
@@ -245,7 +245,7 @@ const IndividualPostScreen = ({ route }) => {
       setErrMessage("Chưa có số điện thoại");
       return;
     }
-    if (VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
+    if (!VNF_REGEX.test(phonenumber) || phonenumber.length !== 10) {
       setErrMessage("Số điện thoại không đúng định dạng");
       return;
     }

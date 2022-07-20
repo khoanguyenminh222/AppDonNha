@@ -25,7 +25,6 @@ const SearchScreen = ({route}) => {
     useEffect(() => {
       if(posts[0]!==undefined){
         posts.forEach(p => {
-          console.log("p",p)
           setTempPost(p)
           
         });

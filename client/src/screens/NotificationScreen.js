@@ -37,11 +37,10 @@ const NotificationScreen = ({route}) => {
   // useEffect(() => {
   //   fetchNotifies();
   // }, []);
-  console.log(notifies[0].length)
+  
   const handleLoadMore = () => {
     setEnd(end + 3);
     setStart(start + 3);
-    console.log(end, start);
   };
   useEffect(() => {
     for (let index = start; index < notifies.length; index++) {
